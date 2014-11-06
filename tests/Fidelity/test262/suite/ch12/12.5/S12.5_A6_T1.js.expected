@@ -52,7 +52,6 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
                         {
                             "kind": "SingleLineCommentTrivia",
@@ -126,14 +125,6 @@
                             "fullEnd": 399,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 401,
-                            "fullEnd": 402,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -156,7 +147,16 @@
                     "width": 4,
                     "text": "true",
                     "value": true,
-                    "valueText": "true"
+                    "valueText": "true",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 401,
+                            "fullEnd": 402,
+                            "text": " "
+                        }
+                    ]
                 },
                 "closeParenToken": {
                     "kind": "CloseParenToken",
@@ -186,17 +186,7 @@
                         "width": 1,
                         "text": ";",
                         "value": ";",
-                        "valueText": ";",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 407,
-                                "fullEnd": 408,
-                                "text": "\n"
-                            }
-                        ]
+                        "valueText": ";"
                     }
                 }
             }
@@ -214,6 +204,12 @@
             "hasLeadingComment": true,
             "hasLeadingNewLine": true,
             "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 407,
+                    "fullEnd": 408,
+                    "text": "\n"
+                },
                 {
                     "kind": "SingleLineCommentTrivia",
                     "fullStart": 408,

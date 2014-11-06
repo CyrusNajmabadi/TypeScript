@@ -32,7 +32,6 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
                         {
                             "kind": "SingleLineCommentTrivia",
@@ -94,14 +93,6 @@
                             "fullEnd": 340,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 342,
-                            "fullEnd": 343,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -114,7 +105,16 @@
                     "width": 1,
                     "text": "(",
                     "value": "(",
-                    "valueText": "("
+                    "valueText": "(",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 342,
+                            "fullEnd": 343,
+                            "text": " "
+                        }
+                    ]
                 },
                 "condition": {
                     "kind": "BinaryExpression",
@@ -162,16 +162,7 @@
                                 "width": 1,
                                 "text": "0",
                                 "value": 0,
-                                "valueText": "0",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "fullStart": 346,
-                                        "fullEnd": 347,
-                                        "text": " "
-                                    }
-                                ]
+                                "valueText": "0"
                             }
                         },
                         "operatorToken": {
@@ -185,12 +176,12 @@
                             "text": "-",
                             "value": "-",
                             "valueText": "-",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 348,
-                                    "fullEnd": 349,
+                                    "fullStart": 346,
+                                    "fullEnd": 347,
                                     "text": " "
                                 }
                             ]
@@ -213,7 +204,16 @@
                                 "width": 1,
                                 "text": "-",
                                 "value": "-",
-                                "valueText": "-"
+                                "valueText": "-",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 348,
+                                        "fullEnd": 349,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "operand": {
                                 "kind": "NumericLiteral",
@@ -225,16 +225,7 @@
                                 "width": 1,
                                 "text": "0",
                                 "value": 0,
-                                "valueText": "0",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "fullStart": 351,
-                                        "fullEnd": 352,
-                                        "text": " "
-                                    }
-                                ]
+                                "valueText": "0"
                             }
                         }
                     },
@@ -249,12 +240,12 @@
                         "text": "!==",
                         "value": "!==",
                         "valueText": "!==",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 355,
-                                "fullEnd": 356,
+                                "fullStart": 351,
+                                "fullEnd": 352,
                                 "text": " "
                             }
                         ]
@@ -270,12 +261,12 @@
                         "text": "0",
                         "value": 0,
                         "valueText": "0",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 357,
-                                "fullEnd": 358,
+                                "fullStart": 355,
+                                "fullEnd": 356,
                                 "text": " "
                             }
                         ]
@@ -292,12 +283,12 @@
                     "text": ")",
                     "value": ")",
                     "valueText": ")",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 359,
-                            "fullEnd": 360,
+                            "fullStart": 357,
+                            "fullEnd": 358,
                             "text": " "
                         }
                     ]
@@ -321,20 +312,13 @@
                         "text": "{",
                         "value": "{",
                         "valueText": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 361,
-                                "fullEnd": 363,
-                                "text": "  "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 363,
-                                "fullEnd": 364,
-                                "text": "\n"
+                                "fullStart": 359,
+                                "fullEnd": 360,
+                                "text": " "
                             }
                         ]
                     },
@@ -367,7 +351,20 @@
                                     "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 361,
+                                            "fullEnd": 363,
+                                            "text": "  "
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 363,
+                                            "fullEnd": 364,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 364,
@@ -415,16 +412,7 @@
                                                 "width": 31,
                                                 "text": "'#1.1: -0 - -0 === 0. Actual: '",
                                                 "value": "#1.1: -0 - -0 === 0. Actual: ",
-                                                "valueText": "#1.1: -0 - -0 === 0. Actual: ",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 404,
-                                                        "fullEnd": 405,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": "#1.1: -0 - -0 === 0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -437,12 +425,12 @@
                                                 "text": "+",
                                                 "value": "+",
                                                 "valueText": "+",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 406,
-                                                        "fullEnd": 407,
+                                                        "fullStart": 404,
+                                                        "fullEnd": 405,
                                                         "text": " "
                                                     }
                                                 ]
@@ -465,7 +453,16 @@
                                                     "width": 1,
                                                     "text": "(",
                                                     "value": "(",
-                                                    "valueText": "("
+                                                    "valueText": "(",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 406,
+                                                            "fullEnd": 407,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "expression": {
                                                     "kind": "BinaryExpression",
@@ -505,16 +502,7 @@
                                                             "width": 1,
                                                             "text": "0",
                                                             "value": 0,
-                                                            "valueText": "0",
-                                                            "hasTrailingTrivia": true,
-                                                            "trailingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "fullStart": 410,
-                                                                    "fullEnd": 411,
-                                                                    "text": " "
-                                                                }
-                                                            ]
+                                                            "valueText": "0"
                                                         }
                                                     },
                                                     "operatorToken": {
@@ -528,12 +516,12 @@
                                                         "text": "-",
                                                         "value": "-",
                                                         "valueText": "-",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
                                                             {
                                                                 "kind": "WhitespaceTrivia",
-                                                                "fullStart": 412,
-                                                                "fullEnd": 413,
+                                                                "fullStart": 410,
+                                                                "fullEnd": 411,
                                                                 "text": " "
                                                             }
                                                         ]
@@ -556,7 +544,16 @@
                                                             "width": 1,
                                                             "text": "-",
                                                             "value": "-",
-                                                            "valueText": "-"
+                                                            "valueText": "-",
+                                                            "hasLeadingTrivia": true,
+                                                            "leadingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "fullStart": 412,
+                                                                    "fullEnd": 413,
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "operand": {
                                                             "kind": "NumericLiteral",
@@ -611,17 +608,7 @@
                                 "width": 1,
                                 "text": ";",
                                 "value": ";",
-                                "valueText": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLine": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "fullStart": 418,
-                                        "fullEnd": 419,
-                                        "text": "\n"
-                                    }
-                                ]
+                                "valueText": ";"
                             }
                         }
                     ],
@@ -636,13 +623,14 @@
                         "text": "}",
                         "value": "}",
                         "valueText": "}",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 420,
-                                "fullEnd": 421,
-                                "text": " "
+                                "kind": "NewLineTrivia",
+                                "fullStart": 418,
+                                "fullEnd": 419,
+                                "text": "\n"
                             }
                         ]
                     }
@@ -666,12 +654,12 @@
                         "text": "else",
                         "value": "else",
                         "valueText": "else",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 425,
-                                "fullEnd": 426,
+                                "fullStart": 420,
+                                "fullEnd": 421,
                                 "text": " "
                             }
                         ]
@@ -695,14 +683,13 @@
                             "text": "{",
                             "value": "{",
                             "valueText": "{",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
-                                    "kind": "NewLineTrivia",
-                                    "fullStart": 427,
-                                    "fullEnd": 428,
-                                    "text": "\n"
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 425,
+                                    "fullEnd": 426,
+                                    "text": " "
                                 }
                             ]
                         },
@@ -727,21 +714,19 @@
                                     "value": "if",
                                     "valueText": "if",
                                     "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 427,
+                                            "fullEnd": 428,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 428,
                                             "fullEnd": 430,
                                             "text": "  "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 432,
-                                            "fullEnd": 433,
-                                            "text": " "
                                         }
                                     ]
                                 },
@@ -755,7 +740,16 @@
                                     "width": 1,
                                     "text": "(",
                                     "value": "(",
-                                    "valueText": "("
+                                    "valueText": "(",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 432,
+                                            "fullEnd": 433,
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "condition": {
                                     "kind": "BinaryExpression",
@@ -783,16 +777,7 @@
                                             "width": 1,
                                             "text": "1",
                                             "value": 1,
-                                            "valueText": "1",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "fullStart": 435,
-                                                    "fullEnd": 436,
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -805,12 +790,12 @@
                                             "text": "/",
                                             "value": "/",
                                             "valueText": "/",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
                                                 {
                                                     "kind": "WhitespaceTrivia",
-                                                    "fullStart": 437,
-                                                    "fullEnd": 438,
+                                                    "fullStart": 435,
+                                                    "fullEnd": 436,
                                                     "text": " "
                                                 }
                                             ]
@@ -833,7 +818,16 @@
                                                 "width": 1,
                                                 "text": "(",
                                                 "value": "(",
-                                                "valueText": "("
+                                                "valueText": "(",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 437,
+                                                        "fullEnd": 438,
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "expression": {
                                                 "kind": "BinaryExpression",
@@ -873,16 +867,7 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "fullStart": 441,
-                                                                "fullEnd": 442,
-                                                                "text": " "
-                                                            }
-                                                        ]
+                                                        "valueText": "0"
                                                     }
                                                 },
                                                 "operatorToken": {
@@ -896,12 +881,12 @@
                                                     "text": "-",
                                                     "value": "-",
                                                     "valueText": "-",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
                                                         {
                                                             "kind": "WhitespaceTrivia",
-                                                            "fullStart": 443,
-                                                            "fullEnd": 444,
+                                                            "fullStart": 441,
+                                                            "fullEnd": 442,
                                                             "text": " "
                                                         }
                                                     ]
@@ -924,7 +909,16 @@
                                                         "width": 1,
                                                         "text": "-",
                                                         "value": "-",
-                                                        "valueText": "-"
+                                                        "valueText": "-",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 443,
+                                                                "fullEnd": 444,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "operand": {
                                                         "kind": "NumericLiteral",
@@ -950,16 +944,7 @@
                                                 "width": 1,
                                                 "text": ")",
                                                 "value": ")",
-                                                "valueText": ")",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 447,
-                                                        "fullEnd": 448,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": ")"
                                             }
                                         }
                                     },
@@ -974,12 +959,12 @@
                                         "text": "!==",
                                         "value": "!==",
                                         "valueText": "!==",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 451,
-                                                "fullEnd": 452,
+                                                "fullStart": 447,
+                                                "fullEnd": 448,
                                                 "text": " "
                                             }
                                         ]
@@ -1002,7 +987,16 @@
                                             "width": 6,
                                             "text": "Number",
                                             "value": "Number",
-                                            "valueText": "Number"
+                                            "valueText": "Number",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 451,
+                                                    "fullEnd": 452,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -1040,16 +1034,7 @@
                                     "width": 1,
                                     "text": ")",
                                     "value": ")",
-                                    "valueText": ")",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 477,
-                                            "fullEnd": 478,
-                                            "text": " "
-                                        }
-                                    ]
+                                    "valueText": ")"
                                 },
                                 "statement": {
                                     "kind": "Block",
@@ -1070,14 +1055,13 @@
                                         "text": "{",
                                         "value": "{",
                                         "valueText": "{",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 479,
-                                                "fullEnd": 480,
-                                                "text": "\n"
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 477,
+                                                "fullEnd": 478,
+                                                "text": " "
                                             }
                                         ]
                                     },
@@ -1110,7 +1094,14 @@
                                                     "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
+                                                    "hasLeadingNewLine": true,
                                                     "leadingTrivia": [
+                                                        {
+                                                            "kind": "NewLineTrivia",
+                                                            "fullStart": 479,
+                                                            "fullEnd": 480,
+                                                            "text": "\n"
+                                                        },
                                                         {
                                                             "kind": "WhitespaceTrivia",
                                                             "fullStart": 480,
@@ -1177,17 +1168,7 @@
                                                 "width": 1,
                                                 "text": ";",
                                                 "value": ";",
-                                                "valueText": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLine": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "NewLineTrivia",
-                                                        "fullStart": 528,
-                                                        "fullEnd": 529,
-                                                        "text": "\n"
-                                                    }
-                                                ]
+                                                "valueText": ";"
                                             }
                                         }
                                     ],
@@ -1203,22 +1184,19 @@
                                         "value": "}",
                                         "valueText": "}",
                                         "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
+                                        "hasLeadingNewLine": true,
                                         "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 528,
+                                                "fullEnd": 529,
+                                                "text": "\n"
+                                            },
                                             {
                                                 "kind": "WhitespaceTrivia",
                                                 "fullStart": 529,
                                                 "fullEnd": 531,
                                                 "text": "  "
-                                            }
-                                        ],
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 532,
-                                                "fullEnd": 533,
-                                                "text": "\n"
                                             }
                                         ]
                                     }
@@ -1236,13 +1214,13 @@
                             "text": "}",
                             "value": "}",
                             "valueText": "}",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 534,
-                                    "fullEnd": 535,
+                                    "fullStart": 532,
+                                    "fullEnd": 533,
                                     "text": "\n"
                                 }
                             ]
@@ -1272,8 +1250,13 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 534,
+                            "fullEnd": 535,
+                            "text": "\n"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "fullStart": 535,
@@ -1292,14 +1275,6 @@
                             "fullEnd": 546,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 548,
-                            "fullEnd": 549,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -1312,7 +1287,16 @@
                     "width": 1,
                     "text": "(",
                     "value": "(",
-                    "valueText": "("
+                    "valueText": "(",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 548,
+                            "fullEnd": 549,
+                            "text": " "
+                        }
+                    ]
                 },
                 "condition": {
                     "kind": "BinaryExpression",
@@ -1340,16 +1324,7 @@
                             "width": 1,
                             "text": "0",
                             "value": 0,
-                            "valueText": "0",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "fullStart": 551,
-                                    "fullEnd": 552,
-                                    "text": " "
-                                }
-                            ]
+                            "valueText": "0"
                         },
                         "operatorToken": {
                             "kind": "MinusToken",
@@ -1362,12 +1337,12 @@
                             "text": "-",
                             "value": "-",
                             "valueText": "-",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 553,
-                                    "fullEnd": 554,
+                                    "fullStart": 551,
+                                    "fullEnd": 552,
                                     "text": " "
                                 }
                             ]
@@ -1390,7 +1365,16 @@
                                 "width": 1,
                                 "text": "-",
                                 "value": "-",
-                                "valueText": "-"
+                                "valueText": "-",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "fullStart": 553,
+                                        "fullEnd": 554,
+                                        "text": " "
+                                    }
+                                ]
                             },
                             "operand": {
                                 "kind": "NumericLiteral",
@@ -1402,16 +1386,7 @@
                                 "width": 1,
                                 "text": "0",
                                 "value": 0,
-                                "valueText": "0",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "fullStart": 556,
-                                        "fullEnd": 557,
-                                        "text": " "
-                                    }
-                                ]
+                                "valueText": "0"
                             }
                         }
                     },
@@ -1426,12 +1401,12 @@
                         "text": "!==",
                         "value": "!==",
                         "valueText": "!==",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 560,
-                                "fullEnd": 561,
+                                "fullStart": 556,
+                                "fullEnd": 557,
                                 "text": " "
                             }
                         ]
@@ -1447,12 +1422,12 @@
                         "text": "0",
                         "value": 0,
                         "valueText": "0",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 562,
-                                "fullEnd": 563,
+                                "fullStart": 560,
+                                "fullEnd": 561,
                                 "text": " "
                             }
                         ]
@@ -1469,12 +1444,12 @@
                     "text": ")",
                     "value": ")",
                     "valueText": ")",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 564,
-                            "fullEnd": 565,
+                            "fullStart": 562,
+                            "fullEnd": 563,
                             "text": " "
                         }
                     ]
@@ -1498,20 +1473,13 @@
                         "text": "{",
                         "value": "{",
                         "valueText": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 566,
-                                "fullEnd": 568,
-                                "text": "  "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 568,
-                                "fullEnd": 569,
-                                "text": "\n"
+                                "fullStart": 564,
+                                "fullEnd": 565,
+                                "text": " "
                             }
                         ]
                     },
@@ -1544,7 +1512,20 @@
                                     "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 566,
+                                            "fullEnd": 568,
+                                            "text": "  "
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 568,
+                                            "fullEnd": 569,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 569,
@@ -1592,16 +1573,7 @@
                                                 "width": 30,
                                                 "text": "'#2.1: 0 - -0 === 0. Actual: '",
                                                 "value": "#2.1: 0 - -0 === 0. Actual: ",
-                                                "valueText": "#2.1: 0 - -0 === 0. Actual: ",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 608,
-                                                        "fullEnd": 609,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": "#2.1: 0 - -0 === 0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -1614,12 +1586,12 @@
                                                 "text": "+",
                                                 "value": "+",
                                                 "valueText": "+",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 610,
-                                                        "fullEnd": 611,
+                                                        "fullStart": 608,
+                                                        "fullEnd": 609,
                                                         "text": " "
                                                     }
                                                 ]
@@ -1642,7 +1614,16 @@
                                                     "width": 1,
                                                     "text": "(",
                                                     "value": "(",
-                                                    "valueText": "("
+                                                    "valueText": "(",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 610,
+                                                            "fullEnd": 611,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "expression": {
                                                     "kind": "BinaryExpression",
@@ -1662,16 +1643,7 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "fullStart": 613,
-                                                                "fullEnd": 614,
-                                                                "text": " "
-                                                            }
-                                                        ]
+                                                        "valueText": "0"
                                                     },
                                                     "operatorToken": {
                                                         "kind": "MinusToken",
@@ -1684,12 +1656,12 @@
                                                         "text": "-",
                                                         "value": "-",
                                                         "valueText": "-",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
                                                             {
                                                                 "kind": "WhitespaceTrivia",
-                                                                "fullStart": 615,
-                                                                "fullEnd": 616,
+                                                                "fullStart": 613,
+                                                                "fullEnd": 614,
                                                                 "text": " "
                                                             }
                                                         ]
@@ -1712,7 +1684,16 @@
                                                             "width": 1,
                                                             "text": "-",
                                                             "value": "-",
-                                                            "valueText": "-"
+                                                            "valueText": "-",
+                                                            "hasLeadingTrivia": true,
+                                                            "leadingTrivia": [
+                                                                {
+                                                                    "kind": "WhitespaceTrivia",
+                                                                    "fullStart": 615,
+                                                                    "fullEnd": 616,
+                                                                    "text": " "
+                                                                }
+                                                            ]
                                                         },
                                                         "operand": {
                                                             "kind": "NumericLiteral",
@@ -1767,17 +1748,7 @@
                                 "width": 1,
                                 "text": ";",
                                 "value": ";",
-                                "valueText": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLine": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "fullStart": 621,
-                                        "fullEnd": 622,
-                                        "text": "\n"
-                                    }
-                                ]
+                                "valueText": ";"
                             }
                         }
                     ],
@@ -1792,13 +1763,14 @@
                         "text": "}",
                         "value": "}",
                         "valueText": "}",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 623,
-                                "fullEnd": 624,
-                                "text": " "
+                                "kind": "NewLineTrivia",
+                                "fullStart": 621,
+                                "fullEnd": 622,
+                                "text": "\n"
                             }
                         ]
                     }
@@ -1822,12 +1794,12 @@
                         "text": "else",
                         "value": "else",
                         "valueText": "else",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 628,
-                                "fullEnd": 629,
+                                "fullStart": 623,
+                                "fullEnd": 624,
                                 "text": " "
                             }
                         ]
@@ -1851,14 +1823,13 @@
                             "text": "{",
                             "value": "{",
                             "valueText": "{",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
-                                    "kind": "NewLineTrivia",
-                                    "fullStart": 630,
-                                    "fullEnd": 631,
-                                    "text": "\n"
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 628,
+                                    "fullEnd": 629,
+                                    "text": " "
                                 }
                             ]
                         },
@@ -1883,21 +1854,19 @@
                                     "value": "if",
                                     "valueText": "if",
                                     "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 630,
+                                            "fullEnd": 631,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 631,
                                             "fullEnd": 633,
                                             "text": "  "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 635,
-                                            "fullEnd": 636,
-                                            "text": " "
                                         }
                                     ]
                                 },
@@ -1911,7 +1880,16 @@
                                     "width": 1,
                                     "text": "(",
                                     "value": "(",
-                                    "valueText": "("
+                                    "valueText": "(",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 635,
+                                            "fullEnd": 636,
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "condition": {
                                     "kind": "BinaryExpression",
@@ -1939,16 +1917,7 @@
                                             "width": 1,
                                             "text": "1",
                                             "value": 1,
-                                            "valueText": "1",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "fullStart": 638,
-                                                    "fullEnd": 639,
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -1961,12 +1930,12 @@
                                             "text": "/",
                                             "value": "/",
                                             "valueText": "/",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
                                                 {
                                                     "kind": "WhitespaceTrivia",
-                                                    "fullStart": 640,
-                                                    "fullEnd": 641,
+                                                    "fullStart": 638,
+                                                    "fullEnd": 639,
                                                     "text": " "
                                                 }
                                             ]
@@ -1989,7 +1958,16 @@
                                                 "width": 1,
                                                 "text": "(",
                                                 "value": "(",
-                                                "valueText": "("
+                                                "valueText": "(",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 640,
+                                                        "fullEnd": 641,
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "expression": {
                                                 "kind": "BinaryExpression",
@@ -2009,16 +1987,7 @@
                                                     "width": 1,
                                                     "text": "0",
                                                     "value": 0,
-                                                    "valueText": "0",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "fullStart": 643,
-                                                            "fullEnd": 644,
-                                                            "text": " "
-                                                        }
-                                                    ]
+                                                    "valueText": "0"
                                                 },
                                                 "operatorToken": {
                                                     "kind": "MinusToken",
@@ -2031,12 +2000,12 @@
                                                     "text": "-",
                                                     "value": "-",
                                                     "valueText": "-",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
                                                         {
                                                             "kind": "WhitespaceTrivia",
-                                                            "fullStart": 645,
-                                                            "fullEnd": 646,
+                                                            "fullStart": 643,
+                                                            "fullEnd": 644,
                                                             "text": " "
                                                         }
                                                     ]
@@ -2059,7 +2028,16 @@
                                                         "width": 1,
                                                         "text": "-",
                                                         "value": "-",
-                                                        "valueText": "-"
+                                                        "valueText": "-",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 645,
+                                                                "fullEnd": 646,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     },
                                                     "operand": {
                                                         "kind": "NumericLiteral",
@@ -2085,16 +2063,7 @@
                                                 "width": 1,
                                                 "text": ")",
                                                 "value": ")",
-                                                "valueText": ")",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 649,
-                                                        "fullEnd": 650,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": ")"
                                             }
                                         }
                                     },
@@ -2109,12 +2078,12 @@
                                         "text": "!==",
                                         "value": "!==",
                                         "valueText": "!==",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 653,
-                                                "fullEnd": 654,
+                                                "fullStart": 649,
+                                                "fullEnd": 650,
                                                 "text": " "
                                             }
                                         ]
@@ -2137,7 +2106,16 @@
                                             "width": 6,
                                             "text": "Number",
                                             "value": "Number",
-                                            "valueText": "Number"
+                                            "valueText": "Number",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 653,
+                                                    "fullEnd": 654,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -2175,16 +2153,7 @@
                                     "width": 1,
                                     "text": ")",
                                     "value": ")",
-                                    "valueText": ")",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 679,
-                                            "fullEnd": 680,
-                                            "text": " "
-                                        }
-                                    ]
+                                    "valueText": ")"
                                 },
                                 "statement": {
                                     "kind": "Block",
@@ -2205,14 +2174,13 @@
                                         "text": "{",
                                         "value": "{",
                                         "valueText": "{",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 681,
-                                                "fullEnd": 682,
-                                                "text": "\n"
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 679,
+                                                "fullEnd": 680,
+                                                "text": " "
                                             }
                                         ]
                                     },
@@ -2245,7 +2213,14 @@
                                                     "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
+                                                    "hasLeadingNewLine": true,
                                                     "leadingTrivia": [
+                                                        {
+                                                            "kind": "NewLineTrivia",
+                                                            "fullStart": 681,
+                                                            "fullEnd": 682,
+                                                            "text": "\n"
+                                                        },
                                                         {
                                                             "kind": "WhitespaceTrivia",
                                                             "fullStart": 682,
@@ -2312,17 +2287,7 @@
                                                 "width": 1,
                                                 "text": ";",
                                                 "value": ";",
-                                                "valueText": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLine": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "NewLineTrivia",
-                                                        "fullStart": 729,
-                                                        "fullEnd": 730,
-                                                        "text": "\n"
-                                                    }
-                                                ]
+                                                "valueText": ";"
                                             }
                                         }
                                     ],
@@ -2338,22 +2303,19 @@
                                         "value": "}",
                                         "valueText": "}",
                                         "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
+                                        "hasLeadingNewLine": true,
                                         "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 729,
+                                                "fullEnd": 730,
+                                                "text": "\n"
+                                            },
                                             {
                                                 "kind": "WhitespaceTrivia",
                                                 "fullStart": 730,
                                                 "fullEnd": 732,
                                                 "text": "  "
-                                            }
-                                        ],
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 733,
-                                                "fullEnd": 734,
-                                                "text": "\n"
                                             }
                                         ]
                                     }
@@ -2371,13 +2333,13 @@
                             "text": "}",
                             "value": "}",
                             "valueText": "}",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 735,
-                                    "fullEnd": 736,
+                                    "fullStart": 733,
+                                    "fullEnd": 734,
                                     "text": "\n"
                                 }
                             ]
@@ -2407,8 +2369,13 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 735,
+                            "fullEnd": 736,
+                            "text": "\n"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "fullStart": 736,
@@ -2427,14 +2394,6 @@
                             "fullEnd": 747,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 749,
-                            "fullEnd": 750,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -2447,7 +2406,16 @@
                     "width": 1,
                     "text": "(",
                     "value": "(",
-                    "valueText": "("
+                    "valueText": "(",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 749,
+                            "fullEnd": 750,
+                            "text": " "
+                        }
+                    ]
                 },
                 "condition": {
                     "kind": "BinaryExpression",
@@ -2495,16 +2463,7 @@
                                 "width": 1,
                                 "text": "0",
                                 "value": 0,
-                                "valueText": "0",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "fullStart": 753,
-                                        "fullEnd": 754,
-                                        "text": " "
-                                    }
-                                ]
+                                "valueText": "0"
                             }
                         },
                         "operatorToken": {
@@ -2518,12 +2477,12 @@
                             "text": "-",
                             "value": "-",
                             "valueText": "-",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 755,
-                                    "fullEnd": 756,
+                                    "fullStart": 753,
+                                    "fullEnd": 754,
                                     "text": " "
                                 }
                             ]
@@ -2539,12 +2498,12 @@
                             "text": "0",
                             "value": 0,
                             "valueText": "0",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 757,
-                                    "fullEnd": 758,
+                                    "fullStart": 755,
+                                    "fullEnd": 756,
                                     "text": " "
                                 }
                             ]
@@ -2561,12 +2520,12 @@
                         "text": "!==",
                         "value": "!==",
                         "valueText": "!==",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 761,
-                                "fullEnd": 762,
+                                "fullStart": 757,
+                                "fullEnd": 758,
                                 "text": " "
                             }
                         ]
@@ -2589,7 +2548,16 @@
                             "width": 1,
                             "text": "-",
                             "value": "-",
-                            "valueText": "-"
+                            "valueText": "-",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 761,
+                                    "fullEnd": 762,
+                                    "text": " "
+                                }
+                            ]
                         },
                         "operand": {
                             "kind": "NumericLiteral",
@@ -2601,16 +2569,7 @@
                             "width": 1,
                             "text": "0",
                             "value": 0,
-                            "valueText": "0",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "fullStart": 764,
-                                    "fullEnd": 765,
-                                    "text": " "
-                                }
-                            ]
+                            "valueText": "0"
                         }
                     }
                 },
@@ -2625,12 +2584,12 @@
                     "text": ")",
                     "value": ")",
                     "valueText": ")",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 766,
-                            "fullEnd": 767,
+                            "fullStart": 764,
+                            "fullEnd": 765,
                             "text": " "
                         }
                     ]
@@ -2654,20 +2613,13 @@
                         "text": "{",
                         "value": "{",
                         "valueText": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 768,
-                                "fullEnd": 770,
-                                "text": "  "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 770,
-                                "fullEnd": 771,
-                                "text": "\n"
+                                "fullStart": 766,
+                                "fullEnd": 767,
+                                "text": " "
                             }
                         ]
                     },
@@ -2700,7 +2652,20 @@
                                     "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 768,
+                                            "fullEnd": 770,
+                                            "text": "  "
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 770,
+                                            "fullEnd": 771,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 771,
@@ -2748,16 +2713,7 @@
                                                 "width": 30,
                                                 "text": "'#3.1: -0 - 0 === 0. Actual: '",
                                                 "value": "#3.1: -0 - 0 === 0. Actual: ",
-                                                "valueText": "#3.1: -0 - 0 === 0. Actual: ",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 810,
-                                                        "fullEnd": 811,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": "#3.1: -0 - 0 === 0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -2770,12 +2726,12 @@
                                                 "text": "+",
                                                 "value": "+",
                                                 "valueText": "+",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 812,
-                                                        "fullEnd": 813,
+                                                        "fullStart": 810,
+                                                        "fullEnd": 811,
                                                         "text": " "
                                                     }
                                                 ]
@@ -2798,7 +2754,16 @@
                                                     "width": 1,
                                                     "text": "(",
                                                     "value": "(",
-                                                    "valueText": "("
+                                                    "valueText": "(",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 812,
+                                                            "fullEnd": 813,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "expression": {
                                                     "kind": "BinaryExpression",
@@ -2838,16 +2803,7 @@
                                                             "width": 1,
                                                             "text": "0",
                                                             "value": 0,
-                                                            "valueText": "0",
-                                                            "hasTrailingTrivia": true,
-                                                            "trailingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "fullStart": 816,
-                                                                    "fullEnd": 817,
-                                                                    "text": " "
-                                                                }
-                                                            ]
+                                                            "valueText": "0"
                                                         }
                                                     },
                                                     "operatorToken": {
@@ -2861,12 +2817,12 @@
                                                         "text": "-",
                                                         "value": "-",
                                                         "valueText": "-",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
                                                             {
                                                                 "kind": "WhitespaceTrivia",
-                                                                "fullStart": 818,
-                                                                "fullEnd": 819,
+                                                                "fullStart": 816,
+                                                                "fullEnd": 817,
                                                                 "text": " "
                                                             }
                                                         ]
@@ -2881,7 +2837,16 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0"
+                                                        "valueText": "0",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 818,
+                                                                "fullEnd": 819,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -2923,17 +2888,7 @@
                                 "width": 1,
                                 "text": ";",
                                 "value": ";",
-                                "valueText": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLine": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "fullStart": 823,
-                                        "fullEnd": 824,
-                                        "text": "\n"
-                                    }
-                                ]
+                                "valueText": ";"
                             }
                         }
                     ],
@@ -2948,13 +2903,14 @@
                         "text": "}",
                         "value": "}",
                         "valueText": "}",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 825,
-                                "fullEnd": 826,
-                                "text": " "
+                                "kind": "NewLineTrivia",
+                                "fullStart": 823,
+                                "fullEnd": 824,
+                                "text": "\n"
                             }
                         ]
                     }
@@ -2978,12 +2934,12 @@
                         "text": "else",
                         "value": "else",
                         "valueText": "else",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 830,
-                                "fullEnd": 831,
+                                "fullStart": 825,
+                                "fullEnd": 826,
                                 "text": " "
                             }
                         ]
@@ -3007,14 +2963,13 @@
                             "text": "{",
                             "value": "{",
                             "valueText": "{",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
-                                    "kind": "NewLineTrivia",
-                                    "fullStart": 832,
-                                    "fullEnd": 833,
-                                    "text": "\n"
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 830,
+                                    "fullEnd": 831,
+                                    "text": " "
                                 }
                             ]
                         },
@@ -3039,21 +2994,19 @@
                                     "value": "if",
                                     "valueText": "if",
                                     "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 832,
+                                            "fullEnd": 833,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 833,
                                             "fullEnd": 835,
                                             "text": "  "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 837,
-                                            "fullEnd": 838,
-                                            "text": " "
                                         }
                                     ]
                                 },
@@ -3067,7 +3020,16 @@
                                     "width": 1,
                                     "text": "(",
                                     "value": "(",
-                                    "valueText": "("
+                                    "valueText": "(",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 837,
+                                            "fullEnd": 838,
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "condition": {
                                     "kind": "BinaryExpression",
@@ -3095,16 +3057,7 @@
                                             "width": 1,
                                             "text": "1",
                                             "value": 1,
-                                            "valueText": "1",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "fullStart": 840,
-                                                    "fullEnd": 841,
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -3117,12 +3070,12 @@
                                             "text": "/",
                                             "value": "/",
                                             "valueText": "/",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
                                                 {
                                                     "kind": "WhitespaceTrivia",
-                                                    "fullStart": 842,
-                                                    "fullEnd": 843,
+                                                    "fullStart": 840,
+                                                    "fullEnd": 841,
                                                     "text": " "
                                                 }
                                             ]
@@ -3145,7 +3098,16 @@
                                                 "width": 1,
                                                 "text": "(",
                                                 "value": "(",
-                                                "valueText": "("
+                                                "valueText": "(",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 842,
+                                                        "fullEnd": 843,
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "expression": {
                                                 "kind": "BinaryExpression",
@@ -3185,16 +3147,7 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "fullStart": 846,
-                                                                "fullEnd": 847,
-                                                                "text": " "
-                                                            }
-                                                        ]
+                                                        "valueText": "0"
                                                     }
                                                 },
                                                 "operatorToken": {
@@ -3208,12 +3161,12 @@
                                                     "text": "-",
                                                     "value": "-",
                                                     "valueText": "-",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
                                                         {
                                                             "kind": "WhitespaceTrivia",
-                                                            "fullStart": 848,
-                                                            "fullEnd": 849,
+                                                            "fullStart": 846,
+                                                            "fullEnd": 847,
                                                             "text": " "
                                                         }
                                                     ]
@@ -3228,7 +3181,16 @@
                                                     "width": 1,
                                                     "text": "0",
                                                     "value": 0,
-                                                    "valueText": "0"
+                                                    "valueText": "0",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 848,
+                                                            "fullEnd": 849,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             "closeParenToken": {
@@ -3241,16 +3203,7 @@
                                                 "width": 1,
                                                 "text": ")",
                                                 "value": ")",
-                                                "valueText": ")",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 851,
-                                                        "fullEnd": 852,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": ")"
                                             }
                                         }
                                     },
@@ -3265,12 +3218,12 @@
                                         "text": "!==",
                                         "value": "!==",
                                         "valueText": "!==",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 855,
-                                                "fullEnd": 856,
+                                                "fullStart": 851,
+                                                "fullEnd": 852,
                                                 "text": " "
                                             }
                                         ]
@@ -3293,7 +3246,16 @@
                                             "width": 6,
                                             "text": "Number",
                                             "value": "Number",
-                                            "valueText": "Number"
+                                            "valueText": "Number",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 855,
+                                                    "fullEnd": 856,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -3331,16 +3293,7 @@
                                     "width": 1,
                                     "text": ")",
                                     "value": ")",
-                                    "valueText": ")",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 881,
-                                            "fullEnd": 882,
-                                            "text": " "
-                                        }
-                                    ]
+                                    "valueText": ")"
                                 },
                                 "statement": {
                                     "kind": "Block",
@@ -3361,14 +3314,13 @@
                                         "text": "{",
                                         "value": "{",
                                         "valueText": "{",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 883,
-                                                "fullEnd": 884,
-                                                "text": "\n"
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 881,
+                                                "fullEnd": 882,
+                                                "text": " "
                                             }
                                         ]
                                     },
@@ -3401,7 +3353,14 @@
                                                     "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
+                                                    "hasLeadingNewLine": true,
                                                     "leadingTrivia": [
+                                                        {
+                                                            "kind": "NewLineTrivia",
+                                                            "fullStart": 883,
+                                                            "fullEnd": 884,
+                                                            "text": "\n"
+                                                        },
                                                         {
                                                             "kind": "WhitespaceTrivia",
                                                             "fullStart": 884,
@@ -3468,17 +3427,7 @@
                                                 "width": 1,
                                                 "text": ";",
                                                 "value": ";",
-                                                "valueText": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLine": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "NewLineTrivia",
-                                                        "fullStart": 931,
-                                                        "fullEnd": 932,
-                                                        "text": "\n"
-                                                    }
-                                                ]
+                                                "valueText": ";"
                                             }
                                         }
                                     ],
@@ -3494,22 +3443,19 @@
                                         "value": "}",
                                         "valueText": "}",
                                         "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
+                                        "hasLeadingNewLine": true,
                                         "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 931,
+                                                "fullEnd": 932,
+                                                "text": "\n"
+                                            },
                                             {
                                                 "kind": "WhitespaceTrivia",
                                                 "fullStart": 932,
                                                 "fullEnd": 934,
                                                 "text": "  "
-                                            }
-                                        ],
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 935,
-                                                "fullEnd": 936,
-                                                "text": "\n"
                                             }
                                         ]
                                     }
@@ -3527,13 +3473,13 @@
                             "text": "}",
                             "value": "}",
                             "valueText": "}",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 937,
-                                    "fullEnd": 938,
+                                    "fullStart": 935,
+                                    "fullEnd": 936,
                                     "text": "\n"
                                 }
                             ]
@@ -3563,8 +3509,13 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "fullStart": 937,
+                            "fullEnd": 938,
+                            "text": "\n"
+                        },
                         {
                             "kind": "NewLineTrivia",
                             "fullStart": 938,
@@ -3583,14 +3534,6 @@
                             "fullEnd": 949,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 951,
-                            "fullEnd": 952,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -3603,7 +3546,16 @@
                     "width": 1,
                     "text": "(",
                     "value": "(",
-                    "valueText": "("
+                    "valueText": "(",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 951,
+                            "fullEnd": 952,
+                            "text": " "
+                        }
+                    ]
                 },
                 "condition": {
                     "kind": "BinaryExpression",
@@ -3631,16 +3583,7 @@
                             "width": 1,
                             "text": "0",
                             "value": 0,
-                            "valueText": "0",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "fullStart": 954,
-                                    "fullEnd": 955,
-                                    "text": " "
-                                }
-                            ]
+                            "valueText": "0"
                         },
                         "operatorToken": {
                             "kind": "MinusToken",
@@ -3653,12 +3596,12 @@
                             "text": "-",
                             "value": "-",
                             "valueText": "-",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 956,
-                                    "fullEnd": 957,
+                                    "fullStart": 954,
+                                    "fullEnd": 955,
                                     "text": " "
                                 }
                             ]
@@ -3674,12 +3617,12 @@
                             "text": "0",
                             "value": 0,
                             "valueText": "0",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "WhitespaceTrivia",
-                                    "fullStart": 958,
-                                    "fullEnd": 959,
+                                    "fullStart": 956,
+                                    "fullEnd": 957,
                                     "text": " "
                                 }
                             ]
@@ -3696,12 +3639,12 @@
                         "text": "!==",
                         "value": "!==",
                         "valueText": "!==",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 962,
-                                "fullEnd": 963,
+                                "fullStart": 958,
+                                "fullEnd": 959,
                                 "text": " "
                             }
                         ]
@@ -3717,12 +3660,12 @@
                         "text": "0",
                         "value": 0,
                         "valueText": "0",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 964,
-                                "fullEnd": 965,
+                                "fullStart": 962,
+                                "fullEnd": 963,
                                 "text": " "
                             }
                         ]
@@ -3739,12 +3682,12 @@
                     "text": ")",
                     "value": ")",
                     "valueText": ")",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
                         {
                             "kind": "WhitespaceTrivia",
-                            "fullStart": 966,
-                            "fullEnd": 967,
+                            "fullStart": 964,
+                            "fullEnd": 965,
                             "text": " "
                         }
                     ]
@@ -3768,20 +3711,13 @@
                         "text": "{",
                         "value": "{",
                         "valueText": "{",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 968,
-                                "fullEnd": 970,
-                                "text": "  "
-                            },
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 970,
-                                "fullEnd": 971,
-                                "text": "\n"
+                                "fullStart": 966,
+                                "fullEnd": 967,
+                                "text": " "
                             }
                         ]
                     },
@@ -3814,7 +3750,20 @@
                                     "value": "$ERROR",
                                     "valueText": "$ERROR",
                                     "hasLeadingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 968,
+                                            "fullEnd": 970,
+                                            "text": "  "
+                                        },
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 970,
+                                            "fullEnd": 971,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 971,
@@ -3862,16 +3811,7 @@
                                                 "width": 29,
                                                 "text": "'#4.1: 0 - 0 === 0. Actual: '",
                                                 "value": "#4.1: 0 - 0 === 0. Actual: ",
-                                                "valueText": "#4.1: 0 - 0 === 0. Actual: ",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 1009,
-                                                        "fullEnd": 1010,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": "#4.1: 0 - 0 === 0. Actual: "
                                             },
                                             "operatorToken": {
                                                 "kind": "PlusToken",
@@ -3884,12 +3824,12 @@
                                                 "text": "+",
                                                 "value": "+",
                                                 "valueText": "+",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
                                                     {
                                                         "kind": "WhitespaceTrivia",
-                                                        "fullStart": 1011,
-                                                        "fullEnd": 1012,
+                                                        "fullStart": 1009,
+                                                        "fullEnd": 1010,
                                                         "text": " "
                                                     }
                                                 ]
@@ -3912,7 +3852,16 @@
                                                     "width": 1,
                                                     "text": "(",
                                                     "value": "(",
-                                                    "valueText": "("
+                                                    "valueText": "(",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 1011,
+                                                            "fullEnd": 1012,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 },
                                                 "expression": {
                                                     "kind": "BinaryExpression",
@@ -3932,16 +3881,7 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
-                                                            {
-                                                                "kind": "WhitespaceTrivia",
-                                                                "fullStart": 1014,
-                                                                "fullEnd": 1015,
-                                                                "text": " "
-                                                            }
-                                                        ]
+                                                        "valueText": "0"
                                                     },
                                                     "operatorToken": {
                                                         "kind": "MinusToken",
@@ -3954,12 +3894,12 @@
                                                         "text": "-",
                                                         "value": "-",
                                                         "valueText": "-",
-                                                        "hasTrailingTrivia": true,
-                                                        "trailingTrivia": [
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
                                                             {
                                                                 "kind": "WhitespaceTrivia",
-                                                                "fullStart": 1016,
-                                                                "fullEnd": 1017,
+                                                                "fullStart": 1014,
+                                                                "fullEnd": 1015,
                                                                 "text": " "
                                                             }
                                                         ]
@@ -3974,7 +3914,16 @@
                                                         "width": 1,
                                                         "text": "0",
                                                         "value": 0,
-                                                        "valueText": "0"
+                                                        "valueText": "0",
+                                                        "hasLeadingTrivia": true,
+                                                        "leadingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "fullStart": 1016,
+                                                                "fullEnd": 1017,
+                                                                "text": " "
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "closeParenToken": {
@@ -4016,17 +3965,7 @@
                                 "width": 1,
                                 "text": ";",
                                 "value": ";",
-                                "valueText": ";",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingNewLine": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "NewLineTrivia",
-                                        "fullStart": 1021,
-                                        "fullEnd": 1022,
-                                        "text": "\n"
-                                    }
-                                ]
+                                "valueText": ";"
                             }
                         }
                     ],
@@ -4041,13 +3980,14 @@
                         "text": "}",
                         "value": "}",
                         "valueText": "}",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "hasLeadingNewLine": true,
+                        "leadingTrivia": [
                             {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 1023,
-                                "fullEnd": 1024,
-                                "text": " "
+                                "kind": "NewLineTrivia",
+                                "fullStart": 1021,
+                                "fullEnd": 1022,
+                                "text": "\n"
                             }
                         ]
                     }
@@ -4071,12 +4011,12 @@
                         "text": "else",
                         "value": "else",
                         "valueText": "else",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 1028,
-                                "fullEnd": 1029,
+                                "fullStart": 1023,
+                                "fullEnd": 1024,
                                 "text": " "
                             }
                         ]
@@ -4100,14 +4040,13 @@
                             "text": "{",
                             "value": "{",
                             "valueText": "{",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
                                 {
-                                    "kind": "NewLineTrivia",
-                                    "fullStart": 1030,
-                                    "fullEnd": 1031,
-                                    "text": "\n"
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 1028,
+                                    "fullEnd": 1029,
+                                    "text": " "
                                 }
                             ]
                         },
@@ -4132,21 +4071,19 @@
                                     "value": "if",
                                     "valueText": "if",
                                     "hasLeadingTrivia": true,
-                                    "hasTrailingTrivia": true,
+                                    "hasLeadingNewLine": true,
                                     "leadingTrivia": [
+                                        {
+                                            "kind": "NewLineTrivia",
+                                            "fullStart": 1030,
+                                            "fullEnd": 1031,
+                                            "text": "\n"
+                                        },
                                         {
                                             "kind": "WhitespaceTrivia",
                                             "fullStart": 1031,
                                             "fullEnd": 1033,
                                             "text": "  "
-                                        }
-                                    ],
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 1035,
-                                            "fullEnd": 1036,
-                                            "text": " "
                                         }
                                     ]
                                 },
@@ -4160,7 +4097,16 @@
                                     "width": 1,
                                     "text": "(",
                                     "value": "(",
-                                    "valueText": "("
+                                    "valueText": "(",
+                                    "hasLeadingTrivia": true,
+                                    "leadingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "fullStart": 1035,
+                                            "fullEnd": 1036,
+                                            "text": " "
+                                        }
+                                    ]
                                 },
                                 "condition": {
                                     "kind": "BinaryExpression",
@@ -4188,16 +4134,7 @@
                                             "width": 1,
                                             "text": "1",
                                             "value": 1,
-                                            "valueText": "1",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "fullStart": 1038,
-                                                    "fullEnd": 1039,
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "valueText": "1"
                                         },
                                         "operatorToken": {
                                             "kind": "SlashToken",
@@ -4210,12 +4147,12 @@
                                             "text": "/",
                                             "value": "/",
                                             "valueText": "/",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
                                                 {
                                                     "kind": "WhitespaceTrivia",
-                                                    "fullStart": 1040,
-                                                    "fullEnd": 1041,
+                                                    "fullStart": 1038,
+                                                    "fullEnd": 1039,
                                                     "text": " "
                                                 }
                                             ]
@@ -4238,7 +4175,16 @@
                                                 "width": 1,
                                                 "text": "(",
                                                 "value": "(",
-                                                "valueText": "("
+                                                "valueText": "(",
+                                                "hasLeadingTrivia": true,
+                                                "leadingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "fullStart": 1040,
+                                                        "fullEnd": 1041,
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
                                             "expression": {
                                                 "kind": "BinaryExpression",
@@ -4258,16 +4204,7 @@
                                                     "width": 1,
                                                     "text": "0",
                                                     "value": 0,
-                                                    "valueText": "0",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "fullStart": 1043,
-                                                            "fullEnd": 1044,
-                                                            "text": " "
-                                                        }
-                                                    ]
+                                                    "valueText": "0"
                                                 },
                                                 "operatorToken": {
                                                     "kind": "MinusToken",
@@ -4280,12 +4217,12 @@
                                                     "text": "-",
                                                     "value": "-",
                                                     "valueText": "-",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
                                                         {
                                                             "kind": "WhitespaceTrivia",
-                                                            "fullStart": 1045,
-                                                            "fullEnd": 1046,
+                                                            "fullStart": 1043,
+                                                            "fullEnd": 1044,
                                                             "text": " "
                                                         }
                                                     ]
@@ -4300,7 +4237,16 @@
                                                     "width": 1,
                                                     "text": "0",
                                                     "value": 0,
-                                                    "valueText": "0"
+                                                    "valueText": "0",
+                                                    "hasLeadingTrivia": true,
+                                                    "leadingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "fullStart": 1045,
+                                                            "fullEnd": 1046,
+                                                            "text": " "
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             "closeParenToken": {
@@ -4313,16 +4259,7 @@
                                                 "width": 1,
                                                 "text": ")",
                                                 "value": ")",
-                                                "valueText": ")",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "fullStart": 1048,
-                                                        "fullEnd": 1049,
-                                                        "text": " "
-                                                    }
-                                                ]
+                                                "valueText": ")"
                                             }
                                         }
                                     },
@@ -4337,12 +4274,12 @@
                                         "text": "!==",
                                         "value": "!==",
                                         "valueText": "!==",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
                                                 "kind": "WhitespaceTrivia",
-                                                "fullStart": 1052,
-                                                "fullEnd": 1053,
+                                                "fullStart": 1048,
+                                                "fullEnd": 1049,
                                                 "text": " "
                                             }
                                         ]
@@ -4365,7 +4302,16 @@
                                             "width": 6,
                                             "text": "Number",
                                             "value": "Number",
-                                            "valueText": "Number"
+                                            "valueText": "Number",
+                                            "hasLeadingTrivia": true,
+                                            "leadingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "fullStart": 1052,
+                                                    "fullEnd": 1053,
+                                                    "text": " "
+                                                }
+                                            ]
                                         },
                                         "dotToken": {
                                             "kind": "DotToken",
@@ -4403,16 +4349,7 @@
                                     "width": 1,
                                     "text": ")",
                                     "value": ")",
-                                    "valueText": ")",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "fullStart": 1078,
-                                            "fullEnd": 1079,
-                                            "text": " "
-                                        }
-                                    ]
+                                    "valueText": ")"
                                 },
                                 "statement": {
                                     "kind": "Block",
@@ -4433,14 +4370,13 @@
                                         "text": "{",
                                         "value": "{",
                                         "valueText": "{",
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
-                                        "trailingTrivia": [
+                                        "hasLeadingTrivia": true,
+                                        "leadingTrivia": [
                                             {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 1080,
-                                                "fullEnd": 1081,
-                                                "text": "\n"
+                                                "kind": "WhitespaceTrivia",
+                                                "fullStart": 1078,
+                                                "fullEnd": 1079,
+                                                "text": " "
                                             }
                                         ]
                                     },
@@ -4473,7 +4409,14 @@
                                                     "value": "$ERROR",
                                                     "valueText": "$ERROR",
                                                     "hasLeadingTrivia": true,
+                                                    "hasLeadingNewLine": true,
                                                     "leadingTrivia": [
+                                                        {
+                                                            "kind": "NewLineTrivia",
+                                                            "fullStart": 1080,
+                                                            "fullEnd": 1081,
+                                                            "text": "\n"
+                                                        },
                                                         {
                                                             "kind": "WhitespaceTrivia",
                                                             "fullStart": 1081,
@@ -4540,17 +4483,7 @@
                                                 "width": 1,
                                                 "text": ";",
                                                 "value": ";",
-                                                "valueText": ";",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingNewLine": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "NewLineTrivia",
-                                                        "fullStart": 1127,
-                                                        "fullEnd": 1128,
-                                                        "text": "\n"
-                                                    }
-                                                ]
+                                                "valueText": ";"
                                             }
                                         }
                                     ],
@@ -4566,22 +4499,19 @@
                                         "value": "}",
                                         "valueText": "}",
                                         "hasLeadingTrivia": true,
-                                        "hasTrailingTrivia": true,
-                                        "hasTrailingNewLine": true,
+                                        "hasLeadingNewLine": true,
                                         "leadingTrivia": [
+                                            {
+                                                "kind": "NewLineTrivia",
+                                                "fullStart": 1127,
+                                                "fullEnd": 1128,
+                                                "text": "\n"
+                                            },
                                             {
                                                 "kind": "WhitespaceTrivia",
                                                 "fullStart": 1128,
                                                 "fullEnd": 1130,
                                                 "text": "  "
-                                            }
-                                        ],
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "NewLineTrivia",
-                                                "fullStart": 1131,
-                                                "fullEnd": 1132,
-                                                "text": "\n"
                                             }
                                         ]
                                     }
@@ -4599,13 +4529,13 @@
                             "text": "}",
                             "value": "}",
                             "valueText": "}",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                            "hasLeadingTrivia": true,
+                            "hasLeadingNewLine": true,
+                            "leadingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
-                                    "fullStart": 1133,
-                                    "fullEnd": 1134,
+                                    "fullStart": 1131,
+                                    "fullEnd": 1132,
                                     "text": "\n"
                                 }
                             ]
@@ -4626,6 +4556,12 @@
             "hasLeadingTrivia": true,
             "hasLeadingNewLine": true,
             "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 1133,
+                    "fullEnd": 1134,
+                    "text": "\n"
+                },
                 {
                     "kind": "NewLineTrivia",
                     "fullStart": 1134,

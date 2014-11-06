@@ -62,7 +62,6 @@
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
                         "hasLeadingNewLine": true,
-                        "hasTrailingTrivia": true,
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
@@ -136,14 +135,6 @@
                                 "fullEnd": 413,
                                 "text": "\n"
                             }
-                        ],
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 416,
-                                "fullEnd": 417,
-                                "text": " "
-                            }
                         ]
                     },
                     "variableDeclarators": [
@@ -166,12 +157,12 @@
                                 "text": "x",
                                 "value": "x",
                                 "valueText": "x",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
-                                        "fullStart": 418,
-                                        "fullEnd": 419,
+                                        "fullStart": 416,
+                                        "fullEnd": 417,
                                         "text": " "
                                     }
                                 ]
@@ -221,8 +212,14 @@
                     "value": true,
                     "valueText": "true",
                     "hasLeadingTrivia": true,
-                    "hasLeadingSkippedText": true,
+                    "hasLeadingSkippedToken": true,
                     "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 418,
+                            "fullEnd": 419,
+                            "text": " "
+                        },
                         {
                             "kind": "SkippedTokenTrivia",
                             "skippedToken": {
@@ -256,17 +253,7 @@
                     "width": 1,
                     "text": ";",
                     "value": ";",
-                    "valueText": ";",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "fullStart": 426,
-                            "fullEnd": 427,
-                            "text": "\n"
-                        }
-                    ]
+                    "valueText": ";"
                 }
             }
         ],
@@ -283,6 +270,12 @@
             "hasLeadingComment": true,
             "hasLeadingNewLine": true,
             "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 426,
+                    "fullEnd": 427,
+                    "text": "\n"
+                },
                 {
                     "kind": "SingleLineCommentTrivia",
                     "fullStart": 427,

@@ -53,16 +53,7 @@
                         "width": 3,
                         "text": "foo",
                         "value": "foo",
-                        "valueText": "foo",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 3,
-                                "fullEnd": 4,
-                                "text": " "
-                            }
-                        ]
+                        "valueText": "foo"
                     },
                     "operatorToken": {
                         "kind": "PlusPlusToken",
@@ -75,12 +66,12 @@
                         "text": "++",
                         "value": "++",
                         "valueText": "++",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
                                 "kind": "WhitespaceTrivia",
-                                "fullStart": 6,
-                                "fullEnd": 7,
+                                "fullStart": 3,
+                                "fullEnd": 4,
                                 "text": " "
                             }
                         ]
@@ -125,7 +116,16 @@
                         "width": 2,
                         "text": "++",
                         "value": "++",
-                        "valueText": "++"
+                        "valueText": "++",
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 6,
+                                "fullEnd": 7,
+                                "text": " "
+                            }
+                        ]
                     },
                     "operand": {
                         "kind": "IdentifierName",

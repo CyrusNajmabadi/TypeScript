@@ -155,7 +155,7 @@ module TypeScript {
         for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
 
-            if (trivia.kind() === SyntaxKind.SingleLineCommentTrivia) {
+            if (trivia.kind === SyntaxKind.SingleLineCommentTrivia) {
                 var triviaText = trivia.fullText();
                 var referencedCode = getFileReferenceFromReferencePath(fileName, text, position, triviaText, diagnostics);
 

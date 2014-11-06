@@ -46,16 +46,7 @@
                         "width": 1,
                         "text": "1",
                         "value": 1,
-                        "valueText": "1",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 1,
-                                "fullEnd": 2,
-                                "text": " "
-                            }
-                        ]
+                        "valueText": "1"
                     },
                     "operatorToken": {
                         "kind": "GreaterThanGreaterThanGreaterThanToken",
@@ -68,14 +59,13 @@
                         "text": ">>>",
                         "value": ">>>",
                         "valueText": ">>>",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingComment": true,
-                        "trailingTrivia": [
+                        "hasLeadingTrivia": true,
+                        "leadingTrivia": [
                             {
-                                "kind": "MultiLineCommentTrivia",
-                                "fullStart": 5,
-                                "fullEnd": 9,
-                                "text": "/**/"
+                                "kind": "WhitespaceTrivia",
+                                "fullStart": 1,
+                                "fullEnd": 2,
+                                "text": " "
                             }
                         ]
                     },
@@ -122,8 +112,15 @@
                     "value": 2,
                     "valueText": "2",
                     "hasLeadingTrivia": true,
-                    "hasLeadingSkippedText": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingSkippedToken": true,
                     "leadingTrivia": [
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "fullStart": 5,
+                            "fullEnd": 9,
+                            "text": "/**/"
+                        },
                         {
                             "kind": "SkippedTokenTrivia",
                             "skippedToken": {

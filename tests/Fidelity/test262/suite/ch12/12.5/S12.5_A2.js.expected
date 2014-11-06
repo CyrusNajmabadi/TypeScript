@@ -32,7 +32,6 @@
                     "hasLeadingTrivia": true,
                     "hasLeadingComment": true,
                     "hasLeadingNewLine": true,
-                    "hasTrailingTrivia": true,
                     "leadingTrivia": [
                         {
                             "kind": "SingleLineCommentTrivia",
@@ -82,14 +81,6 @@
                             "fullEnd": 299,
                             "text": "\n"
                         }
-                    ],
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 301,
-                            "fullEnd": 302,
-                            "text": " "
-                        }
                     ]
                 },
                 "openParenToken": {
@@ -102,7 +93,16 @@
                     "width": 1,
                     "text": "(",
                     "value": "(",
-                    "valueText": "("
+                    "valueText": "(",
+                    "hasLeadingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "fullStart": 301,
+                            "fullEnd": 302,
+                            "text": " "
+                        }
+                    ]
                 },
                 "condition": {
                     "kind": "InvocationExpression",
@@ -182,16 +182,7 @@
                     "width": 1,
                     "text": ")",
                     "value": ")",
-                    "valueText": ")",
-                    "hasTrailingTrivia": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "fullStart": 316,
-                            "fullEnd": 317,
-                            "text": " "
-                        }
-                    ]
+                    "valueText": ")"
                 },
                 "statement": {
                     "kind": "ExpressionStatement",
@@ -219,7 +210,16 @@
                             "width": 5,
                             "text": "$FAIL",
                             "value": "$FAIL",
-                            "valueText": "$FAIL"
+                            "valueText": "$FAIL",
+                            "hasLeadingTrivia": true,
+                            "leadingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "fullStart": 316,
+                                    "fullEnd": 317,
+                                    "text": " "
+                                }
+                            ]
                         },
                         "argumentList": {
                             "kind": "ArgumentList",
@@ -279,17 +279,7 @@
                         "width": 1,
                         "text": ";",
                         "value": ";",
-                        "valueText": ";",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingNewLine": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "NewLineTrivia",
-                                "fullStart": 383,
-                                "fullEnd": 384,
-                                "text": "\n"
-                            }
-                        ]
+                        "valueText": ";"
                     }
                 }
             }
@@ -306,6 +296,12 @@
             "hasLeadingTrivia": true,
             "hasLeadingNewLine": true,
             "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "fullStart": 383,
+                    "fullEnd": 384,
+                    "text": "\n"
+                },
                 {
                     "kind": "NewLineTrivia",
                     "fullStart": 384,
