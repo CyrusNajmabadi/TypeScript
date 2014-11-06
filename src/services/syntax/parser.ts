@@ -332,16 +332,13 @@ module TypeScript.Parser {
             addTriviaTo(skippedToken.leadingTrivia(source.text), array);
 
             // now, add the text of the token as skipped text to the trivia array.
-            var trimmedToken = Syntax.withTrailingTrivia(Syntax.withLeadingTrivia(skippedToken, Syntax.emptyTriviaList, source.text), Syntax.emptyTriviaList, source.text);
+            var trimmedToken = Syntax.withLeadingTrivia(skippedToken, Syntax.emptyTriviaList, source.text);
 
             // Because we removed the leading trivia from the skipped token, the full start of the
             // trimmed token is the start of the skipped token.
             trimmedToken.setFullStart(start(skippedToken, source.text));
 
             array.push(Syntax.skippedTokenTrivia(trimmedToken, source.text));
-
-            // Finally, add the trailing trivia of the skipped token to the trivia array.
-            addTriviaTo(skippedToken.trailingTrivia(source.text), array);
         }
 
         function addTriviaTo(list: ISyntaxTriviaList, array: ISyntaxTrivia[]): void {
@@ -2717,7 +2714,7 @@ module TypeScript.Parser {
             // and report a better error message.
             if (inObjectCreation && currentToken().kind === SyntaxKind.CloseBracketToken) {
                 var errorStart = start(openBracketToken, source.text);
-                var errorEnd = end(currentToken(), source.text);
+                var errorEnd = fullEnd(currentToken());
                 var diagnostic = new Diagnostic(fileName, source.text.lineMap(), errorStart, errorEnd - errorStart,
                     DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead, undefined);
                 addDiagnostic(diagnostic);
