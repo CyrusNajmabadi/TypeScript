@@ -30771,12 +30771,12 @@ function tokenToJSON(token, text, mergeTrivia) {
             break;
         }
     }
-    result.fullStart = token.fullStart();
-    result.fullEnd = TypeScript.fullEnd(token);
+    var fullStart = previousTokenForJSON ? TypeScript.end(previousTokenForJSON, text) : token.fullStart();
+    var fullEnd = TypeScript.end(token, text);
+    result.fullStart = fullStart;
     result.start = TypeScript.start(token, text);
-    result.end = TypeScript.end(token, text);
-    result.fullWidth = token.fullWidth();
-    result.width = TypeScript.width(token);
+    result.fullWidth = fullEnd - fullStart;
+    result.width = TypeScript.width(token, text);
     result.text = token.text();
     var value = TypeScript.tokenValue(token);
     if (value !== undefined) {
