@@ -19539,8 +19539,7 @@ var TypeScript;
         TypeScript.Debug.assert(TypeScript.SyntaxKind.LastToken <= 127);
         var ScannerConstants;
         (function (ScannerConstants) {
-            ScannerConstants[ScannerConstants["LargeTokenFullWidthShift"] = 6] = "LargeTokenFullWidthShift";
-            ScannerConstants[ScannerConstants["LargeTokenLeadingTriviaShift"] = 3] = "LargeTokenLeadingTriviaShift";
+            ScannerConstants[ScannerConstants["LargeTokenFullWidthShift"] = 3] = "LargeTokenFullWidthShift";
             ScannerConstants[ScannerConstants["WhitespaceTrivia"] = 0x01] = "WhitespaceTrivia";
             ScannerConstants[ScannerConstants["NewlineTrivia"] = 0x02] = "NewlineTrivia";
             ScannerConstants[ScannerConstants["CommentTrivia"] = 0x04] = "CommentTrivia";
@@ -19548,32 +19547,23 @@ var TypeScript;
             ScannerConstants[ScannerConstants["KindMask"] = 0x7F] = "KindMask";
             ScannerConstants[ScannerConstants["IsVariableWidthMask"] = 0x80] = "IsVariableWidthMask";
         })(ScannerConstants || (ScannerConstants = {}));
-        function largeTokenPackData(fullWidth, leadingTriviaInfo, trailingTriviaInfo) {
-            return (fullWidth << 6 /* LargeTokenFullWidthShift */) | (leadingTriviaInfo << 3 /* LargeTokenLeadingTriviaShift */) | trailingTriviaInfo;
+        function largeTokenPackData(fullWidth, leadingTriviaInfo) {
+            return (fullWidth << 3 /* LargeTokenFullWidthShift */) | leadingTriviaInfo;
         }
         function largeTokenUnpackFullWidth(packedFullWidthAndInfo) {
-            return packedFullWidthAndInfo >> 6 /* LargeTokenFullWidthShift */;
+            return packedFullWidthAndInfo >> 3 /* LargeTokenFullWidthShift */;
         }
         function largeTokenUnpackLeadingTriviaInfo(packedFullWidthAndInfo) {
-            return (packedFullWidthAndInfo >> 3 /* LargeTokenLeadingTriviaShift */) & 7 /* TriviaMask */;
-        }
-        function largeTokenUnpackTrailingTriviaInfo(packedFullWidthAndInfo) {
             return packedFullWidthAndInfo & 7 /* TriviaMask */;
         }
         function largeTokenUnpackHasLeadingTrivia(packed) {
             return largeTokenUnpackLeadingTriviaInfo(packed) !== 0;
-        }
-        function largeTokenUnpackHasTrailingTrivia(packed) {
-            return largeTokenUnpackTrailingTriviaInfo(packed) !== 0;
         }
         function hasComment(info) {
             return (info & 4 /* CommentTrivia */) !== 0;
         }
         function largeTokenUnpackHasLeadingComment(packed) {
             return hasComment(largeTokenUnpackLeadingTriviaInfo(packed));
-        }
-        function largeTokenUnpackHasTrailingComment(packed) {
-            return hasComment(largeTokenUnpackTrailingTriviaInfo(packed));
         }
         var isKeywordStartCharacter = TypeScript.ArrayUtilities.createArray(127 /* maxAsciiCharacter */, 0);
         var isIdentifierStartCharacter = TypeScript.ArrayUtilities.createArray(127 /* maxAsciiCharacter */, false);
@@ -19608,7 +19598,7 @@ var TypeScript;
             }
         }
         Scanner.isContextualToken = isContextualToken;
-        var lastTokenInfo = { leadingTriviaWidth: -1, width: -1 };
+        var lastTokenInfo = { leadingTriviaWidth: -1 };
         var lastTokenInfoTokenID = -1;
         var triviaScanner = createScannerInternal(2 /* Latest */, TypeScript.SimpleText.fromString(""), function () {
         });
@@ -19625,13 +19615,7 @@ var TypeScript;
             if (!token.hasLeadingTrivia()) {
                 return TypeScript.Syntax.emptyTriviaList;
             }
-            return triviaScanner.scanTrivia(token, text, false);
-        }
-        function trailingTrivia(token, text) {
-            if (!token.hasTrailingTrivia()) {
-                return TypeScript.Syntax.emptyTriviaList;
-            }
-            return triviaScanner.scanTrivia(token, text, true);
+            return triviaScanner.scanTrivia(token, text);
         }
         function leadingTriviaWidth(token, text) {
             if (!token.hasLeadingTrivia()) {
@@ -19639,13 +19623,6 @@ var TypeScript;
             }
             fillSizeInfo(token, text);
             return lastTokenInfo.leadingTriviaWidth;
-        }
-        function trailingTriviaWidth(token, text) {
-            if (!token.hasTrailingTrivia()) {
-                return 0;
-            }
-            fillSizeInfo(token, text);
-            return token.fullWidth() - lastTokenInfo.leadingTriviaWidth - lastTokenInfo.width;
         }
         function tokenIsIncrementallyUnusable(token) {
             return false;
@@ -19661,16 +19638,10 @@ var TypeScript;
             FixedWidthTokenWithNoTrivia.prototype.childAt = function (index) {
                 throw TypeScript.Errors.invalidOperation();
             };
-            FixedWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
-                return visitor.visitToken(this);
-            };
             FixedWidthTokenWithNoTrivia.prototype.isIncrementallyUnusable = function () {
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.isKeywordConvertedToIdentifier = function () {
-                return false;
-            };
-            FixedWidthTokenWithNoTrivia.prototype.hasSkippedToken = function () {
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.fullText = function () {
@@ -19682,13 +19653,7 @@ var TypeScript;
             FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
                 return TypeScript.Syntax.emptyTriviaList;
             };
-            FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
-            };
             FixedWidthTokenWithNoTrivia.prototype.leadingTriviaWidth = function () {
-                return 0;
-            };
-            FixedWidthTokenWithNoTrivia.prototype.trailingTriviaWidth = function () {
                 return 0;
             };
             FixedWidthTokenWithNoTrivia.prototype.fullWidth = function () {
@@ -19700,13 +19665,10 @@ var TypeScript;
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
             };
-            FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
+            FixedWidthTokenWithNoTrivia.prototype.hasLeadingSkippedToken = function () {
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingComment = function () {
-                return false;
-            };
-            FixedWidthTokenWithNoTrivia.prototype.hasTrailingComment = function () {
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.clone = function () {
@@ -19730,9 +19692,6 @@ var TypeScript;
             LargeScannerToken.prototype.childAt = function (index) {
                 throw TypeScript.Errors.invalidOperation();
             };
-            LargeScannerToken.prototype.accept = function (visitor) {
-                return visitor.visitToken(this);
-            };
             LargeScannerToken.prototype.syntaxTreeText = function (text) {
                 var result = text || TypeScript.syntaxTree(this).text;
                 TypeScript.Debug.assert(result);
@@ -19742,9 +19701,6 @@ var TypeScript;
                 return tokenIsIncrementallyUnusable(this);
             };
             LargeScannerToken.prototype.isKeywordConvertedToIdentifier = function () {
-                return false;
-            };
-            LargeScannerToken.prototype.hasSkippedToken = function () {
                 return false;
             };
             LargeScannerToken.prototype.fullText = function (text) {
@@ -19757,14 +19713,8 @@ var TypeScript;
             LargeScannerToken.prototype.leadingTrivia = function (text) {
                 return leadingTrivia(this, this.syntaxTreeText(text));
             };
-            LargeScannerToken.prototype.trailingTrivia = function (text) {
-                return trailingTrivia(this, this.syntaxTreeText(text));
-            };
             LargeScannerToken.prototype.leadingTriviaWidth = function (text) {
                 return leadingTriviaWidth(this, this.syntaxTreeText(text));
-            };
-            LargeScannerToken.prototype.trailingTriviaWidth = function (text) {
-                return trailingTriviaWidth(this, this.syntaxTreeText(text));
             };
             LargeScannerToken.prototype.fullWidth = function () {
                 return largeTokenUnpackFullWidth(this._packedFullWidthAndInfo);
@@ -19775,14 +19725,11 @@ var TypeScript;
             LargeScannerToken.prototype.hasLeadingTrivia = function () {
                 return largeTokenUnpackHasLeadingTrivia(this._packedFullWidthAndInfo);
             };
-            LargeScannerToken.prototype.hasTrailingTrivia = function () {
-                return largeTokenUnpackHasTrailingTrivia(this._packedFullWidthAndInfo);
-            };
             LargeScannerToken.prototype.hasLeadingComment = function () {
                 return largeTokenUnpackHasLeadingComment(this._packedFullWidthAndInfo);
             };
-            LargeScannerToken.prototype.hasTrailingComment = function () {
-                return largeTokenUnpackHasTrailingComment(this._packedFullWidthAndInfo);
+            LargeScannerToken.prototype.hasLeadingSkippedToken = function () {
+                return false;
             };
             LargeScannerToken.prototype.clone = function () {
                 return new LargeScannerToken(this._fullStart, this.kind, this._packedFullWidthAndInfo, this.cachedText);
@@ -19820,32 +19767,26 @@ var TypeScript;
             }
             function scan(allowContextualToken) {
                 var fullStart = index;
-                var leadingTriviaInfo = scanTriviaInfo(false);
+                var leadingTriviaInfo = scanTriviaInfo();
                 var start = index;
                 var kindAndIsVariableWidth = scanSyntaxKind(allowContextualToken);
-                var end = index;
-                var trailingTriviaInfo = scanTriviaInfo(true);
-                var fullWidth = index - fullStart;
+                var fullEnd = index;
+                var fullWidth = fullEnd - fullStart;
                 var kind = kindAndIsVariableWidth & 127 /* KindMask */;
                 var isFixedWidth = kind >= TypeScript.SyntaxKind.FirstFixedWidth && kind <= TypeScript.SyntaxKind.LastFixedWidth && ((kindAndIsVariableWidth & 128 /* IsVariableWidthMask */) === 0);
-                if (isFixedWidth && leadingTriviaInfo === 0 && trailingTriviaInfo === 0) {
+                if (isFixedWidth && leadingTriviaInfo === 0) {
                     return new FixedWidthTokenWithNoTrivia(fullStart, kind);
                 }
                 else {
-                    var packedFullWidthAndInfo = largeTokenPackData(fullWidth, leadingTriviaInfo, trailingTriviaInfo);
-                    var cachedText = isFixedWidth ? undefined : text.substr(start, end - start);
+                    var packedFullWidthAndInfo = largeTokenPackData(fullWidth, leadingTriviaInfo);
+                    var cachedText = isFixedWidth ? undefined : text.substr(start, fullEnd - start);
                     return new LargeScannerToken(fullStart, kind, packedFullWidthAndInfo, cachedText);
                 }
             }
-            function scanTrivia(parent, text, isTrailing) {
+            function scanTrivia(parent, text) {
                 var tokenFullStart = parent.fullStart();
                 var tokenStart = tokenFullStart + leadingTriviaWidth(parent, text);
-                if (isTrailing) {
-                    reset(text, tokenStart + parent.text().length, tokenFullStart + parent.fullWidth());
-                }
-                else {
-                    reset(text, tokenFullStart, tokenStart);
-                }
+                reset(text, tokenFullStart, tokenStart);
                 var trivia = [];
                 while (true) {
                     if (index < end) {
@@ -19889,10 +19830,7 @@ var TypeScript;
                             case 8233 /* paragraphSeparator */:
                             case 8232 /* lineSeparator */:
                                 trivia.push(scanLineTerminatorSequenceTrivia(ch));
-                                if (!isTrailing) {
-                                    continue;
-                                }
-                                break;
+                                continue;
                             default:
                                 throw TypeScript.Errors.invalidOperation();
                         }
@@ -19902,7 +19840,7 @@ var TypeScript;
                     return triviaList;
                 }
             }
-            function scanTriviaInfo(isTrailing) {
+            function scanTriviaInfo() {
                 var result = 0;
                 var _end = end;
                 while (index < _end) {
@@ -19924,9 +19862,6 @@ var TypeScript;
                         case 8232 /* lineSeparator */:
                             index++;
                             result |= 2 /* NewlineTrivia */;
-                            if (isTrailing) {
-                                return result;
-                            }
                             continue;
                         case 47 /* slash */:
                             if ((index + 1) < _end) {
@@ -20609,12 +20544,9 @@ var TypeScript;
                 var fullStart = token.fullStart();
                 var fullEnd = fullStart + token.fullWidth();
                 reset(text, fullStart, fullEnd);
-                scanTriviaInfo(false);
+                scanTriviaInfo();
                 var start = index;
-                scanSyntaxKind(isContextualToken(token));
-                var end = index;
                 tokenInfo.leadingTriviaWidth = start - fullStart;
-                tokenInfo.width = end - start;
             }
             reset(text, 0, text.length());
             return {
@@ -21008,7 +20940,7 @@ var TypeScript;
                 var child = TypeScript.childAt(node, i);
                 if (TypeScript.isToken(child)) {
                     var token = child;
-                    if (token.hasSkippedToken() || (TypeScript.width(token) === 0 && token.kind !== 8 /* EndOfFileToken */)) {
+                    if (token.hasLeadingSkippedToken() || (TypeScript.fullWidth(token) === 0 && token.kind !== 8 /* EndOfFileToken */)) {
                         return true;
                     }
                 }
@@ -21045,64 +20977,6 @@ var TypeScript;
             return false;
         }
         Syntax.isEntirelyInsideCommentTrivia = isEntirelyInsideCommentTrivia;
-        function isEntirelyInsideComment(sourceUnit, position) {
-            var positionedToken = TypeScript.findToken(sourceUnit, position);
-            var fullStart = positionedToken.fullStart();
-            var triviaList = undefined;
-            var lastTriviaBeforeToken = undefined;
-            if (positionedToken.kind === 8 /* EndOfFileToken */) {
-                if (positionedToken.hasLeadingTrivia()) {
-                    triviaList = positionedToken.leadingTrivia();
-                }
-                else {
-                    positionedToken = TypeScript.previousToken(positionedToken);
-                    if (positionedToken) {
-                        if (positionedToken && positionedToken.hasTrailingTrivia()) {
-                            triviaList = positionedToken.trailingTrivia();
-                            fullStart = TypeScript.end(positionedToken);
-                        }
-                    }
-                }
-            }
-            else {
-                if (position <= (fullStart + positionedToken.leadingTriviaWidth())) {
-                    triviaList = positionedToken.leadingTrivia();
-                }
-                else if (position >= (fullStart + TypeScript.width(positionedToken))) {
-                    triviaList = positionedToken.trailingTrivia();
-                    fullStart = TypeScript.end(positionedToken);
-                }
-            }
-            if (triviaList) {
-                for (var i = 0, n = triviaList.count(); i < n; i++) {
-                    var trivia = triviaList.syntaxTriviaAt(i);
-                    if (position <= fullStart) {
-                        break;
-                    }
-                    else if (position <= fullStart + trivia.fullWidth() && trivia.isComment()) {
-                        lastTriviaBeforeToken = trivia;
-                        break;
-                    }
-                    fullStart += trivia.fullWidth();
-                }
-            }
-            return lastTriviaBeforeToken && isEntirelyInsideCommentTrivia(lastTriviaBeforeToken, fullStart, position);
-        }
-        Syntax.isEntirelyInsideComment = isEntirelyInsideComment;
-        function isEntirelyInStringOrRegularExpressionLiteral(sourceUnit, position) {
-            var positionedToken = TypeScript.findToken(sourceUnit, position);
-            if (positionedToken) {
-                if (positionedToken.kind === 8 /* EndOfFileToken */) {
-                    positionedToken = TypeScript.previousToken(positionedToken);
-                    return positionedToken && positionedToken.trailingTriviaWidth() === 0 && isUnterminatedStringLiteral(positionedToken);
-                }
-                else if (position > TypeScript.start(positionedToken)) {
-                    return (position < TypeScript.end(positionedToken) && (positionedToken.kind === 12 /* StringLiteral */ || positionedToken.kind === 10 /* RegularExpressionLiteral */)) || (position <= TypeScript.end(positionedToken) && isUnterminatedStringLiteral(positionedToken));
-                }
-            }
-            return false;
-        }
-        Syntax.isEntirelyInStringOrRegularExpressionLiteral = isEntirelyInStringOrRegularExpressionLiteral;
         function getAncestorOfKind(positionedToken, kind) {
             while (positionedToken && positionedToken.parent) {
                 if (positionedToken.parent.kind === kind) {
@@ -21157,30 +21031,12 @@ var TypeScript;
         Syntax.findTokenOnLeft = findTokenOnLeft;
         function findCompleteTokenOnLeft(sourceUnit, position) {
             var positionedToken = TypeScript.findToken(sourceUnit, position);
-            if (TypeScript.width(positionedToken) > 0 && position >= TypeScript.end(positionedToken)) {
+            if (TypeScript.width(positionedToken) > 0 && position >= TypeScript.fullEnd(positionedToken)) {
                 return positionedToken;
             }
             return TypeScript.previousToken(positionedToken);
         }
         Syntax.findCompleteTokenOnLeft = findCompleteTokenOnLeft;
-        function firstTokenInLineContainingPosition(syntaxTree, position) {
-            var current = TypeScript.findToken(syntaxTree.sourceUnit(), position);
-            while (true) {
-                if (isFirstTokenInLine(current, syntaxTree.lineMap())) {
-                    break;
-                }
-                current = TypeScript.previousToken(current);
-            }
-            return current;
-        }
-        Syntax.firstTokenInLineContainingPosition = firstTokenInLineContainingPosition;
-        function isFirstTokenInLine(token, lineMap) {
-            var _previousToken = TypeScript.previousToken(token);
-            if (_previousToken === undefined) {
-                return true;
-            }
-            return lineMap.getLineNumberFromPosition(TypeScript.end(_previousToken)) !== lineMap.getLineNumberFromPosition(TypeScript.start(token));
-        }
     })(Syntax = TypeScript.Syntax || (TypeScript.Syntax = {}));
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
@@ -21231,42 +21087,6 @@ var TypeScript;
         throw TypeScript.Errors.invalidOperation();
     }
     TypeScript.findToken = findToken;
-    function findSkippedTokenInPositionedToken(positionedToken, position) {
-        var positionInLeadingTriviaList = (position < start(positionedToken));
-        return findSkippedTokenInTriviaList(positionedToken, position, positionInLeadingTriviaList);
-    }
-    TypeScript.findSkippedTokenInPositionedToken = findSkippedTokenInPositionedToken;
-    function findSkippedTokenInLeadingTriviaList(positionedToken, position) {
-        return findSkippedTokenInTriviaList(positionedToken, position, true);
-    }
-    TypeScript.findSkippedTokenInLeadingTriviaList = findSkippedTokenInLeadingTriviaList;
-    function findSkippedTokenInTrailingTriviaList(positionedToken, position) {
-        return findSkippedTokenInTriviaList(positionedToken, position, false);
-    }
-    TypeScript.findSkippedTokenInTrailingTriviaList = findSkippedTokenInTrailingTriviaList;
-    function findSkippedTokenInTriviaList(positionedToken, position, lookInLeadingTriviaList) {
-        var triviaList = undefined;
-        var fullStart;
-        if (lookInLeadingTriviaList) {
-            triviaList = positionedToken.leadingTrivia();
-            fullStart = positionedToken.fullStart();
-        }
-        else {
-            triviaList = positionedToken.trailingTrivia();
-            fullStart = end(positionedToken);
-        }
-        if (triviaList && triviaList.hasSkippedToken()) {
-            for (var i = 0, n = triviaList.count(); i < n; i++) {
-                var trivia = triviaList.syntaxTriviaAt(i);
-                var triviaWidth = trivia.fullWidth();
-                if (trivia.isSkippedToken() && position >= fullStart && position <= fullStart + triviaWidth) {
-                    return trivia.skippedToken();
-                }
-                fullStart += triviaWidth;
-            }
-        }
-        return undefined;
-    }
     function findTokenWorker(element, elementPosition, position) {
         if (isList(element)) {
             return findTokenInList(element, elementPosition, position);
@@ -21374,11 +21194,6 @@ var TypeScript;
         return token ? token.leadingTriviaWidth(text) : 0;
     }
     TypeScript.leadingTriviaWidth = leadingTriviaWidth;
-    function trailingTriviaWidth(element, text) {
-        var token = lastToken(element);
-        return token ? token.trailingTriviaWidth(text) : 0;
-    }
-    TypeScript.trailingTriviaWidth = trailingTriviaWidth;
     function firstToken(element) {
         if (element) {
             var kind = element.kind;
@@ -21485,16 +21300,11 @@ var TypeScript;
         return token ? token.fullStart() + token.leadingTriviaWidth(text) : -1;
     }
     TypeScript.start = start;
-    function end(element, text) {
-        var token = isToken(element) ? element : lastToken(element);
-        return token ? fullEnd(token) - token.trailingTriviaWidth(text) : -1;
-    }
-    TypeScript.end = end;
     function width(element, text) {
         if (isToken(element)) {
             return element.text().length;
         }
-        return fullWidth(element) - leadingTriviaWidth(element, text) - trailingTriviaWidth(element, text);
+        return fullWidth(element) - leadingTriviaWidth(element, text);
     }
     TypeScript.width = width;
     function fullEnd(element) {
@@ -21509,7 +21319,7 @@ var TypeScript;
             return true;
         }
         var lineMap = text.lineMap();
-        return lineMap.getLineNumberFromPosition(end(token1, text)) !== lineMap.getLineNumberFromPosition(start(token2, text));
+        return lineMap.getLineNumberFromPosition(fullEnd(token1)) !== lineMap.getLineNumberFromPosition(start(token2, text));
     }
     TypeScript.existsNewLineBetweenTokens = existsNewLineBetweenTokens;
 })(TypeScript || (TypeScript = {}));
@@ -21750,7 +21560,7 @@ var TypeScript;
     var Syntax;
     (function (Syntax) {
         function realizeToken(token, text) {
-            return new RealizedToken(token.fullStart(), token.kind, token.isKeywordConvertedToIdentifier(), token.leadingTrivia(text), token.text(), token.trailingTrivia(text));
+            return new RealizedToken(token.fullStart(), token.kind, token.isKeywordConvertedToIdentifier(), token.leadingTrivia(text), token.text());
         }
         Syntax.realizeToken = realizeToken;
         function convertKeywordToIdentifier(token) {
@@ -21758,13 +21568,9 @@ var TypeScript;
         }
         Syntax.convertKeywordToIdentifier = convertKeywordToIdentifier;
         function withLeadingTrivia(token, leadingTrivia, text) {
-            return new RealizedToken(token.fullStart(), token.kind, token.isKeywordConvertedToIdentifier(), leadingTrivia, token.text(), token.trailingTrivia(text));
+            return new RealizedToken(token.fullStart(), token.kind, token.isKeywordConvertedToIdentifier(), leadingTrivia, token.text());
         }
         Syntax.withLeadingTrivia = withLeadingTrivia;
-        function withTrailingTrivia(token, trailingTrivia, text) {
-            return new RealizedToken(token.fullStart(), token.kind, token.isKeywordConvertedToIdentifier(), token.leadingTrivia(text), token.text(), trailingTrivia);
-        }
-        Syntax.withTrailingTrivia = withTrailingTrivia;
         function emptyToken(kind) {
             return new EmptyToken(kind);
         }
@@ -21777,9 +21583,6 @@ var TypeScript;
             };
             EmptyToken.prototype.childAt = function (index) {
                 throw TypeScript.Errors.invalidOperation();
-            };
-            EmptyToken.prototype.accept = function (visitor) {
-                return visitor.visitToken(this);
             };
             EmptyToken.prototype.clone = function () {
                 return new EmptyToken(this.kind);
@@ -21832,46 +21635,30 @@ var TypeScript;
             EmptyToken.prototype.hasLeadingTrivia = function () {
                 return false;
             };
-            EmptyToken.prototype.hasTrailingTrivia = function () {
-                return false;
-            };
             EmptyToken.prototype.hasLeadingComment = function () {
                 return false;
             };
-            EmptyToken.prototype.hasTrailingComment = function () {
-                return false;
-            };
-            EmptyToken.prototype.hasSkippedToken = function () {
+            EmptyToken.prototype.hasLeadingSkippedToken = function () {
                 return false;
             };
             EmptyToken.prototype.leadingTriviaWidth = function () {
                 return 0;
             };
-            EmptyToken.prototype.trailingTriviaWidth = function () {
-                return 0;
-            };
             EmptyToken.prototype.leadingTrivia = function () {
-                return Syntax.emptyTriviaList;
-            };
-            EmptyToken.prototype.trailingTrivia = function () {
                 return Syntax.emptyTriviaList;
             };
             return EmptyToken;
         })();
         EmptyToken.prototype.childCount = 0;
         var RealizedToken = (function () {
-            function RealizedToken(fullStart, kind, isKeywordConvertedToIdentifier, leadingTrivia, text, trailingTrivia) {
+            function RealizedToken(fullStart, kind, isKeywordConvertedToIdentifier, leadingTrivia, text) {
                 this.kind = kind;
                 this._fullStart = fullStart;
                 this._isKeywordConvertedToIdentifier = isKeywordConvertedToIdentifier;
                 this._text = text;
                 this._leadingTrivia = leadingTrivia.clone();
-                this._trailingTrivia = trailingTrivia.clone();
                 if (!this._leadingTrivia.isShared()) {
                     this._leadingTrivia.parent = this;
-                }
-                if (!this._trailingTrivia.isShared()) {
-                    this._trailingTrivia.parent = this;
                 }
             }
             RealizedToken.prototype.setFullStart = function (fullStart) {
@@ -21880,11 +21667,8 @@ var TypeScript;
             RealizedToken.prototype.childAt = function (index) {
                 throw TypeScript.Errors.invalidOperation();
             };
-            RealizedToken.prototype.accept = function (visitor) {
-                return visitor.visitToken(this);
-            };
             RealizedToken.prototype.clone = function () {
-                return new RealizedToken(this._fullStart, this.kind, this._isKeywordConvertedToIdentifier, this._leadingTrivia, this._text, this._trailingTrivia);
+                return new RealizedToken(this._fullStart, this.kind, this._isKeywordConvertedToIdentifier, this._leadingTrivia, this._text);
             };
             RealizedToken.prototype.isIncrementallyUnusable = function () {
                 return true;
@@ -21896,40 +21680,28 @@ var TypeScript;
                 return this._fullStart;
             };
             RealizedToken.prototype.fullWidth = function () {
-                return this._leadingTrivia.fullWidth() + this._text.length + this._trailingTrivia.fullWidth();
+                return this._leadingTrivia.fullWidth() + this._text.length;
             };
             RealizedToken.prototype.text = function () {
                 return this._text;
             };
             RealizedToken.prototype.fullText = function () {
-                return this._leadingTrivia.fullText() + this.text() + this._trailingTrivia.fullText();
+                return this._leadingTrivia.fullText() + this.text();
             };
             RealizedToken.prototype.hasLeadingTrivia = function () {
                 return this._leadingTrivia.count() > 0;
             };
-            RealizedToken.prototype.hasTrailingTrivia = function () {
-                return this._trailingTrivia.count() > 0;
-            };
             RealizedToken.prototype.hasLeadingComment = function () {
                 return this._leadingTrivia.hasComment();
             };
-            RealizedToken.prototype.hasTrailingComment = function () {
-                return this._trailingTrivia.hasComment();
-            };
-            RealizedToken.prototype.leadingTriviaWidth = function () {
-                return this._leadingTrivia.fullWidth();
-            };
-            RealizedToken.prototype.trailingTriviaWidth = function () {
-                return this._trailingTrivia.fullWidth();
-            };
-            RealizedToken.prototype.hasSkippedToken = function () {
-                return this._leadingTrivia.hasSkippedToken() || this._trailingTrivia.hasSkippedToken();
+            RealizedToken.prototype.hasLeadingSkippedToken = function () {
+                return this._leadingTrivia.hasSkippedToken();
             };
             RealizedToken.prototype.leadingTrivia = function () {
                 return this._leadingTrivia;
             };
-            RealizedToken.prototype.trailingTrivia = function () {
-                return this._trailingTrivia;
+            RealizedToken.prototype.leadingTriviaWidth = function () {
+                return this._leadingTrivia.fullWidth();
             };
             return RealizedToken;
         })();
@@ -21943,9 +21715,6 @@ var TypeScript;
             };
             ConvertedKeywordToken.prototype.childAt = function (index) {
                 throw TypeScript.Errors.invalidOperation();
-            };
-            ConvertedKeywordToken.prototype.accept = function (visitor) {
-                return visitor.visitToken(this);
             };
             ConvertedKeywordToken.prototype.fullStart = function () {
                 return this.underlyingToken.fullStart();
@@ -21967,33 +21736,19 @@ var TypeScript;
             ConvertedKeywordToken.prototype.hasLeadingTrivia = function () {
                 return this.underlyingToken.hasLeadingTrivia();
             };
-            ConvertedKeywordToken.prototype.hasTrailingTrivia = function () {
-                return this.underlyingToken.hasTrailingTrivia();
-            };
             ConvertedKeywordToken.prototype.hasLeadingComment = function () {
                 return this.underlyingToken.hasLeadingComment();
             };
-            ConvertedKeywordToken.prototype.hasTrailingComment = function () {
-                return this.underlyingToken.hasTrailingComment();
-            };
-            ConvertedKeywordToken.prototype.hasSkippedToken = function () {
-                return this.underlyingToken.hasSkippedToken();
+            ConvertedKeywordToken.prototype.hasLeadingSkippedToken = function () {
+                return this.underlyingToken.hasLeadingSkippedToken();
             };
             ConvertedKeywordToken.prototype.leadingTrivia = function (text) {
                 var result = this.underlyingToken.leadingTrivia(this.syntaxTreeText(text));
                 result.parent = this;
                 return result;
             };
-            ConvertedKeywordToken.prototype.trailingTrivia = function (text) {
-                var result = this.underlyingToken.trailingTrivia(this.syntaxTreeText(text));
-                result.parent = this;
-                return result;
-            };
             ConvertedKeywordToken.prototype.leadingTriviaWidth = function (text) {
                 return this.underlyingToken.leadingTriviaWidth(this.syntaxTreeText(text));
-            };
-            ConvertedKeywordToken.prototype.trailingTriviaWidth = function (text) {
-                return this.underlyingToken.trailingTriviaWidth(this.syntaxTreeText(text));
             };
             ConvertedKeywordToken.prototype.isKeywordConvertedToIdentifier = function () {
                 return true;
@@ -22103,7 +21858,6 @@ var TypeScript;
         Syntax.deferredTrivia = deferredTrivia;
         function skippedTokenTrivia(token, text) {
             TypeScript.Debug.assert(!token.hasLeadingTrivia());
-            TypeScript.Debug.assert(!token.hasTrailingTrivia());
             TypeScript.Debug.assert(token.fullWidth() > 0);
             return new SkippedTokenTrivia(token, token.fullText(text));
         }
@@ -22341,7 +22095,7 @@ var TypeScript;
                 return true;
             }
             var lineMap = text.lineMap();
-            var tokenLine = lineMap.getLineNumberFromPosition(TypeScript.end(token, text));
+            var tokenLine = lineMap.getLineNumberFromPosition(TypeScript.fullEnd(token));
             var nextTokenLine = lineMap.getLineNumberFromPosition(TypeScript.start(_nextToken, text));
             return tokenLine !== nextTokenLine;
         }
@@ -23281,10 +23035,9 @@ var TypeScript;
             }
             function addSkippedTokenToTriviaArray(array, skippedToken) {
                 addTriviaTo(skippedToken.leadingTrivia(source.text), array);
-                var trimmedToken = TypeScript.Syntax.withTrailingTrivia(TypeScript.Syntax.withLeadingTrivia(skippedToken, TypeScript.Syntax.emptyTriviaList, source.text), TypeScript.Syntax.emptyTriviaList, source.text);
+                var trimmedToken = TypeScript.Syntax.withLeadingTrivia(skippedToken, TypeScript.Syntax.emptyTriviaList, source.text);
                 trimmedToken.setFullStart(TypeScript.start(skippedToken, source.text));
                 array.push(TypeScript.Syntax.skippedTokenTrivia(trimmedToken, source.text));
-                addTriviaTo(skippedToken.trailingTrivia(source.text), array);
             }
             function addTriviaTo(list, array) {
                 for (var i = 0, n = list.count(); i < n; i++) {
@@ -24688,7 +24441,7 @@ var TypeScript;
             function parseElementAccessArgumentExpression(openBracketToken, inObjectCreation) {
                 if (inObjectCreation && currentToken().kind === 77 /* CloseBracketToken */) {
                     var errorStart = TypeScript.start(openBracketToken, source.text);
-                    var errorEnd = TypeScript.end(currentToken(), source.text);
+                    var errorEnd = TypeScript.fullEnd(currentToken());
                     var diagnostic = new TypeScript.Diagnostic(fileName, source.text.lineMap(), errorStart, errorEnd - errorStart, TypeScript.DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead, undefined);
                     addDiagnostic(diagnostic);
                     return TypeScript.Syntax.emptyToken(9 /* IdentifierName */);
@@ -29789,7 +29542,7 @@ var TypeScript;
             var index = source.indexOf("+ 1");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withDelete(oldText, index, 3);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 36);
         };
         IncrementalParserTests.testIncrementalRegex1 = function () {
             var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
@@ -29803,7 +29556,7 @@ var TypeScript;
             var semicolonIndex = source.indexOf(";");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         };
         IncrementalParserTests.testIncrementalComment1 = function () {
             var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
@@ -29829,7 +29582,7 @@ var TypeScript;
             var index = source.indexOf(";");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "*");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         };
         IncrementalParserTests.testParameter1 = function () {
             var source = "class C {\r\n";
@@ -29847,7 +29600,7 @@ var TypeScript;
             var index = source.indexOf(": string");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "?");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 48);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
         };
         IncrementalParserTests.testEnumElement1 = function () {
             var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
@@ -29860,13 +29613,13 @@ var TypeScript;
             var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 28);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 27);
         };
         IncrementalParserTests.testStrictMode2 = function () {
             var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 13);
         };
         IncrementalParserTests.testStrictMode3 = function () {
             var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
@@ -29968,7 +29721,7 @@ var TypeScript;
             var index = source.indexOf(' =>');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withDelete(oldText, index, " => 1".length);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 6);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
         };
         IncrementalParserTests.testGenerics3 = function () {
             var source = "var v = 1 >> = 2";
@@ -29996,21 +29749,21 @@ var TypeScript;
             var index = source.indexOf('Foo<Bar<');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withDelete(oldText, index, "Foo<Bar<".length);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
         };
         IncrementalParserTests.testGenerics7 = function () {
             var source = "var v = T>>=2;";
             var index = source.indexOf('=');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withChange(oldText, index, "= ".length, ": Foo<Bar<");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
         };
         IncrementalParserTests.testGenerics8 = function () {
             var source = "var v : Foo<Bar<T>>=2;";
             var index = source.indexOf(':');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withChange(oldText, index, ": Foo<Bar<".length, "= ");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
         };
         IncrementalParserTests.testParenthesizedExpressionToLambda = function () {
             var source = "var v = (a, b) = c";
@@ -30655,7 +30408,7 @@ var TypeScript;
         }
         TypeScript.Debug.assert(token1.parent);
         TypeScript.Debug.assert(token2.parent);
-        return token1.kind === token2.kind && TypeScript.width(token1) === TypeScript.width(token2) && token1.fullWidth() === token2.fullWidth() && token1.fullStart() === token2.fullStart() && TypeScript.fullEnd(token1) === TypeScript.fullEnd(token2) && TypeScript.start(token1, text1) === TypeScript.start(token2, text2) && TypeScript.end(token1, text1) === TypeScript.end(token2, text2) && token1.text() === token2.text() && triviaListStructuralEquals(token1.leadingTrivia(text1), token2.leadingTrivia(text2)) && triviaListStructuralEquals(token1.trailingTrivia(text1), token2.trailingTrivia(text2));
+        return token1.kind === token2.kind && TypeScript.width(token1) === TypeScript.width(token2) && token1.fullWidth() === token2.fullWidth() && token1.fullStart() === token2.fullStart() && TypeScript.fullEnd(token1) === TypeScript.fullEnd(token2) && TypeScript.start(token1, text1) === TypeScript.start(token2, text2) && token1.text() === token2.text() && triviaListStructuralEquals(token1.leadingTrivia(text1), token2.leadingTrivia(text2));
     }
     TypeScript.tokenStructuralEquals = tokenStructuralEquals;
     function triviaListStructuralEquals(triviaList1, triviaList2) {
@@ -30715,9 +30468,6 @@ var TypeScript;
         if (TypeScript.start(element1) !== TypeScript.start(element2)) {
             return false;
         }
-        if (TypeScript.end(element1) !== TypeScript.end(element2)) {
-            return false;
-        }
         if (TypeScript.fullEnd(element1) !== TypeScript.fullEnd(element2)) {
             return false;
         }
@@ -30771,8 +30521,8 @@ function tokenToJSON(token, text, mergeTrivia) {
             break;
         }
     }
-    var fullStart = previousTokenForJSON ? TypeScript.end(previousTokenForJSON, text) : token.fullStart();
-    var fullEnd = TypeScript.end(token, text);
+    var fullStart = token.fullStart();
+    var fullEnd = TypeScript.fullEnd(token);
     result.fullStart = fullStart;
     result.start = TypeScript.start(token, text);
     result.fullWidth = fullEnd - fullStart;
@@ -30788,10 +30538,9 @@ function tokenToJSON(token, text, mergeTrivia) {
     }
     if (isSkippedToken || isMissingToken) {
         TypeScript.Debug.assert(!token.hasLeadingTrivia());
-        TypeScript.Debug.assert(!token.hasTrailingTrivia());
     }
     else {
-        var leadingTrivia = getLeadingTrivia(mergeTrivia ? previousTokenForJSON : undefined, token, text);
+        var leadingTrivia = token.hasLeadingTrivia() ? token.leadingTrivia(text).toArray() : undefined;
         if (leadingTrivia) {
             result.hasLeadingTrivia = true;
             if (TypeScript.ArrayUtilities.any(leadingTrivia, function (t) { return t.isComment(); })) {
@@ -30806,15 +30555,7 @@ function tokenToJSON(token, text, mergeTrivia) {
             result.leadingTrivia = triviaListToJSON(leadingTrivia, text);
         }
     }
-    if (!isSkippedToken && !isMissingToken) {
-        previousTokenForJSON = token;
-    }
     return result;
-}
-function getLeadingTrivia(previousToken, token, text) {
-    var trailingTrivia = previousToken && previousToken.hasTrailingTrivia() ? previousToken.trailingTrivia(text).toArray() : undefined;
-    var leadingTrivia = token.hasLeadingTrivia() ? token.leadingTrivia(text).toArray() : undefined;
-    return ts.concatenate(trailingTrivia, leadingTrivia);
 }
 function triviaListToJSON(trivia, text) {
     var result = [];
@@ -30852,7 +30593,6 @@ function nodeToJSON(node, text) {
     result.fullStart = TypeScript.fullStart(node);
     result.fullEnd = TypeScript.fullEnd(node);
     result.start = TypeScript.start(node);
-    result.end = TypeScript.end(node);
     result.fullWidth = TypeScript.fullWidth(node);
     result.width = TypeScript.width(node);
     if (TypeScript.isIncrementallyUnusable(node)) {
@@ -30892,9 +30632,7 @@ function elementToJSON(element, text) {
         return nodeToJSON(element, text);
     }
 }
-var previousTokenForJSON;
 function syntaxTreeToJSON(tree) {
-    previousTokenForJSON = undefined;
     var result = {};
     result.isDeclaration = tree.isDeclaration();
     switch (tree.languageVersion()) {

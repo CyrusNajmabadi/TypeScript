@@ -49,8 +49,8 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
         }
     }
 
-    var fullStart = previousTokenForJSON ? TypeScript.end(previousTokenForJSON, text) : token.fullStart();
-    var fullEnd = TypeScript.end(token, text);
+    var fullStart = token.fullStart();
+    var fullEnd = TypeScript.fullEnd(token);
 
     result.fullStart = fullStart;
 
@@ -73,10 +73,9 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
 
     if (isSkippedToken || isMissingToken) {
         TypeScript.Debug.assert(!token.hasLeadingTrivia());
-        TypeScript.Debug.assert(!token.hasTrailingTrivia());
     }
     else {
-        var leadingTrivia = getLeadingTrivia(mergeTrivia ? previousTokenForJSON : undefined, token, text);
+        var leadingTrivia = token.hasLeadingTrivia() ? token.leadingTrivia(text).toArray() : undefined;
 
         if (leadingTrivia) {
             result.hasLeadingTrivia = true;
@@ -94,17 +93,7 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
         }
     }
 
-    if (!isSkippedToken && !isMissingToken) {
-        previousTokenForJSON = token;
-    }
     return result;
-}
-
-function getLeadingTrivia(previousToken: TypeScript.ISyntaxToken, token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleText) {
-    var trailingTrivia = previousToken && previousToken.hasTrailingTrivia() ? previousToken.trailingTrivia(text).toArray() : undefined;
-    var leadingTrivia = token.hasLeadingTrivia() ? token.leadingTrivia(text).toArray() : undefined;
-
-    return ts.concatenate(trailingTrivia, leadingTrivia);
 }
 
 function triviaListToJSON(trivia: TypeScript.ISyntaxTrivia[], text: TypeScript.ISimpleText): any {
@@ -153,7 +142,6 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
     result.fullEnd = TypeScript.fullEnd(node);
 
     result.start = TypeScript.start(node);
-    result.end = TypeScript.end(node);
 
     result.fullWidth = TypeScript.fullWidth(node);
     result.width = TypeScript.width(node);
@@ -203,9 +191,7 @@ function elementToJSON(element: TypeScript.ISyntaxElement, text: TypeScript.ISim
     }
 }
 
-var previousTokenForJSON: TypeScript.ISyntaxToken;
 function syntaxTreeToJSON(tree: TypeScript.SyntaxTree): any {
-    previousTokenForJSON = undefined;
     var result: any = {};
 
     result.isDeclaration = tree.isDeclaration();
