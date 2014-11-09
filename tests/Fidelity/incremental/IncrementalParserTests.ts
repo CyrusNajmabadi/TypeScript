@@ -116,7 +116,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withDelete(oldText, index, 3);
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 36);
         }
 
         public static testIncrementalRegex1() {
@@ -138,7 +138,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         }
 
         public static testIncrementalComment1() {
@@ -177,7 +177,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "*");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         }
 
         public static testParameter1() {
@@ -205,7 +205,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "?");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 48);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
         }
 
         public static testEnumElement1() {
@@ -243,7 +243,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 28);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 27);
         }
 
         public static testStrictMode2() {
@@ -255,7 +255,7 @@ module TypeScript {
             var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
 
             // Note the decreased reuse of nodes compared to testStrictMode1
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 13);
         }
 
         public static testStrictMode3() {
@@ -424,7 +424,7 @@ module TypeScript {
             var newTextAndChange = withDelete(oldText, index, " => 1".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 6);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
         }
 
         public static testGenerics3() {
@@ -472,7 +472,7 @@ module TypeScript {
             var newTextAndChange = withDelete(oldText, index, "Foo<Bar<".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
         }
 
         public static testGenerics7() {
@@ -484,7 +484,7 @@ module TypeScript {
             var newTextAndChange = withChange(oldText, index, "= ".length, ": Foo<Bar<");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
         }
 
         public static testGenerics8() {
@@ -496,7 +496,7 @@ module TypeScript {
             var newTextAndChange = withChange(oldText, index, ": Foo<Bar<".length, "= ");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
         }
 
         public static testParenthesizedExpressionToLambda() {
