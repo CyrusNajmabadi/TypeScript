@@ -30835,7 +30835,6 @@ function triviaToJSON(trivia, text) {
         }
     }
     if (trivia.isSkippedToken()) {
-        result.skippedToken = tokenToJSON(trivia.skippedToken(), text, false);
     }
     else {
         result.fullStart = trivia.fullStart();

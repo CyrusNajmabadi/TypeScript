@@ -132,7 +132,7 @@ function triviaToJSON(trivia: TypeScript.ISyntaxTrivia, text: TypeScript.ISimple
     }
 
     if (trivia.isSkippedToken()) {
-        result.skippedToken = tokenToJSON(trivia.skippedToken(), text, /*megeTrivia:*/ false);
+        //result.skippedToken = tokenToJSON(trivia.skippedToken(), text, /*megeTrivia:*/ false);
     }
     else {
         result.fullStart = trivia.fullStart();
