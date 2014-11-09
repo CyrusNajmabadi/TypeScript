@@ -95,6 +95,9 @@ module TypeScript.Services.Formatting {
                     var trivia = _nextToken.leadingTrivia();
                     this._lastTriviaWasNewLine = trivia.hasNewLine();
                 }
+                else {
+                    this._lastTriviaWasNewLine = false;
+                }
             }
 
             // Update the position
