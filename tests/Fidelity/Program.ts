@@ -32,10 +32,13 @@ class PositionValidatingWalker extends TypeScript.SyntaxWalker {
     }
 }
 
-function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleText): any {
+function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleText, mergeTrivia: boolean): any {
     if (!token) {
         return undefined;
     }
+
+    var isSkippedToken = token.parent && token.parent.kind === TypeScript.SyntaxKind.SkippedTokenTrivia;
+    var isMissingToken = token.fullWidth() === 0 && token.kind !== TypeScript.SyntaxKind.EndOfFileToken;
 
     var result: any = {};
 
@@ -46,14 +49,15 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
         }
     }
 
-    result.fullStart = token.fullStart();
-    result.fullEnd = TypeScript.fullEnd(token);
+    var fullStart = previousTokenForJSON ? TypeScript.end(previousTokenForJSON, text) : token.fullStart();
+    var fullEnd = TypeScript.end(token, text);
+
+    result.fullStart = fullStart;
 
     result.start = TypeScript.start(token, text);
-    result.end = TypeScript.end(token, text);
 
-    result.fullWidth = token.fullWidth();
-    result.width = TypeScript.width(token);
+    result.fullWidth = fullEnd - fullStart;
+    result.width = TypeScript.width(token, text);
 
     result.text = token.text();
 
@@ -67,68 +71,47 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
         result.isKeywordConvertedToIdentifier = true;
     }
 
-    var leadingTrivia: TypeScript.ISyntaxTriviaList = undefined;
-    if (token.hasLeadingTrivia()) {
-        result.hasLeadingTrivia = true;
-        leadingTrivia = token.leadingTrivia(text);
+    if (isSkippedToken || isMissingToken) {
+        TypeScript.Debug.assert(!token.hasLeadingTrivia());
+        TypeScript.Debug.assert(!token.hasTrailingTrivia());
     }
+    else {
+        var leadingTrivia = getLeadingTrivia(mergeTrivia ? previousTokenForJSON : undefined, token, text);
 
-    if (token.hasLeadingComment()) {
-        result.hasLeadingComment = true;
+        if (leadingTrivia) {
+            result.hasLeadingTrivia = true;
 
-        TypeScript.Debug.assert(token.hasLeadingTrivia());
-        TypeScript.Debug.assert(leadingTrivia.hasComment());
-    }
-
-    if (leadingTrivia) {
-        if (leadingTrivia.hasNewLine()) {
-            result.hasLeadingNewLine = true;
-        }
-
-        if (leadingTrivia.hasSkippedToken()) {
-            result.hasLeadingSkippedText = true;
-        }
-    }
-
-    var trailingTrivia: TypeScript.ISyntaxTriviaList = undefined;
-    if (token.hasTrailingTrivia()) {
-        result.hasTrailingTrivia = true;
-        trailingTrivia = token.trailingTrivia(text);
-    }
-
-    if (token.hasTrailingComment()) {
-        result.hasTrailingComment = true;
-
-        TypeScript.Debug.assert(token.hasTrailingTrivia());
-        TypeScript.Debug.assert(trailingTrivia.hasComment());
-    }
-
-    if (trailingTrivia) {
-        if (trailingTrivia.hasNewLine()) {
-            result.hasTrailingNewLine = true;
-        }
-
-        if (trailingTrivia.hasSkippedToken()) {
-            result.hasTrailingSkippedText = true;
+            if (TypeScript.ArrayUtilities.any(leadingTrivia, t => t.isComment())) {
+                result.hasLeadingComment = true;
+            }
+            if (TypeScript.ArrayUtilities.any(leadingTrivia, t => t.isNewLine())) {
+                result.hasLeadingNewLine = true;
+            }
+            if (TypeScript.ArrayUtilities.any(leadingTrivia, t => t.isSkippedToken())) {
+                result.hasLeadingSkippedToken = true;
+            }
+            result.leadingTrivia = triviaListToJSON(leadingTrivia, text);
         }
     }
 
-    if (leadingTrivia) {
-        result.leadingTrivia = triviaListToJSON(leadingTrivia, text);
+    if (!isSkippedToken && !isMissingToken) {
+        previousTokenForJSON = token;
     }
-
-    if (trailingTrivia) {
-        result.trailingTrivia = triviaListToJSON(trailingTrivia, text);
-    }
-
     return result;
 }
 
-function triviaListToJSON(trivia: TypeScript.ISyntaxTriviaList, text: TypeScript.ISimpleText): any {
+function getLeadingTrivia(previousToken: TypeScript.ISyntaxToken, token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleText) {
+    var trailingTrivia = previousToken && previousToken.hasTrailingTrivia() ? previousToken.trailingTrivia(text).toArray() : undefined;
+    var leadingTrivia = token.hasLeadingTrivia() ? token.leadingTrivia(text).toArray() : undefined;
+
+    return ts.concatenate(trailingTrivia, leadingTrivia);
+}
+
+function triviaListToJSON(trivia: TypeScript.ISyntaxTrivia[], text: TypeScript.ISimpleText): any {
     var result: any[] = [];
 
-    for (var i = 0, n = trivia.count(); i < n; i++) {
-        result.push(triviaToJSON(trivia.syntaxTriviaAt(i), text));
+    for (var i = 0, n = trivia.length; i < n; i++) {
+        result.push(triviaToJSON(trivia[i], text));
     }
 
     return result;
@@ -138,14 +121,14 @@ function triviaToJSON(trivia: TypeScript.ISyntaxTrivia, text: TypeScript.ISimple
     var result: any = {};
 
     for (var name in TypeScript.SyntaxKind) {
-        if (<any>TypeScript.SyntaxKind[name] === trivia.kind()) {
+        if (<any>TypeScript.SyntaxKind[name] === trivia.kind) {
             result.kind = name;
             break;
         }
     }
 
     if (trivia.isSkippedToken()) {
-        result.skippedToken = tokenToJSON(trivia.skippedToken(), text);
+        result.skippedToken = tokenToJSON(trivia.skippedToken(), text, /*megeTrivia:*/ false);
     }
     else {
         result.fullStart = trivia.fullStart();
@@ -166,13 +149,13 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         }
     }
 
-    result.fullStart = TypeScript.fullStart(node);
-    result.fullEnd = TypeScript.fullEnd(node);
+    //result.fullStart = TypeScript.fullStart(node);
+    //result.fullEnd = TypeScript.fullEnd(node);
 
     result.start = TypeScript.start(node);
     result.end = TypeScript.end(node);
 
-    result.fullWidth = TypeScript.fullWidth(node);
+    //result.fullWidth = TypeScript.fullWidth(node);
     result.width = TypeScript.width(node);
 
     if (TypeScript.isIncrementallyUnusable(node)) {
@@ -204,7 +187,7 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
 
 function elementToJSON(element: TypeScript.ISyntaxElement, text: TypeScript.ISimpleText): any {
     if (TypeScript.isToken(element)) {
-        return tokenToJSON(<TypeScript.ISyntaxToken>element, text);
+        return tokenToJSON(<TypeScript.ISyntaxToken>element, text,/*megeTrivia:*/ true);
     }
     else if (TypeScript.isList(element)) {
         var result: any[] = [];
@@ -220,7 +203,9 @@ function elementToJSON(element: TypeScript.ISyntaxElement, text: TypeScript.ISim
     }
 }
 
+var previousTokenForJSON: TypeScript.ISyntaxToken;
 function syntaxTreeToJSON(tree: TypeScript.SyntaxTree): any {
+    previousTokenForJSON = undefined;
     var result: any = {};
 
     result.isDeclaration = tree.isDeclaration();
@@ -341,9 +326,9 @@ class Program {
             this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
         }
 
-        TypeScript.Environment.standardOut.Write("Testing against 262:");
-        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
-            fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
+        //TypeScript.Environment.standardOut.Write("Testing against 262:");
+        //this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
+        //    fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
     }
 
     private static reusedElements(oldNode: TypeScript.SourceUnitSyntax, newNode: TypeScript.SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
@@ -735,19 +720,19 @@ class Program {
                 TypeScript.Debug.assert(token.fullWidth() > 0);
             }
 
-            tokens[i] = tokenToJSON(token, text);
-            tokensOnLeft[i] = tokenToJSON(tokenOnLeft, text) || null;
+            tokens[i] = tokenToJSON(token, text, /*megeTrivia:*/ false);
+            tokensOnLeft[i] = tokenToJSON(tokenOnLeft, text, /*megeTrivia:*/ false) || null;
         }
 
         var positionedToken = TypeScript.findToken(sourceUnit, 0);
         while (positionedToken) {
-            leftToRight.push(tokenToJSON(positionedToken, text));
+            leftToRight.push(tokenToJSON(positionedToken, text, /*megeTrivia:*/ false));
             positionedToken = TypeScript.nextToken(positionedToken);
         }
 
         positionedToken = TypeScript.findToken(sourceUnit, contents.length);
         while (positionedToken) {
-            rightToLeft.push(tokenToJSON(positionedToken, text));
+            rightToLeft.push(tokenToJSON(positionedToken, text, /*megeTrivia:*/ false));
             positionedToken = TypeScript.previousToken(positionedToken);
         }
 
@@ -776,7 +761,7 @@ class Program {
 
         while (true) {
             var token = scanner.scan(/*allowRegularExpression:*/ false);
-            tokens.push(tokenToJSON(token, text));
+            tokens.push(tokenToJSON(token, text, /*megeTrivia:*/ false));
 
             if (token.kind === TypeScript.SyntaxKind.EndOfFileToken) {
                 break;
@@ -808,7 +793,7 @@ class Program {
 
         while (true) {
             var token = scanner.scan(/*allowRegularExpression:*/ false);
-            jsonTokens.push(tokenToJSON(token, text));
+            jsonTokens.push(tokenToJSON(token, text, /*megeTrivia:*/ false));
             tokens.push(token);
 
             TypeScript.Debug.assert(position === token.fullStart());
