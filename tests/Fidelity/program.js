@@ -30762,6 +30762,9 @@ function tokenToJSON(token, text, mergeTrivia) {
     if (!token) {
         return undefined;
     }
+    if (token.fullWidth() === 0 && token.kind !== 8 /* EndOfFileToken */) {
+        return undefined;
+    }
     var isSkippedToken = token.parent && token.parent.kind === 6 /* SkippedTokenTrivia */;
     var isMissingToken = token.fullWidth() === 0 && token.kind !== 8 /* EndOfFileToken */;
     var result = {};

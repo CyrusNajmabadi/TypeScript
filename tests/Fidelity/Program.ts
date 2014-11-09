@@ -37,6 +37,10 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
         return undefined;
     }
 
+    if (token.fullWidth() === 0 && token.kind !== TypeScript.SyntaxKind.EndOfFileToken) {
+        return undefined;
+    }
+
     var isSkippedToken = token.parent && token.parent.kind === TypeScript.SyntaxKind.SkippedTokenTrivia;
     var isMissingToken = token.fullWidth() === 0 && token.kind !== TypeScript.SyntaxKind.EndOfFileToken;
 
