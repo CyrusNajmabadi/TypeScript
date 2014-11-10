@@ -180,20 +180,24 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
 }
 
 function elementToJSON(element: TypeScript.ISyntaxElement, text: TypeScript.ISimpleText): any {
-    if (TypeScript.isToken(element)) {
-        return tokenToJSON(<TypeScript.ISyntaxToken>element, text,/*megeTrivia:*/ true);
-    }
-    else if (TypeScript.isList(element)) {
-        var result: any[] = [];
-
-        for (var i = 0, n = TypeScript.childCount(element); i < n; i++) {
-            result.push(elementToJSON(TypeScript.childAt(element, i), text));
+    if (element !== undefined) {
+        if (TypeScript.isToken(element)) {
+            return tokenToJSON(<TypeScript.ISyntaxToken>element, text,/*megeTrivia:*/ true);
         }
+        else if (TypeScript.isList(element)) {
+            if (TypeScript.childCount(element) > 0) {
+                var result: any[] = [];
 
-        return result;
-    }
-    else {
-        return nodeToJSON(<TypeScript.ISyntaxNode>element, text);
+                for (var i = 0, n = TypeScript.childCount(element); i < n; i++) {
+                    result.push(elementToJSON(TypeScript.childAt(element, i), text));
+                }
+
+                return result;
+            }
+        }
+        else {
+            return nodeToJSON(<TypeScript.ISyntaxNode>element, text);
+        }
     }
 }
 
@@ -318,9 +322,9 @@ class Program {
             this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
         }
 
-        TypeScript.Environment.standardOut.Write("Testing against 262:");
-        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
-            fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
+        //TypeScript.Environment.standardOut.Write("Testing against 262:");
+        //this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
+        //    fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
     }
 
     private static reusedElements(oldNode: TypeScript.SourceUnitSyntax, newNode: TypeScript.SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
