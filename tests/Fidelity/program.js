@@ -22718,7 +22718,6 @@ var TypeScript;
         SyntaxWalker.prototype.visitForStatement = function (node) {
             this.visitToken(node.forKeyword);
             this.visitToken(node.openParenToken);
-            TypeScript.visitNodeOrToken(this, node.variableDeclaration);
             TypeScript.visitNodeOrToken(this, node.initializer);
             this.visitToken(node.firstSemicolonToken);
             TypeScript.visitNodeOrToken(this, node.condition);
@@ -22730,10 +22729,9 @@ var TypeScript;
         SyntaxWalker.prototype.visitForInStatement = function (node) {
             this.visitToken(node.forKeyword);
             this.visitToken(node.openParenToken);
-            TypeScript.visitNodeOrToken(this, node.variableDeclaration);
             TypeScript.visitNodeOrToken(this, node.left);
             this.visitToken(node.inKeyword);
-            TypeScript.visitNodeOrToken(this, node.expression);
+            TypeScript.visitNodeOrToken(this, node.right);
             this.visitToken(node.closeParenToken);
             TypeScript.visitNodeOrToken(this, node.statement);
         };
@@ -23965,29 +23963,13 @@ var TypeScript;
                 var openParenToken = eatToken(74 /* OpenParenToken */);
                 var _currentToken = currentToken();
                 var tokenKind = _currentToken.kind;
-                if (tokenKind === 42 /* VarKeyword */) {
-                    return parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
-                }
-                else if (tokenKind === 80 /* SemicolonToken */) {
-                    return parseForStatementWithNoVariableDeclarationOrInitializer(forKeyword, openParenToken);
+                var initializer = tokenKind === 80 /* SemicolonToken */ ? undefined : tokenKind === 42 /* VarKeyword */ ? parseVariableDeclaration(false) : parseExpression(false);
+                if (initializer !== undefined && currentToken().kind === 31 /* InKeyword */) {
+                    return new TypeScript.ForInStatementSyntax(parseNodeData, forKeyword, openParenToken, initializer, eatToken(31 /* InKeyword */), parseExpression(true), eatToken(75 /* CloseParenToken */), parseStatement(false));
                 }
                 else {
-                    return parseForOrForInStatementWithInitializer(forKeyword, openParenToken);
+                    return new TypeScript.ForStatementSyntax(parseNodeData, forKeyword, openParenToken, initializer, eatToken(80 /* SemicolonToken */), tryParseForStatementCondition(), eatToken(80 /* SemicolonToken */), tryParseForStatementIncrementor(), eatToken(75 /* CloseParenToken */), parseStatement(false));
                 }
-            }
-            function parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken) {
-                var variableDeclaration = parseVariableDeclaration(false);
-                return currentToken().kind === 31 /* InKeyword */ ? parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, undefined) : parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, undefined);
-            }
-            function parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, initializer) {
-                return new TypeScript.ForInStatementSyntax(parseNodeData, forKeyword, openParenToken, variableDeclaration, initializer, eatToken(31 /* InKeyword */), parseExpression(true), eatToken(75 /* CloseParenToken */), parseStatement(false));
-            }
-            function parseForOrForInStatementWithInitializer(forKeyword, openParenToken) {
-                var initializer = parseExpression(false);
-                return currentToken().kind === 31 /* InKeyword */ ? parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, undefined, initializer) : parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, undefined, initializer);
-            }
-            function parseForStatementWithNoVariableDeclarationOrInitializer(forKeyword, openParenToken) {
-                return parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, undefined, undefined);
             }
             function tryParseForStatementCondition() {
                 var tokenKind = currentToken().kind;
@@ -24002,9 +23984,6 @@ var TypeScript;
                     return parseExpression(true);
                 }
                 return undefined;
-            }
-            function parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, initializer) {
-                return new TypeScript.ForStatementSyntax(parseNodeData, forKeyword, openParenToken, variableDeclaration, initializer, eatToken(80 /* SemicolonToken */), tryParseForStatementCondition(), eatToken(80 /* SemicolonToken */), tryParseForStatementIncrementor(), eatToken(75 /* CloseParenToken */), parseStatement(false));
             }
             function tryEatBreakOrContinueLabel() {
                 var identifier = undefined;
@@ -25969,46 +25948,44 @@ var TypeScript;
             case 2: return this.semicolonToken;
         }
     };
-    TypeScript.ForStatementSyntax = function (data, forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
+    TypeScript.ForStatementSyntax = function (data, forKeyword, openParenToken, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
         if (data) {
             this.__data = data;
         }
-        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.variableDeclaration = variableDeclaration, this.initializer = initializer, this.firstSemicolonToken = firstSemicolonToken, this.condition = condition, this.secondSemicolonToken = secondSemicolonToken, this.incrementor = incrementor, this.closeParenToken = closeParenToken, this.statement = statement, forKeyword.parent = this, openParenToken.parent = this, variableDeclaration && (variableDeclaration.parent = this), initializer && (initializer.parent = this), firstSemicolonToken.parent = this, condition && (condition.parent = this), secondSemicolonToken.parent = this, incrementor && (incrementor.parent = this), closeParenToken.parent = this, statement.parent = this;
+        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.initializer = initializer, this.firstSemicolonToken = firstSemicolonToken, this.condition = condition, this.secondSemicolonToken = secondSemicolonToken, this.incrementor = incrementor, this.closeParenToken = closeParenToken, this.statement = statement, forKeyword.parent = this, openParenToken.parent = this, initializer && (initializer.parent = this), firstSemicolonToken.parent = this, condition && (condition.parent = this), secondSemicolonToken.parent = this, incrementor && (incrementor.parent = this), closeParenToken.parent = this, statement.parent = this;
     };
     TypeScript.ForStatementSyntax.prototype.kind = 159 /* ForStatement */;
-    TypeScript.ForStatementSyntax.prototype.childCount = 10;
+    TypeScript.ForStatementSyntax.prototype.childCount = 9;
     TypeScript.ForStatementSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
-            case 2: return this.variableDeclaration;
-            case 3: return this.initializer;
-            case 4: return this.firstSemicolonToken;
-            case 5: return this.condition;
-            case 6: return this.secondSemicolonToken;
-            case 7: return this.incrementor;
-            case 8: return this.closeParenToken;
-            case 9: return this.statement;
+            case 2: return this.initializer;
+            case 3: return this.firstSemicolonToken;
+            case 4: return this.condition;
+            case 5: return this.secondSemicolonToken;
+            case 6: return this.incrementor;
+            case 7: return this.closeParenToken;
+            case 8: return this.statement;
         }
     };
-    TypeScript.ForInStatementSyntax = function (data, forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
+    TypeScript.ForInStatementSyntax = function (data, forKeyword, openParenToken, left, inKeyword, right, closeParenToken, statement) {
         if (data) {
             this.__data = data;
         }
-        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.variableDeclaration = variableDeclaration, this.left = left, this.inKeyword = inKeyword, this.expression = expression, this.closeParenToken = closeParenToken, this.statement = statement, forKeyword.parent = this, openParenToken.parent = this, variableDeclaration && (variableDeclaration.parent = this), left && (left.parent = this), inKeyword.parent = this, expression.parent = this, closeParenToken.parent = this, statement.parent = this;
+        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.left = left, this.inKeyword = inKeyword, this.right = right, this.closeParenToken = closeParenToken, this.statement = statement, forKeyword.parent = this, openParenToken.parent = this, left.parent = this, inKeyword.parent = this, right.parent = this, closeParenToken.parent = this, statement.parent = this;
     };
     TypeScript.ForInStatementSyntax.prototype.kind = 160 /* ForInStatement */;
-    TypeScript.ForInStatementSyntax.prototype.childCount = 8;
+    TypeScript.ForInStatementSyntax.prototype.childCount = 7;
     TypeScript.ForInStatementSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
-            case 2: return this.variableDeclaration;
-            case 3: return this.left;
-            case 4: return this.inKeyword;
-            case 5: return this.expression;
-            case 6: return this.closeParenToken;
-            case 7: return this.statement;
+            case 2: return this.left;
+            case 3: return this.inKeyword;
+            case 4: return this.right;
+            case 5: return this.closeParenToken;
+            case 6: return this.statement;
         }
     };
     TypeScript.EmptyStatementSyntax = function (data, semicolonToken) {
@@ -27642,15 +27619,15 @@ var TypeScript;
             _super.prototype.visitForInStatement.call(this, node);
         };
         GrammarCheckerWalker.prototype.checkForInLeftHandSideExpression = function (node) {
-            if (node.left && !TypeScript.SyntaxUtilities.isLeftHandSizeExpression(node.left)) {
+            if (node.left.kind !== 190 /* VariableDeclaration */ && !TypeScript.SyntaxUtilities.isLeftHandSizeExpression(node.left)) {
                 this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Invalid_left_hand_side_in_for_in_statement);
                 return true;
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForInStatementVariableDeclaration = function (node) {
-            if (node.variableDeclaration && node.variableDeclaration.variableDeclarators.length > 1) {
-                this.pushDiagnostic(node.variableDeclaration, TypeScript.DiagnosticCode.Only_a_single_variable_declaration_is_allowed_in_a_for_in_statement);
+            if (node.left.kind === 190 /* VariableDeclaration */ && node.left.variableDeclarators.length > 1) {
+                this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Only_a_single_variable_declaration_is_allowed_in_a_for_in_statement);
                 return true;
             }
             return false;
@@ -28752,8 +28729,7 @@ var TypeScript;
                 this.appendToken(node.forKeyword);
                 this.ensureSpace();
                 this.appendToken(node.openParenToken);
-                this.appendNode(node.variableDeclaration);
-                this.appendElement(node.initializer);
+                TypeScript.visitNodeOrToken(this, node.initializer);
                 this.appendToken(node.firstSemicolonToken);
                 if (node.condition) {
                     this.ensureSpace();
@@ -28771,12 +28747,11 @@ var TypeScript;
                 this.appendToken(node.forKeyword);
                 this.ensureSpace();
                 this.appendToken(node.openParenToken);
-                this.appendNode(node.variableDeclaration);
                 this.appendElement(node.left);
                 this.ensureSpace();
                 this.appendToken(node.inKeyword);
                 this.ensureSpace();
-                this.appendElement(node.expression);
+                this.appendElement(node.right);
                 this.appendToken(node.closeParenToken);
                 this.appendBlockOrStatement(node.statement);
             };
