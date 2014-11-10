@@ -1,7 +1,7 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-    export enum CharacterCodes {
+    export const enum CharacterCodes {
         nullCharacter = 0,
         maxAsciiCharacter = 127,
 

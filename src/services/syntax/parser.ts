@@ -4208,7 +4208,7 @@ module TypeScript.Parser {
     //
     // The code to do this uses the above logic.  It will see an operator with the same precedence,
     // and so it won't consume it.
-    enum BinaryExpressionPrecedence {
+    const enum BinaryExpressionPrecedence {
         Lowest = 1,
 
         // Intuitively, logical || have the lowest precedence.  "a || b && c" is "a || (b && c)", not
