@@ -2856,41 +2856,30 @@ module TypeScript.Parser {
         }
 
         function parseArrowFunctionBody(): BlockSyntax | IExpressionSyntax {
-            var block = tryParseArrowFunctionBlock();
-            if (block !== undefined) {
-                return block;
-            }
-
-            return tryParseAssignmentExpressionOrHigher(/*force:*/ true, /*allowIn:*/ true);
-        }
-
-        function tryParseArrowFunctionBlock(): BlockSyntax {
             if (isBlock()) {
                 return parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             }
-            else {
-                // We didn't have a block.  However, we may be in an error situation.  For example,
-                // if the user wrote:
-                //
-                //  a => 
-                //      var v = 0;
-                //  }
-                //
-                // (i.e. they're missing the open brace).  See if that's the case so we can try to 
-                // recover better.  If we don't do this, then the next close curly we see may end
-                // up preemptively closing the containing construct.
-                var _modifierCount = modifierCount();
-                if (isStatement(_modifierCount, /*inErrorRecovery:*/ false) &&
-                    !isExpressionStatement(currentToken()) &&
-                    !isFunctionDeclaration(_modifierCount)) {
-                    // We've seen a statement (and it isn't an expressionStatement like 'foo()'), 
-                    // so treat this like a block with a missing open brace.
-                    return parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ true, /*checkForStrictMode:*/ false);
-                }
-                else {
-                    return undefined;
-                }
+
+            // We didn't have a block.  However, we may be in an error situation.  For example,
+            // if the user wrote:
+            //
+            //  a => 
+            //      var v = 0;
+            //  }
+            //
+            // (i.e. they're missing the open brace).  See if that's the case so we can try to 
+            // recover better.  If we don't do this, then the next close curly we see may end
+            // up preemptively closing the containing construct.
+            var _modifierCount = modifierCount();
+            if (isStatement(_modifierCount, /*inErrorRecovery:*/ false) &&
+                !isExpressionStatement(currentToken()) &&
+                !isFunctionDeclaration(_modifierCount)) {
+                // We've seen a statement (and it isn't an expressionStatement like 'foo()'), 
+                // so treat this like a block with a missing open brace.
+                return parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ true, /*checkForStrictMode:*/ false);
             }
+
+            return tryParseAssignmentExpressionOrHigher(/*force:*/ true, /*allowIn:*/ true);
         }
 
         function isSimpleArrowFunctionExpression(_currentToken: ISyntaxToken): boolean {
