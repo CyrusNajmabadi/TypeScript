@@ -22847,14 +22847,12 @@ var TypeScript;
         SyntaxWalker.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
             TypeScript.visitNodeOrToken(this, node.callSignature);
             this.visitToken(node.equalsGreaterThanToken);
-            TypeScript.visitNodeOrToken(this, node.block);
-            TypeScript.visitNodeOrToken(this, node.expression);
+            TypeScript.visitNodeOrToken(this, node.body);
         };
         SyntaxWalker.prototype.visitSimpleArrowFunctionExpression = function (node) {
             TypeScript.visitNodeOrToken(this, node.parameter);
             this.visitToken(node.equalsGreaterThanToken);
-            TypeScript.visitNodeOrToken(this, node.block);
-            TypeScript.visitNodeOrToken(this, node.expression);
+            TypeScript.visitNodeOrToken(this, node.body);
         };
         SyntaxWalker.prototype.visitCastExpression = function (node) {
             this.visitToken(node.lessThanToken);
@@ -24556,13 +24554,14 @@ var TypeScript;
                 if (requireArrow && currentToken().kind !== 87 /* EqualsGreaterThanToken */) {
                     return undefined;
                 }
-                var equalsGreaterThanToken = eatToken(87 /* EqualsGreaterThanToken */);
+                return new TypeScript.ParenthesizedArrowFunctionExpressionSyntax(parseNodeData, callSignature, eatToken(87 /* EqualsGreaterThanToken */), parseArrowFunctionBody());
+            }
+            function parseArrowFunctionBody() {
                 var block = tryParseArrowFunctionBlock();
-                var expression = undefined;
-                if (block === undefined) {
-                    expression = tryParseAssignmentExpressionOrHigher(true, true);
+                if (block !== undefined) {
+                    return block;
                 }
-                return new TypeScript.ParenthesizedArrowFunctionExpressionSyntax(parseNodeData, callSignature, equalsGreaterThanToken, block, expression);
+                return tryParseAssignmentExpressionOrHigher(true, true);
             }
             function tryParseArrowFunctionBlock() {
                 if (isBlock()) {
@@ -24585,14 +24584,7 @@ var TypeScript;
                 return isIdentifier(_currentToken) && peekToken(1).kind === 87 /* EqualsGreaterThanToken */;
             }
             function parseSimpleArrowFunctionExpression() {
-                var parameter = eatSimpleParameter();
-                var equalsGreaterThanToken = eatToken(87 /* EqualsGreaterThanToken */);
-                var block = tryParseArrowFunctionBlock();
-                var expression = undefined;
-                if (block === undefined) {
-                    expression = tryParseAssignmentExpressionOrHigher(true, true);
-                }
-                return new TypeScript.SimpleArrowFunctionExpressionSyntax(parseNodeData, parameter, equalsGreaterThanToken, block, expression);
+                return new TypeScript.SimpleArrowFunctionExpressionSyntax(parseNodeData, eatSimpleParameter(), eatToken(87 /* EqualsGreaterThanToken */), parseArrowFunctionBody());
             }
             function isBlock() {
                 return currentToken().kind === 72 /* OpenBraceToken */;
@@ -25594,7 +25586,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.modifiers = modifiers, this.moduleKeyword = moduleKeyword, this.name = name, this.openBraceToken = openBraceToken, this.moduleElements = moduleElements, this.closeBraceToken = closeBraceToken, modifiers.parent = this, moduleKeyword.parent = this, name && (name.parent = this), openBraceToken.parent = this, moduleElements.parent = this, closeBraceToken.parent = this;
+        this.modifiers = modifiers, this.moduleKeyword = moduleKeyword, this.name = name, this.openBraceToken = openBraceToken, this.moduleElements = moduleElements, this.closeBraceToken = closeBraceToken, modifiers.parent = this, moduleKeyword.parent = this, name.parent = this, openBraceToken.parent = this, moduleElements.parent = this, closeBraceToken.parent = this;
     };
     TypeScript.ModuleDeclarationSyntax.prototype.kind = 135 /* ModuleDeclaration */;
     TypeScript.ModuleDeclarationSyntax.prototype.childCount = 6;
@@ -26336,36 +26328,34 @@ var TypeScript;
             case 2: return this.closeParenToken;
         }
     };
-    TypeScript.ParenthesizedArrowFunctionExpressionSyntax = function (data, callSignature, equalsGreaterThanToken, block, expression) {
+    TypeScript.ParenthesizedArrowFunctionExpressionSyntax = function (data, callSignature, equalsGreaterThanToken, body) {
         if (data) {
             this.__data = data;
         }
-        this.callSignature = callSignature, this.equalsGreaterThanToken = equalsGreaterThanToken, this.block = block, this.expression = expression, callSignature.parent = this, equalsGreaterThanToken.parent = this, block && (block.parent = this), expression && (expression.parent = this);
+        this.callSignature = callSignature, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body, callSignature.parent = this, equalsGreaterThanToken.parent = this, body.parent = this;
     };
     TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = 182 /* ParenthesizedArrowFunctionExpression */;
-    TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.childCount = 4;
+    TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.childCount = 3;
     TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.callSignature;
             case 1: return this.equalsGreaterThanToken;
-            case 2: return this.block;
-            case 3: return this.expression;
+            case 2: return this.body;
         }
     };
-    TypeScript.SimpleArrowFunctionExpressionSyntax = function (data, parameter, equalsGreaterThanToken, block, expression) {
+    TypeScript.SimpleArrowFunctionExpressionSyntax = function (data, parameter, equalsGreaterThanToken, body) {
         if (data) {
             this.__data = data;
         }
-        this.parameter = parameter, this.equalsGreaterThanToken = equalsGreaterThanToken, this.block = block, this.expression = expression, parameter.parent = this, equalsGreaterThanToken.parent = this, block && (block.parent = this), expression && (expression.parent = this);
+        this.parameter = parameter, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body, parameter.parent = this, equalsGreaterThanToken.parent = this, body.parent = this;
     };
     TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.kind = 183 /* SimpleArrowFunctionExpression */;
-    TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.childCount = 4;
+    TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.childCount = 3;
     TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.parameter;
             case 1: return this.equalsGreaterThanToken;
-            case 2: return this.block;
-            case 3: return this.expression;
+            case 2: return this.body;
         }
     };
     TypeScript.CastExpressionSyntax = function (data, lessThanToken, type, greaterThanToken, expression) {
@@ -28401,16 +28391,14 @@ var TypeScript;
                 this.ensureSpace();
                 this.appendToken(node.equalsGreaterThanToken);
                 this.ensureSpace();
-                this.appendNode(node.block);
-                this.appendElement(node.expression);
+                TypeScript.visitNodeOrToken(this, node.body);
             };
             PrettyPrinterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
                 TypeScript.visitNodeOrToken(this, node.callSignature);
                 this.ensureSpace();
                 this.appendToken(node.equalsGreaterThanToken);
                 this.ensureSpace();
-                this.appendNode(node.block);
-                this.appendElement(node.expression);
+                TypeScript.visitNodeOrToken(this, node.body);
             };
             PrettyPrinterImpl.prototype.visitQualifiedName = function (node) {
                 TypeScript.visitNodeOrToken(this, node.left);
