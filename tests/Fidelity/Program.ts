@@ -322,9 +322,9 @@ class Program {
             this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
         }
 
-        //TypeScript.Environment.standardOut.Write("Testing against 262:");
-        //this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
-        //    fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
+        TypeScript.Environment.standardOut.Write("Testing against 262:");
+        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",
+            fileName => this.runParser(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
     }
 
     private static reusedElements(oldNode: TypeScript.SourceUnitSyntax, newNode: TypeScript.SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {

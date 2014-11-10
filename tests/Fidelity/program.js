@@ -30640,6 +30640,8 @@ var Program = (function () {
         if (specificFile === undefined) {
             this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
         }
+        TypeScript.Environment.standardOut.Write("Testing against 262:");
+        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262", function (fileName) { return _this.runParser(fileName, 1 /* ES5 */, verify, generate); });
     };
     Program.reusedElements = function (oldNode, newNode, key) {
         var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(oldNode);
