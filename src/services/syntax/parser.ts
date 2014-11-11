@@ -1772,7 +1772,8 @@ module TypeScript.Parser {
             if (initializer !== undefined && currentToken().kind === SyntaxKind.InKeyword) {
                 // for ([lookahead not-in {let [ }] LeftHandSideExpression[?Yield] in Expression[In, ?Yield] ) Statement[?Yield, ?Return]
                 // for ( var ForBinding[?Yield] in Expression[In, ?Yield] ) Statement[?Yield, ?Return]
-                // for ( ForDeclaration[?Yield] in Expression[In, ?Yield] ) Statement[?Yield, ?Return]
+                // for ( ForDeclaration[?Yield] in Expression[In, ?Yield] ) Statement[?Yield, ?Return]
+
                 return new ForInStatementSyntax(parseNodeData,
                     forKeyword, openParenToken, initializer, eatToken(SyntaxKind.InKeyword),
                     enableAllowInAnd(parseExpression), eatToken(SyntaxKind.CloseParenToken), parseStatement(/*inErrorRecovery:*/ false));
@@ -2050,7 +2051,8 @@ module TypeScript.Parser {
         function parseIfStatement(ifKeyword: ISyntaxToken): IfStatementSyntax {
             // IfStatement[Yield, Return] :
             //   if (Expression[In, ?Yield]) Statement[?Yield, ?Return] else Statement[?Yield, ?Return]
-            //   if (Expression[In, ?Yield]) Statement[?Yield, ?Return]
+            //   if (Expression[In, ?Yield]) Statement[?Yield, ?Return]
+
             return new IfStatementSyntax(parseNodeData,
                 consumeToken(ifKeyword),
                 eatToken(SyntaxKind.OpenParenToken),
@@ -2184,7 +2186,8 @@ module TypeScript.Parser {
 
         function parseEqualsValueClause(): EqualsValueClauseSyntax {
             // Initializer[In, Yield] :
-            //     = AssignmentExpression[?In, ?Yield]
+            //     = AssignmentExpression[?In, ?Yield]
+
             return new EqualsValueClauseSyntax(parseNodeData,
                 eatToken(SyntaxKind.EqualsToken), tryParseAssignmentExpressionOrHigher(/*force:*/ true));
         }
@@ -2877,7 +2880,8 @@ module TypeScript.Parser {
         }
 
         function parseParenthesizedExpression(openParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
-            // ( Expression[In, ?Yield] )
+            // ( Expression[In, ?Yield] )
+
             return new ParenthesizedExpressionSyntax(parseNodeData,
                 consumeToken(openParenToken),
                 enableAllowInAnd(parseExpression),
