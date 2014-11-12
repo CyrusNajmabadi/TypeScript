@@ -22846,6 +22846,7 @@ var TypeScript;
             TypeScript.visitNodeOrToken(this, node.expression);
         };
         SyntaxWalker.prototype.visitFunctionPropertyAssignment = function (node) {
+            this.visitOptionalToken(node.asterixToken);
             TypeScript.visitNodeOrToken(this, node.propertyName);
             TypeScript.visitNodeOrToken(this, node.callSignature);
             TypeScript.visitNodeOrToken(this, node.block);
@@ -24544,10 +24545,11 @@ var TypeScript;
                         return consumeToken(_currentToken);
                     }
                 }
-                if (isPropertyName(0, inErrorRecovery)) {
+                if (_currentToken.kind === 93 /* AsteriskToken */ || isPropertyName(0, inErrorRecovery)) {
+                    var asterixToken = tryEatToken(93 /* AsteriskToken */);
                     var propertyName = parsePropertyName();
-                    if (isCallSignature(0)) {
-                        return parseFunctionPropertyAssignment(propertyName);
+                    if (asterixToken !== undefined || isCallSignature(0)) {
+                        return parseFunctionPropertyAssignment(asterixToken, propertyName);
                     }
                     else {
                         return new TypeScript.SimplePropertyAssignmentSyntax(parseNodeData, propertyName, eatToken(108 /* ColonToken */), allowInAnd(parseAssignmentExpressionOrHigher));
@@ -24556,7 +24558,7 @@ var TypeScript;
                 return undefined;
             }
             function isPropertyAssignment(inErrorRecovery) {
-                return isAccessor(modifierCount(), inErrorRecovery) || isPropertyName(0, inErrorRecovery);
+                return isAccessor(modifierCount(), inErrorRecovery) || currentToken().kind === 93 /* AsteriskToken */ || isPropertyName(0, inErrorRecovery);
             }
             function isPropertyName(peekIndex, inErrorRecovery) {
                 var token = peekToken(peekIndex);
@@ -24598,8 +24600,8 @@ var TypeScript;
             function parseComputedPropertyName(openBracketToken) {
                 return new TypeScript.ComputedPropertyNameSyntax(parseNodeData, consumeToken(openBracketToken), allowInAnd(parseAssignmentExpressionOrHigher), eatToken(77 /* CloseBracketToken */));
             }
-            function parseFunctionPropertyAssignment(propertyName) {
-                return new TypeScript.FunctionPropertyAssignmentSyntax(parseNodeData, propertyName, parseCallSignature(false), parseFunctionBlock());
+            function parseFunctionPropertyAssignment(asterixToken, propertyName) {
+                return new TypeScript.FunctionPropertyAssignmentSyntax(parseNodeData, asterixToken, propertyName, parseCallSignature(false), parseFunctionBlock());
             }
             function parseArrayLiteralExpression(openBracketToken) {
                 return new TypeScript.ArrayLiteralExpressionSyntax(parseNodeData, consumeToken(openBracketToken), parseSeparatedSyntaxList(15 /* ArrayLiteralExpression_AssignmentExpressions */), eatToken(77 /* CloseBracketToken */));
@@ -26595,19 +26597,20 @@ var TypeScript;
             case 2: return this.expression;
         }
     };
-    TypeScript.FunctionPropertyAssignmentSyntax = function (data, propertyName, callSignature, block) {
+    TypeScript.FunctionPropertyAssignmentSyntax = function (data, asterixToken, propertyName, callSignature, block) {
         if (data) {
             this.__data = data;
         }
-        this.propertyName = propertyName, this.callSignature = callSignature, this.block = block, propertyName.parent = this, callSignature.parent = this, block.parent = this;
+        this.asterixToken = asterixToken, this.propertyName = propertyName, this.callSignature = callSignature, this.block = block, asterixToken && (asterixToken.parent = this), propertyName.parent = this, callSignature.parent = this, block.parent = this;
     };
     TypeScript.FunctionPropertyAssignmentSyntax.prototype.kind = 207 /* FunctionPropertyAssignment */;
-    TypeScript.FunctionPropertyAssignmentSyntax.prototype.childCount = 3;
+    TypeScript.FunctionPropertyAssignmentSyntax.prototype.childCount = 4;
     TypeScript.FunctionPropertyAssignmentSyntax.prototype.childAt = function (index) {
         switch (index) {
-            case 0: return this.propertyName;
-            case 1: return this.callSignature;
-            case 2: return this.block;
+            case 0: return this.asterixToken;
+            case 1: return this.propertyName;
+            case 2: return this.callSignature;
+            case 3: return this.block;
         }
     };
     TypeScript.ParameterSyntax = function (data, dotDotDotToken, modifiers, identifier, questionToken, typeAnnotation, equalsValueClause) {
