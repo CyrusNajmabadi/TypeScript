@@ -164,6 +164,10 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         result.parsedInDisallowInMode = true;
     }
 
+    if (TypeScript.parsedInAllowYieldMode(node)) {
+        result.parsedInAllowYieldMode = true;
+    }
+
     var usedNames: any = {};
     var thisAsIndexable: ts.Map<any> = <any>node;
     for (var i = 0, n = TypeScript.childCount(node); i < n; i++) {

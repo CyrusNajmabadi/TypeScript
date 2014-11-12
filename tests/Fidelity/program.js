@@ -30586,6 +30586,9 @@ function nodeToJSON(node, text) {
     if (TypeScript.parsedInDisallowInMode(node)) {
         result.parsedInDisallowInMode = true;
     }
+    if (TypeScript.parsedInAllowYieldMode(node)) {
+        result.parsedInAllowYieldMode = true;
+    }
     var usedNames = {};
     var thisAsIndexable = node;
     for (var i = 0, n = TypeScript.childCount(node); i < n; i++) {
