@@ -10,7 +10,10 @@
         {
             "start": 11,
             "length": 0,
-            "diagnosticCode": "Expression expected."
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                "{"
+            ]
         }
     ],
     "sourceUnit": {
@@ -78,66 +81,24 @@
                     }
                 },
                 "body": {
-                    "kind": "SemicolonToken",
-                    "fullStart": 8,
-                    "start": 8,
-                    "fullWidth": 0,
+                    "kind": "Block",
+                    "start": -1,
+                    "end": -1,
                     "width": 0,
-                    "text": "",
-                    "isIncrementallyUnusable": true
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "start": 9,
-                "end": 11,
-                "width": 2,
-                "isIncrementallyUnusable": true,
-                "expression": {
-                    "kind": "SimpleArrowFunctionExpression",
-                    "start": 9,
-                    "end": 11,
-                    "width": 2,
                     "isIncrementallyUnusable": true,
-                    "parameter": {
-                        "kind": "Parameter",
-                        "start": -1,
-                        "end": -1,
-                        "width": 0,
-                        "isIncrementallyUnusable": true,
-                        "identifier": {
-                            "kind": "IdentifierName",
-                            "fullStart": 8,
-                            "start": 8,
-                            "fullWidth": 0,
-                            "width": 0,
-                            "text": "",
-                            "isIncrementallyUnusable": true
-                        }
-                    },
-                    "equalsGreaterThanToken": {
-                        "kind": "EqualsGreaterThanToken",
+                    "openBraceToken": {
+                        "kind": "OpenBraceToken",
                         "fullStart": 8,
-                        "start": 9,
-                        "fullWidth": 3,
-                        "width": 2,
-                        "text": "=>",
-                        "value": "=>",
-                        "valueText": "=>",
-                        "hasLeadingTrivia": true,
-                        "leadingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "fullStart": 8,
-                                "fullEnd": 9,
-                                "text": " "
-                            }
-                        ]
+                        "start": 8,
+                        "fullWidth": 0,
+                        "width": 0,
+                        "text": "",
+                        "isIncrementallyUnusable": true
                     },
-                    "body": {
-                        "kind": "IdentifierName",
-                        "fullStart": 11,
-                        "start": 11,
+                    "closeBraceToken": {
+                        "kind": "CloseBraceToken",
+                        "fullStart": 8,
+                        "start": 8,
                         "fullWidth": 0,
                         "width": 0,
                         "text": "",
@@ -148,11 +109,36 @@
         ],
         "endOfFileToken": {
             "kind": "EndOfFileToken",
-            "fullStart": 11,
+            "fullStart": 8,
             "start": 11,
-            "fullWidth": 0,
+            "fullWidth": 3,
             "width": 0,
-            "text": ""
+            "text": "",
+            "isIncrementallyUnusable": true,
+            "hasLeadingTrivia": true,
+            "hasLeadingSkippedToken": true,
+            "leadingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "fullStart": 8,
+                    "fullEnd": 9,
+                    "text": " "
+                },
+                {
+                    "kind": "SkippedTokenTrivia",
+                    "skippedToken": {
+                        "kind": "EqualsGreaterThanToken",
+                        "fullStart": 9,
+                        "start": 9,
+                        "fullWidth": 2,
+                        "width": 2,
+                        "text": "=>",
+                        "value": "=>",
+                        "valueText": "=>",
+                        "isIncrementallyUnusable": true
+                    }
+                }
+            ]
         }
     },
     "lineMap": {
