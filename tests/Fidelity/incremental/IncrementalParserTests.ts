@@ -233,12 +233,12 @@ module TypeScript {
         //}
 
         public static testStrictMode1() {
-            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
-            // we'll have to reparse the nodes (and generate an error for 'static();'
+            // In non-strict mode 'package' means nothing and can be reused.  In strict mode though
+            // we'll have to reparse the nodes (and generate an error for 'package();'
             //
             // Note: in this test we don't actually add 'use strict'.  This is so we can compare 
             // reuse with/without a strict mode change.
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\package();";
 
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, 0, "'strict';\r\n");
@@ -247,9 +247,9 @@ module TypeScript {
         }
 
         public static testStrictMode2() {
-            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
-            // we'll have to reparse the nodes (and generate an error for 'yield();'
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
+            // In non-strict mode 'package' means nothing and can be reused.  In strict mode though
+            // we'll have to reparse the nodes (and generate an error for 'package();'
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\package();";
 
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, 0, "'use strict';\r\n");
@@ -259,12 +259,12 @@ module TypeScript {
         }
 
         public static testStrictMode3() {
-            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
-            // we'll have to reparse the nodes (and generate an error for 'static();'
+            // In non-strict mode 'package' means nothing and can be reused.  In strict mode though
+            // we'll have to reparse the nodes (and generate an error for 'package();'
             //
             // Note: in this test we don't actually remove 'use strict'.  This is so we can compare 
             // reuse with/without a strict mode change.
-            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
+            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\npackage();";
 
             var index = source.indexOf('f');
 
@@ -275,9 +275,9 @@ module TypeScript {
         }
 
         public static testStrictMode4() {
-            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
-            // we'll have to reparse the nodes (and generate an error for 'static();'
-            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
+            // In non-strict mode 'package' means nothing and can be reused.  In strict mode though
+            // we'll have to reparse the nodes (and generate an error for 'package();'
+            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\npackage();";
 
             var index = source.indexOf('f');
 
@@ -539,6 +539,28 @@ module TypeScript {
 
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "()");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
+        public static testYield1() {
+            // We're changing from a non-generator to a genarator.  We can't reuse statement nodes.
+            var source = "function foo() {\r\nyield(foo1);\r\n}";
+
+            var oldText = SimpleText.fromString(source);
+            var index = source.indexOf("foo");
+            var newTextAndChange = withInsert(oldText, index, "*");
+
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
+        }
+
+        public static testYield2() {
+            // We're changing from a generator to a non-genarator.  We can't reuse statement nodes.
+            var source = "function *foo() {\r\nyield(foo1);\r\n}";
+
+            var oldText = SimpleText.fromString(source);
+            var index = source.indexOf("*");
+            var newTextAndChange = withDelete(oldText, index, "*".length);
 
             compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, -1);
         }
