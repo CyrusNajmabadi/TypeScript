@@ -18943,16 +18943,16 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
-    (function (SyntaxConstants) {
-        SyntaxConstants[SyntaxConstants["None"] = 0] = "None";
-        SyntaxConstants[SyntaxConstants["NodeDataComputed"] = 0x00000001] = "NodeDataComputed";
-        SyntaxConstants[SyntaxConstants["NodeIncrementallyUnusableMask"] = 0x00000002] = "NodeIncrementallyUnusableMask";
-        SyntaxConstants[SyntaxConstants["NodeParsedInStrictModeMask"] = 0x00000004] = "NodeParsedInStrictModeMask";
-        SyntaxConstants[SyntaxConstants["NodeParsedInDisallowInMask"] = 0x00000008] = "NodeParsedInDisallowInMask";
-        SyntaxConstants[SyntaxConstants["NodeParsedInAllowYieldMask"] = 0x00000010] = "NodeParsedInAllowYieldMask";
-        SyntaxConstants[SyntaxConstants["NodeFullWidthShift"] = 5] = "NodeFullWidthShift";
-    })(TypeScript.SyntaxConstants || (TypeScript.SyntaxConstants = {}));
-    var SyntaxConstants = TypeScript.SyntaxConstants;
+    (function (SyntaxNodeConstants) {
+        SyntaxNodeConstants[SyntaxNodeConstants["None"] = 0] = "None";
+        SyntaxNodeConstants[SyntaxNodeConstants["DataComputed"] = 0x00000001] = "DataComputed";
+        SyntaxNodeConstants[SyntaxNodeConstants["IncrementallyUnusableMask"] = 0x00000002] = "IncrementallyUnusableMask";
+        SyntaxNodeConstants[SyntaxNodeConstants["ParsedInStrictModeContext"] = 0x00000004] = "ParsedInStrictModeContext";
+        SyntaxNodeConstants[SyntaxNodeConstants["ParsedInDisallowInContext"] = 0x00000008] = "ParsedInDisallowInContext";
+        SyntaxNodeConstants[SyntaxNodeConstants["ParsedInYieldContext"] = 0x00000010] = "ParsedInYieldContext";
+        SyntaxNodeConstants[SyntaxNodeConstants["NodeFullWidthShift"] = 5] = "NodeFullWidthShift";
+    })(TypeScript.SyntaxNodeConstants || (TypeScript.SyntaxNodeConstants = {}));
+    var SyntaxNodeConstants = TypeScript.SyntaxNodeConstants;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -20983,30 +20983,30 @@ var TypeScript;
         return undefined;
     }
     TypeScript.syntaxTree = syntaxTree;
-    function parsedInStrictMode(node) {
+    function parsedInStrictModeContext(node) {
         var info = node.__data;
         if (info === undefined) {
             return false;
         }
-        return (info & 4 /* NodeParsedInStrictModeMask */) !== 0;
+        return (info & 4 /* ParsedInStrictModeContext */) !== 0;
     }
-    TypeScript.parsedInStrictMode = parsedInStrictMode;
-    function parsedInDisallowInMode(node) {
+    TypeScript.parsedInStrictModeContext = parsedInStrictModeContext;
+    function parsedInDisallowInContext(node) {
         var info = node.__data;
         if (info === undefined) {
             return false;
         }
-        return (info & 8 /* NodeParsedInDisallowInMask */) !== 0;
+        return (info & 8 /* ParsedInDisallowInContext */) !== 0;
     }
-    TypeScript.parsedInDisallowInMode = parsedInDisallowInMode;
-    function parsedInAllowYieldMode(node) {
+    TypeScript.parsedInDisallowInContext = parsedInDisallowInContext;
+    function parseInYieldContext(node) {
         var info = node.__data;
         if (info === undefined) {
             return false;
         }
-        return (info & 16 /* NodeParsedInAllowYieldMask */) !== 0;
+        return (info & 16 /* ParsedInYieldContext */) !== 0;
     }
-    TypeScript.parsedInAllowYieldMode = parsedInAllowYieldMode;
+    TypeScript.parseInYieldContext = parseInYieldContext;
     function previousToken(token) {
         var start = token.fullStart();
         if (start === 0) {
@@ -21192,7 +21192,7 @@ var TypeScript;
         if (isToken(element)) {
             return element.isIncrementallyUnusable();
         }
-        return (data(element) & 2 /* NodeIncrementallyUnusableMask */) !== 0;
+        return (data(element) & 2 /* IncrementallyUnusableMask */) !== 0;
     }
     TypeScript.isIncrementallyUnusable = isIncrementallyUnusable;
     function data(element) {
@@ -21201,14 +21201,14 @@ var TypeScript;
         if (info === undefined) {
             info = 0;
         }
-        if ((info & 1 /* NodeDataComputed */) === 0) {
+        if ((info & 1 /* DataComputed */) === 0) {
             info |= computeData(element);
             dataElement.__data = info;
         }
         return info;
     }
     function combineData(fullWidth, isIncrementallyUnusable) {
-        return (fullWidth << 5 /* NodeFullWidthShift */) | (isIncrementallyUnusable ? 2 /* NodeIncrementallyUnusableMask */ : 0) | 1 /* NodeDataComputed */;
+        return (fullWidth << 5 /* NodeFullWidthShift */) | (isIncrementallyUnusable ? 2 /* IncrementallyUnusableMask */ : 0) | 1 /* DataComputed */;
     }
     function listComputeData(list) {
         var fullWidth = 0;
@@ -22912,9 +22912,9 @@ var TypeScript;
             var source;
             var languageVersion;
             var listParsingState = 0;
-            var strictMode = false;
-            var disallowIn = false;
-            var allowYield = false;
+            var strictModeContext = false;
+            var disallowInContext = false;
+            var yieldContext = false;
             var diagnostics = [];
             var parseNodeData = 0;
             var _skippedTokens = undefined;
@@ -22954,7 +22954,7 @@ var TypeScript;
             function currentNode() {
                 if (!_skippedTokens) {
                     var node = source.currentNode();
-                    if (node && TypeScript.parsedInStrictMode(node) === strictMode && TypeScript.parsedInDisallowInMode(node) === disallowIn && TypeScript.parsedInAllowYieldMode(node) === allowYield) {
+                    if (node && TypeScript.parsedInStrictModeContext(node) === strictModeContext && TypeScript.parsedInDisallowInContext(node) === disallowInContext && TypeScript.parseInYieldContext(node) === yieldContext) {
                         return node;
                     }
                 }
@@ -23027,12 +23027,12 @@ var TypeScript;
                 if (tokenKind === 9 /* IdentifierName */) {
                     return true;
                 }
-                if (tokenKind === 61 /* YieldKeyword */ && allowYield) {
+                if (tokenKind === 61 /* YieldKeyword */ && yieldContext) {
                     return false;
                 }
                 if (tokenKind >= TypeScript.SyntaxKind.FirstFutureReservedStrictKeyword) {
                     if (tokenKind <= TypeScript.SyntaxKind.LastFutureReservedStrictKeyword) {
-                        return !strictMode;
+                        return !strictModeContext;
                     }
                     return tokenKind <= TypeScript.SyntaxKind.LastTypeScriptKeyword;
                 }
@@ -23158,24 +23158,24 @@ var TypeScript;
                 throw TypeScript.Errors.invalidOperation();
             }
             function updateParseNodeData() {
-                parseNodeData = (strictMode ? 4 /* NodeParsedInStrictModeMask */ : 0) | (disallowIn ? 8 /* NodeParsedInDisallowInMask */ : 0) | (allowYield ? 16 /* NodeParsedInAllowYieldMask */ : 0);
+                parseNodeData = (strictModeContext ? 4 /* ParsedInStrictModeContext */ : 0) | (disallowInContext ? 8 /* ParsedInDisallowInContext */ : 0) | (yieldContext ? 16 /* ParsedInYieldContext */ : 0);
             }
-            function setStrictMode(val) {
-                strictMode = val;
+            function setStrictModeContext(val) {
+                strictModeContext = val;
                 updateParseNodeData();
             }
-            function setDisallowIn(val) {
-                disallowIn = val;
+            function setDisallowInContext(val) {
+                disallowInContext = val;
                 updateParseNodeData();
             }
-            function setAllowYield(val) {
-                allowYield = val;
+            function setYieldContext(val) {
+                yieldContext = val;
                 updateParseNodeData();
             }
             function parseSourceUnit() {
-                var savedIsInStrictMode = strictMode;
+                var savedIsInStrictMode = strictModeContext;
                 var moduleElements = parseSyntaxList(0 /* SourceUnit_ModuleElements */, updateStrictModeState);
-                setStrictMode(savedIsInStrictMode);
+                setStrictModeContext(savedIsInStrictMode);
                 var sourceUnit = new TypeScript.SourceUnitSyntax(parseNodeData, moduleElements, consumeToken(currentToken()));
                 if (TypeScript.Debug.shouldAssert(2 /* Aggressive */)) {
                     TypeScript.Debug.assert(TypeScript.fullWidth(sourceUnit) === source.text.length());
@@ -23189,13 +23189,13 @@ var TypeScript;
                 return node.kind === 154 /* ExpressionStatement */ && node.expression.kind === 12 /* StringLiteral */;
             }
             function updateStrictModeState(items) {
-                if (!strictMode) {
+                if (!strictModeContext) {
                     for (var i = 0, n = items.length; i < n; i++) {
                         if (!isDirectivePrologueElement(items[i])) {
                             return;
                         }
                     }
-                    setStrictMode(TypeScript.SyntaxFacts.isUseStrictDirective(items[items.length - 1]));
+                    setStrictModeContext(TypeScript.SyntaxFacts.isUseStrictDirective(items[items.length - 1]));
                 }
             }
             function isModuleElement(inErrorRecovery) {
@@ -23364,37 +23364,37 @@ var TypeScript;
                 return isPropertyName(0, inErrorRecovery);
             }
             function allowInAnd(func) {
-                if (disallowIn) {
-                    setDisallowIn(false);
+                if (disallowInContext) {
+                    setDisallowInContext(false);
                     var result = func();
-                    setDisallowIn(true);
+                    setDisallowInContext(true);
                     return result;
                 }
                 return func();
             }
             function disallowInAnd(func) {
-                if (disallowIn) {
+                if (disallowInContext) {
                     return func();
                 }
-                setDisallowIn(true);
+                setDisallowInContext(true);
                 var result = func();
-                setDisallowIn(false);
+                setDisallowInContext(false);
                 return result;
             }
-            function allowYieldAnd(func) {
-                if (allowYield) {
+            function enterYieldContextAnd(func) {
+                if (yieldContext) {
                     return func();
                 }
-                setAllowYield(true);
+                setYieldContext(true);
                 var result = func();
-                setAllowYield(false);
+                setYieldContext(false);
                 return result;
             }
-            function disallowYieldAnd(func) {
-                if (allowYield) {
-                    setAllowYield(false);
+            function leaveYieldContextAnd(func) {
+                if (yieldContext) {
+                    setYieldContext(false);
                     var result = func();
-                    setAllowYield(true);
+                    setYieldContext(true);
                     return result;
                 }
                 return func();
@@ -23481,13 +23481,13 @@ var TypeScript;
             }
             function parseAccessor() {
                 var modifiers = parseModifiers();
-                var _currenToken = currentToken();
-                var tokenKind = _currenToken.kind;
+                var _currentToken = currentToken();
+                var tokenKind = _currentToken.kind;
                 if (tokenKind === 66 /* GetKeyword */) {
-                    return parseGetAccessor(modifiers, _currenToken);
+                    return parseGetAccessor(modifiers, _currentToken);
                 }
                 else if (tokenKind === 70 /* SetKeyword */) {
-                    return parseSetAccessor(modifiers, _currenToken);
+                    return parseSetAccessor(modifiers, _currentToken);
                 }
                 else {
                     throw TypeScript.Errors.invalidOperation();
@@ -24156,10 +24156,10 @@ var TypeScript;
             }
             function isYieldExpression(_currentToken) {
                 if (_currentToken.kind === 61 /* YieldKeyword */) {
-                    if (allowYield) {
+                    if (yieldContext) {
                         return true;
                     }
-                    if (strictMode) {
+                    if (strictModeContext) {
                         return true;
                     }
                     var token1 = peekToken(1);
@@ -24221,7 +24221,7 @@ var TypeScript;
                     if (!TypeScript.SyntaxFacts.isBinaryExpressionOperatorToken(tokenKind) || tokenKind === 81 /* CommaToken */ || TypeScript.SyntaxFacts.isAssignmentOperatorToken(tokenKind)) {
                         break;
                     }
-                    if (tokenKind === 31 /* InKeyword */ && disallowIn) {
+                    if (tokenKind === 31 /* InKeyword */ && disallowInContext) {
                         break;
                     }
                     var newPrecedence = getBinaryExpressionPrecedence(tokenKind);
@@ -24680,20 +24680,6 @@ var TypeScript;
             function parseArrayLiteralExpression(openBracketToken) {
                 return new TypeScript.ArrayLiteralExpressionSyntax(parseNodeData, consumeToken(openBracketToken), parseSeparatedSyntaxList(15 /* ArrayLiteralExpression_AssignmentExpressions */), eatToken(77 /* CloseBracketToken */));
             }
-            function tryAddUnexpectedEqualsGreaterThanToken(callSignature) {
-                var token0 = currentToken();
-                var hasEqualsGreaterThanToken = token0.kind === 87 /* EqualsGreaterThanToken */;
-                if (hasEqualsGreaterThanToken) {
-                    var _lastToken = TypeScript.lastToken(callSignature);
-                    if (_lastToken && _lastToken.fullWidth() > 0) {
-                        var diagnostic = new TypeScript.Diagnostic(fileName, source.text.lineMap(), TypeScript.start(token0, source.text), TypeScript.width(token0), TypeScript.DiagnosticCode.Unexpected_token_0_expected, [TypeScript.SyntaxFacts.getText(72 /* OpenBraceToken */)]);
-                        addDiagnostic(diagnostic);
-                        skipToken(token0);
-                        return true;
-                    }
-                }
-                return false;
-            }
             function parseStatementBlock() {
                 var openBraceToken;
                 return new TypeScript.BlockSyntax(parseNodeData, openBraceToken = eatToken(72 /* OpenBraceToken */), openBraceToken.fullWidth() > 0 ? parseSyntaxList(5 /* Block_Statements */) : [], eatToken(73 /* CloseBraceToken */));
@@ -24708,14 +24694,14 @@ var TypeScript;
                 var openBraceToken = eatToken(72 /* OpenBraceToken */);
                 var statements;
                 if (hasEqualsGreaterThanToken || openBraceToken.fullWidth() > 0) {
-                    statements = _allowYield ? allowYieldAnd(parseFunctionBlockStatements) : disallowYieldAnd(parseFunctionBlockStatements);
+                    statements = _allowYield ? enterYieldContextAnd(parseFunctionBlockStatements) : leaveYieldContextAnd(parseFunctionBlockStatements);
                 }
                 return new TypeScript.BlockSyntax(parseNodeData, openBraceToken, statements || [], eatToken(73 /* CloseBraceToken */));
             }
             function parseFunctionBlockStatements() {
-                var savedIsInStrictMode = strictMode;
+                var savedIsInStrictMode = strictModeContext;
                 var statements = parseSyntaxList(5 /* Block_Statements */, updateStrictModeState);
-                setStrictMode(savedIsInStrictMode);
+                setStrictModeContext(savedIsInStrictMode);
                 return statements;
             }
             function parseCallSignature(requireCompleteTypeParameterList) {
@@ -25159,7 +25145,7 @@ var TypeScript;
                 return false;
             }
             function isExpectedVariableDeclaration_VariableDeclaratorsTerminator() {
-                if (disallowIn) {
+                if (disallowInContext) {
                     var tokenKind = currentToken().kind;
                     if (tokenKind === 80 /* SemicolonToken */ || tokenKind === 75 /* CloseParenToken */) {
                         return true;
@@ -27723,7 +27709,7 @@ var TypeScript;
             _super.prototype.visitWithStatement.call(this, node);
         };
         GrammarCheckerWalker.prototype.checkForWithInStrictMode = function (node) {
-            if (TypeScript.parsedInStrictMode(node)) {
+            if (TypeScript.parsedInStrictModeContext(node)) {
                 this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.with_statements_are_not_allowed_in_strict_mode);
                 return true;
             }
@@ -27877,13 +27863,13 @@ var TypeScript;
             _super.prototype.visitBinaryExpression.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitPrefixUnaryExpression = function (node) {
-            if (TypeScript.parsedInStrictMode(node) && this.isPreIncrementOrDecrementExpression(node) && this.isEvalOrArguments(node.operand)) {
+            if (TypeScript.parsedInStrictModeContext(node) && this.isPreIncrementOrDecrementExpression(node) && this.isEvalOrArguments(node.operand)) {
                 this.pushDiagnostic(node.operatorToken, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(node.operand)]);
             }
             _super.prototype.visitPrefixUnaryExpression.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitPostfixUnaryExpression = function (node) {
-            if (TypeScript.parsedInStrictMode(node) && this.isEvalOrArguments(node.operand)) {
+            if (TypeScript.parsedInStrictModeContext(node) && this.isEvalOrArguments(node.operand)) {
                 this.pushDiagnostic(node.operatorToken, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(node.operand)]);
             }
             _super.prototype.visitPostfixUnaryExpression.call(this, node);
@@ -27896,7 +27882,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedEvalOrArguments = function (node, token) {
             if (token) {
-                if (TypeScript.parsedInStrictMode(node) && this.isEvalOrArguments(token)) {
+                if (TypeScript.parsedInStrictModeContext(node) && this.isEvalOrArguments(token)) {
                     this.pushDiagnostic(token, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(token)]);
                     return true;
                 }
@@ -27912,21 +27898,21 @@ var TypeScript;
             return false;
         };
         GrammarCheckerWalker.prototype.visitDeleteExpression = function (node) {
-            if (TypeScript.parsedInStrictMode(node) && node.expression.kind === 9 /* IdentifierName */) {
+            if (TypeScript.parsedInStrictModeContext(node) && node.expression.kind === 9 /* IdentifierName */) {
                 this.pushDiagnostic(node.deleteKeyword, TypeScript.DiagnosticCode.delete_cannot_be_called_on_an_identifier_in_strict_mode);
                 return;
             }
             _super.prototype.visitDeleteExpression.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitYieldExpression = function (node) {
-            if (!TypeScript.parsedInAllowYieldMode(node)) {
+            if (!TypeScript.parseInYieldContext(node)) {
                 this.pushDiagnostic(node.yieldKeyword, TypeScript.DiagnosticCode.yield_expression_must_be_contained_within_a_generator_declaration);
                 return;
             }
             _super.prototype.visitYieldExpression.call(this, node);
         };
         GrammarCheckerWalker.prototype.checkIllegalAssignment = function (node) {
-            if (TypeScript.parsedInStrictMode(node) && TypeScript.SyntaxFacts.isAssignmentOperatorToken(node.operatorToken.kind) && this.isEvalOrArguments(node.left)) {
+            if (TypeScript.parsedInStrictModeContext(node) && TypeScript.SyntaxFacts.isAssignmentOperatorToken(node.operatorToken.kind) && this.isEvalOrArguments(node.left)) {
                 this.pushDiagnostic(node.operatorToken, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(node.left)]);
                 return true;
             }
@@ -30472,7 +30458,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
@@ -30580,13 +30566,13 @@ function nodeToJSON(node, text) {
     if (TypeScript.isIncrementallyUnusable(node)) {
         result.isIncrementallyUnusable = true;
     }
-    if (TypeScript.parsedInStrictMode(node)) {
+    if (TypeScript.parsedInStrictModeContext(node)) {
         result.parsedInStrictMode = true;
     }
-    if (TypeScript.parsedInDisallowInMode(node)) {
+    if (TypeScript.parsedInDisallowInContext(node)) {
         result.parsedInDisallowInMode = true;
     }
-    if (TypeScript.parsedInAllowYieldMode(node)) {
+    if (TypeScript.parseInYieldContext(node)) {
         result.parsedInAllowYieldMode = true;
     }
     var usedNames = {};

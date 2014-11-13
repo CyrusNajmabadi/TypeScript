@@ -156,15 +156,15 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         result.isIncrementallyUnusable = true;
     }
 
-    if (TypeScript.parsedInStrictMode(node)) {
+    if (TypeScript.parsedInStrictModeContext(node)) {
         result.parsedInStrictMode = true;
     }
 
-    if (TypeScript.parsedInDisallowInMode(node)) {
+    if (TypeScript.parsedInDisallowInContext(node)) {
         result.parsedInDisallowInMode = true;
     }
 
-    if (TypeScript.parsedInAllowYieldMode(node)) {
+    if (TypeScript.parseInYieldContext(node)) {
         result.parsedInAllowYieldMode = true;
     }
 
