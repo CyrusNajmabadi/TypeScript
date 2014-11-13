@@ -164,7 +164,7 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         result.parsedInDisallowInMode = true;
     }
 
-    if (TypeScript.parseInYieldContext(node)) {
+    if (TypeScript.parsedInYieldContext(node)) {
         result.parsedInAllowYieldMode = true;
     }
 
