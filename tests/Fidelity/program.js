@@ -24855,6 +24855,16 @@ var TypeScript;
                 return tryParseType() || eatIdentifierToken(TypeScript.DiagnosticCode.Type_expected);
             }
             function tryParseType() {
+                var savedYieldContext = yieldContext;
+                var savedGeneratorParameterContext = generatorParameterContext;
+                setYieldContext(false);
+                setGeneratorParameterContext(false);
+                var result = tryParseTypeWorker();
+                setYieldContext(savedYieldContext);
+                setGeneratorParameterContext(savedGeneratorParameterContext);
+                return result;
+            }
+            function tryParseTypeWorker() {
                 if (isFunctionType()) {
                     return parseFunctionType();
                 }
@@ -30511,7 +30521,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
