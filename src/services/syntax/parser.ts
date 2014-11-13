@@ -186,8 +186,8 @@ module TypeScript.Parser {
         //      [~GeneratorParameter]BindingIdentifier[?Yield]Initializer[In, ?Yield]opt
         //
         // Here this is saying that if the GeneratorParameter context flag is set, that we should 
-        // explicitly set the 'yield' context flag to false before calling into the BindingIdentifier
-        // and we should explicitly unset the 'yield' context flag before calling into the Initializer.
+        // explicitly set the 'yield' context flag to true before calling into the 'BindingIdentifier'
+        // and we should explicitly unset the 'yield' context flag before calling into the 'Initializer'.
         // production.  Conversely, if the GeneratorParameter context flag is not set, then we 
         // should leave the 'yield' context flag alone.
         //
@@ -1373,7 +1373,8 @@ module TypeScript.Parser {
 
         function parseFunctionDeclarationWorker(modifiers: ISyntaxToken[], functionKeyword: ISyntaxToken, asteriskToken: ISyntaxToken): FunctionDeclarationSyntax {
             // GeneratorDeclaration[Yield, Default] :
-            //      function * BindingIdentifier[?Yield](FormalParameters[Yield, GeneratorParameter]) { GeneratorBody[Yield] }
+            //      function * BindingIdentifier[?Yield](FormalParameters[Yield, GeneratorParameter]) { GeneratorBody[Yield] }
+
             var isGenerator = asteriskToken !== undefined;
             return new FunctionDeclarationSyntax(parseNodeData,
                 modifiers,
