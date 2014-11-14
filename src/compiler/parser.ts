@@ -34,12 +34,16 @@ module ts {
         return file.filename + "(" + loc.line + "," + loc.character + ")";
     }
 
-
     export function getStartPosOfNode(node: Node): number {
         return node.pos;
     }
 
     export function getTokenPosOfNode(node: Node, sourceFile?: SourceFile): number {
+        // With nodes that have no width (i.e. 'Missing' nodes), we actually *don't*
+        // want to skip trivia because this will launch us forward to the next token.
+        if (node.pos === node.end) {
+            return node.pos;
+        }
         return skipTrivia((sourceFile || getSourceFileOfNode(node)).text, node.pos);
     }
 
@@ -567,7 +571,6 @@ module ts {
         return false;
     }
 
-
     export function isDeclaration(node: Node): boolean {
         switch (node.kind) {
             case SyntaxKind.TypeParameter:
@@ -796,6 +799,20 @@ module ts {
         return SyntaxKind.FirstTriviaToken <= token && token <= SyntaxKind.LastTriviaToken;
     }
 
+    export function isUnterminatedTemplateEnd(node: LiteralExpression) {
+        Debug.assert(node.kind === SyntaxKind.NoSubstitutionTemplateLiteral || node.kind === SyntaxKind.TemplateTail);
+        var sourceText = getSourceFileOfNode(node).text;
+
+        // If we're not at the EOF, we know we must be terminated.
+        if (node.end !== sourceText.length) {
+            return false;
+        }
+
+        // If we didn't end in a backtick, we must still be in the middle of a template.
+        // If we did, make sure that it's not the *initial* backtick.
+        return sourceText.charCodeAt(node.end - 1) !== CharacterCodes.backtick || node.text.length === 0;
+    }
+
     export function isModifier(token: SyntaxKind): boolean {
         switch (token) {
             case SyntaxKind.PublicKeyword:
@@ -931,18 +948,16 @@ module ts {
             };
         })();
 
-        function getLineAndCharacterlFromSourcePosition(position: number) {
-            if (!lineStarts) {
-                lineStarts = getLineStarts(sourceText);
-            }
-            return getLineAndCharacterOfPosition(lineStarts, position);
+        function getLineStarts(): number[] {
+            return lineStarts || (lineStarts = computeLineStarts(sourceText));
+        }
+
+        function getLineAndCharacterFromSourcePosition(position: number) {
+            return getLineAndCharacterOfPosition(getLineStarts(), position);
         }
 
         function getPositionFromSourceLineAndCharacter(line: number, character: number): number {
-            if (!lineStarts) {
-                lineStarts = getLineStarts(sourceText);
-            }
-            return getPositionFromLineAndCharacter(lineStarts, line, character);
+            return getPositionFromLineAndCharacter(getLineStarts(), line, character);
         }
 
         function error(message: DiagnosticMessage, arg0?: any, arg1?: any, arg2?: any): void {
@@ -985,7 +1000,9 @@ module ts {
                 ? file.syntacticErrors[file.syntacticErrors.length - 1].start
                 : -1;
             if (start !== lastErrorPos) {
-                file.syntacticErrors.push(createFileDiagnostic(file, start, length, message, arg0, arg1, arg2));
+                var diagnostic = createFileDiagnostic(file, start, length, message, arg0, arg1, arg2);
+                diagnostic.isParseError = true;
+                file.syntacticErrors.push(diagnostic);
             }
 
             if (lookAheadMode === LookAheadMode.NoErrorYet) {
@@ -1145,6 +1162,7 @@ module ts {
         }
 
         function internIdentifier(text: string): string {
+            text = escapeIdentifier(text);
             return hasProperty(identifiers, text) ? identifiers[text] : (identifiers[text] = text);
         }
 
@@ -1155,8 +1173,7 @@ module ts {
             identifierCount++;
             if (isIdentifier) {
                 var node = <Identifier>createNode(SyntaxKind.Identifier);
-                var text = escapeIdentifier(scanner.getTokenValue());
-                node.text = internIdentifier(text);
+                node.text = internIdentifier(scanner.getTokenValue());
                 nextToken();
                 return finishNode(node);
             }
@@ -4256,8 +4273,9 @@ module ts {
         file = <SourceFile>createRootNode(SyntaxKind.SourceFile, 0, sourceText.length, rootNodeFlags);
         file.filename = normalizePath(filename);
         file.text = sourceText;
-        file.getLineAndCharacterFromPosition = getLineAndCharacterlFromSourcePosition;
+        file.getLineAndCharacterFromPosition = getLineAndCharacterFromSourcePosition;
         file.getPositionFromLineAndCharacter = getPositionFromSourceLineAndCharacter;
+        file.getLineStarts = getLineStarts;
         file.syntacticErrors = [];
         file.semanticErrors = [];
         var referenceComments = processReferenceComments(); 

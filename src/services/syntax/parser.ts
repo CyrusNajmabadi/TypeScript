@@ -1373,8 +1373,7 @@ module TypeScript.Parser {
 
         function parseFunctionDeclarationWorker(modifiers: ISyntaxToken[], functionKeyword: ISyntaxToken, asteriskToken: ISyntaxToken): FunctionDeclarationSyntax {
             // GeneratorDeclaration[Yield, Default] :
-            //      function * BindingIdentifier[?Yield](FormalParameters[Yield, GeneratorParameter]) { GeneratorBody[Yield] }
-
+            //      function * BindingIdentifier[?Yield](FormalParameters[Yield, GeneratorParameter]) { GeneratorBody[Yield] }
             var isGenerator = asteriskToken !== undefined;
             return new FunctionDeclarationSyntax(parseNodeData,
                 modifiers,
