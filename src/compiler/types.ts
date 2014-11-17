@@ -167,6 +167,7 @@ module ts {
         ArrayLiteral,
         ObjectLiteral,
         PropertyAssignment,
+        ShorthandPropertyAssignment,
         PropertyAccess,
         IndexedAccess,
         CallExpression,
@@ -333,6 +334,10 @@ module ts {
     export interface PropertyDeclaration extends Declaration {
         type?: TypeNode;
         initializer?: Expression;
+    }
+
+    export interface ShortHandPropertyDeclaration extends Declaration {
+        name: Identifier;
     }
 
     export interface ParameterDeclaration extends VariableDeclaration { }
@@ -719,6 +724,7 @@ module ts {
         getReturnTypeOfSignature(signature: Signature): Type;
         getSymbolsInScope(location: Node, meaning: SymbolFlags): Symbol[];
         getSymbolInfo(node: Node): Symbol;
+        getShorthandAssignmentValueSymbol(location: Node): Symbol;
         getTypeOfNode(node: Node): Type;
         typeToString(type: Type, enclosingDeclaration?: Node, flags?: TypeFormatFlags): string;
         symbolToString(symbol: Symbol, enclosingDeclaration?: Node, meaning?: SymbolFlags): string;
@@ -732,7 +738,7 @@ module ts {
         isImplementationOfOverload(node: FunctionLikeDeclaration): boolean;
         isUndefinedSymbol(symbol: Symbol): boolean;
         isArgumentsSymbol(symbol: Symbol): boolean;
-        hasEarlyErrors(sourceFile?: SourceFile): boolean;
+        isEmitBlocked(sourceFile?: SourceFile): boolean;
         // Returns the constant value of this enum member, or 'undefined' if the enum member has a computed value.
         getEnumMemberValue(node: EnumMember): number;
         isValidPropertyAccess(node: PropertyAccess, propertyName: string): boolean;
@@ -823,7 +829,7 @@ module ts {
         isImportDeclarationEntityNameReferenceDeclarationVisibile(entityName: EntityName): SymbolAccessiblityResult;
         // Returns the constant value this property access resolves to, or 'undefined' for a non-constant
         getConstantValue(node: PropertyAccess | IndexedAccess): number;
-        hasEarlyErrors(sourceFile?: SourceFile): boolean;
+        isEmitBlocked(sourceFile?: SourceFile): boolean;
     }
 
     export const enum SymbolFlags {
@@ -1156,6 +1162,7 @@ module ts {
         locale?: string;
         mapRoot?: string;
         module?: ModuleKind;
+        noEmitOnError?: boolean;
         noErrorTruncation?: boolean;
         noImplicitAny?: boolean;
         noLib?: boolean;
