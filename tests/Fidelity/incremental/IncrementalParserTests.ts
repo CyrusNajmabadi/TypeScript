@@ -127,7 +127,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
         }
 
         public static testIncrementalRegex2() {
@@ -149,7 +149,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, "/");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
         }
 
         public static testIncrementalComment2() {

@@ -3,9 +3,17 @@
     "languageVersion": "EcmaScript5",
     "diagnostics": [
         {
-            "start": 4,
-            "length": 1,
-            "diagnosticCode": "Expression expected."
+            "start": 16,
+            "length": 0,
+            "diagnosticCode": "Unterminated regular expression literal."
+        },
+        {
+            "start": 16,
+            "length": 0,
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                ")"
+            ]
         }
     ],
     "sourceUnit": {
@@ -24,8 +32,8 @@
                 "expression": {
                     "kind": "InvocationExpression",
                     "start": 0,
-                    "end": 15,
-                    "width": 15,
+                    "end": 16,
+                    "width": 16,
                     "isIncrementallyUnusable": true,
                     "expression": {
                         "kind": "IdentifierName",
@@ -40,8 +48,8 @@
                     "argumentList": {
                         "kind": "ArgumentList",
                         "start": 3,
-                        "end": 15,
-                        "width": 12,
+                        "end": 16,
+                        "width": 13,
                         "isIncrementallyUnusable": true,
                         "openParenToken": {
                             "kind": "OpenParenToken",
@@ -55,63 +63,25 @@
                         },
                         "arguments": [
                             {
-                                "kind": "BinaryExpression",
+                                "kind": "RegularExpressionLiteral",
+                                "fullStart": 4,
                                 "start": 4,
-                                "end": 14,
-                                "width": 10,
-                                "isIncrementallyUnusable": true,
-                                "left": {
-                                    "kind": "IdentifierName",
-                                    "fullStart": 4,
-                                    "start": 4,
-                                    "fullWidth": 0,
-                                    "width": 0,
-                                    "text": "",
-                                    "isIncrementallyUnusable": true
-                                },
-                                "operatorToken": {
-                                    "kind": "SlashToken",
-                                    "fullStart": 4,
-                                    "start": 4,
-                                    "fullWidth": 1,
-                                    "width": 1,
-                                    "text": "/",
-                                    "value": "/",
-                                    "valueText": "/"
-                                },
-                                "right": {
-                                    "kind": "IdentifierName",
-                                    "fullStart": 5,
-                                    "start": 5,
-                                    "fullWidth": 9,
-                                    "width": 9,
-                                    "text": "notregexp",
-                                    "value": "notregexp",
-                                    "valueText": "notregexp"
-                                }
+                                "fullWidth": 12,
+                                "width": 12,
+                                "text": "/notregexp);",
+                                "isIncrementallyUnusable": true
                             }
                         ],
                         "closeParenToken": {
                             "kind": "CloseParenToken",
-                            "fullStart": 14,
-                            "start": 14,
-                            "fullWidth": 1,
-                            "width": 1,
-                            "text": ")",
-                            "value": ")",
-                            "valueText": ")"
+                            "fullStart": 16,
+                            "start": 16,
+                            "fullWidth": 0,
+                            "width": 0,
+                            "text": "",
+                            "isIncrementallyUnusable": true
                         }
                     }
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "fullStart": 15,
-                    "start": 15,
-                    "fullWidth": 1,
-                    "width": 1,
-                    "text": ";",
-                    "value": ";",
-                    "valueText": ";"
                 }
             }
         ],
