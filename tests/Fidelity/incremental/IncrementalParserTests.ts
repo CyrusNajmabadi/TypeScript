@@ -99,7 +99,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 36);
         }
 
         public static testIncremental2() {
@@ -193,7 +193,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 26);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
         }
 
         public static testTypeMember1() {
@@ -205,7 +205,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "?");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 44);
         }
 
         public static testEnumElement1() {
@@ -217,7 +217,7 @@ module TypeScript {
             var oldText = SimpleText.fromString(source);
             var newTextAndChange = withChange(oldText, index, 2, "+");
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
         }
 
         //public static testEnumElement1() {
@@ -412,7 +412,7 @@ module TypeScript {
             var newTextAndChange = withInsert(oldText, index, " => 1");
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         }
 
         public static testGenerics2() {
@@ -424,7 +424,7 @@ module TypeScript {
             var newTextAndChange = withDelete(oldText, index, " => 1".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 6);
         }
 
         public static testGenerics3() {
@@ -598,7 +598,7 @@ else {\
             var index = source.lastIndexOf(";");
             var newTextAndChange = withDelete(oldText, index, 1);
 
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 40);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 39);
         }
 
         public static testGenericError1() {

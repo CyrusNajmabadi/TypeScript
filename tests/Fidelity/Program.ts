@@ -273,6 +273,19 @@ class Program {
             TypeScript.Environment.standardOut.WriteLine("");
         }
 
+        if (specificFile === undefined) {
+            TypeScript.Environment.standardOut.WriteLine("Testing Incremental 2.");
+            TypeScript.IncrementalParserTests.runAllTests();
+        }
+
+        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
+        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
+            fileName => this.runIncremental(fileName, ts.ScriptTarget.ES5));
+
+        if (specificFile === undefined) {
+            this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
+        }
+
         TypeScript.Environment.standardOut.Write("Testing scanner ES3:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript3",
             fileName => this.runScanner(fileName, ts.ScriptTarget.ES3, verify, /*generateBaselines:*/ generate));
@@ -316,19 +329,6 @@ class Program {
         TypeScript.Environment.standardOut.Write("Testing pretty printer:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\prettyPrinter\\ecmascript5",
             fileName => this.runPrettyPrinter(fileName, ts.ScriptTarget.ES5, verify, /*generateBaselines:*/ generate));
-
-        if (specificFile === undefined) {
-            TypeScript.Environment.standardOut.WriteLine("Testing Incremental 2.");
-            TypeScript.IncrementalParserTests.runAllTests();
-        }
-
-        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
-        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
-            fileName => this.runIncremental(fileName, ts.ScriptTarget.ES5));
-
-        if (specificFile === undefined) {
-            this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
-        }
 
         TypeScript.Environment.standardOut.Write("Testing against 262:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262",

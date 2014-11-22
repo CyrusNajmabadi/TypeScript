@@ -20985,9 +20985,6 @@ var TypeScript;
             function currentNode() {
                 return undefined;
             }
-            function consumeNode(node) {
-                throw TypeScript.Errors.invalidOperation();
-            }
             function absolutePosition() {
                 return _absolutePosition;
             }
@@ -21031,9 +21028,14 @@ var TypeScript;
             function peekToken(n) {
                 return slidingWindow.peekItemN(n);
             }
-            function consumeToken(token) {
-                _absolutePosition += token.fullWidth();
-                slidingWindow.moveToNextItem();
+            function consumeNodeOrToken(nodeOrToken) {
+                if (nodeOrToken === slidingWindow.currentItemWithoutFetching()) {
+                    _absolutePosition += nodeOrToken.fullWidth();
+                    slidingWindow.moveToNextItem();
+                }
+                else {
+                    resetToPosition(TypeScript.fullEnd(nodeOrToken));
+                }
             }
             function currentToken() {
                 return slidingWindow.currentItem(false);
@@ -21074,15 +21076,13 @@ var TypeScript;
                 currentToken: currentToken,
                 currentContextualToken: currentContextualToken,
                 peekToken: peekToken,
-                consumeNode: consumeNode,
-                consumeToken: consumeToken,
+                consumeNodeOrToken: consumeNodeOrToken,
                 getRewindPoint: getRewindPoint,
                 rewind: rewind,
                 releaseRewindPoint: releaseRewindPoint,
                 tokenDiagnostics: tokenDiagnostics,
                 release: release,
-                absolutePosition: absolutePosition,
-                resetToPosition: resetToPosition
+                absolutePosition: absolutePosition
             };
         }
         Scanner.createParserSource = createParserSource;
@@ -21309,6 +21309,12 @@ var TypeScript;
                 if (!this.addMoreItemsToWindow(argument)) {
                     return this.defaultValue;
                 }
+            }
+            return this.window[this.currentRelativeItemIndex];
+        };
+        SlidingWindow.prototype.currentItemWithoutFetching = function () {
+            if (this.currentRelativeItemIndex >= this.windowCount) {
+                return undefined;
             }
             return this.window[this.currentRelativeItemIndex];
         };
@@ -21804,7 +21810,7 @@ var TypeScript;
     (function (Syntax) {
         function addArrayPrototypeValue(name, val) {
             if (Object.defineProperty && Array.prototype[name] === undefined) {
-                Object.defineProperty(Array.prototype, name, { value: val, writable: false });
+                Object.defineProperty(Array.prototype, name, { value: val, writable: false, enumerable: false });
             }
             else {
                 Array.prototype[name] = val;
@@ -23426,10 +23432,10 @@ var TypeScript;
             function skipToken(token) {
                 _skippedTokens = _skippedTokens || [];
                 _skippedTokens.push(token);
-                source.consumeToken(token);
+                source.consumeNodeOrToken(token);
             }
             function consumeToken(token) {
-                source.consumeToken(token);
+                source.consumeNodeOrToken(token);
                 if (_skippedTokens) {
                     token = addSkippedTokensBeforeToken(token, _skippedTokens);
                     _skippedTokens = undefined;
@@ -23460,7 +23466,7 @@ var TypeScript;
             }
             function consumeNode(node) {
                 TypeScript.Debug.assert(_skippedTokens === undefined);
-                source.consumeNode(node);
+                source.consumeNodeOrToken(node);
             }
             function eatToken(kind) {
                 var token = currentToken();
@@ -24478,17 +24484,17 @@ var TypeScript;
             function parseDefaultSwitchClause(defaultKeyword) {
                 return new TypeScript.DefaultSwitchClauseSyntax(parseNodeData, consumeToken(defaultKeyword), eatToken(108 /* ColonToken */), parseSyntaxList(4 /* SwitchClause_Statements */));
             }
-            function parseThrowStatementExpression() {
-                return canEatExplicitOrAutomaticSemicolon(false) ? createMissingToken(9 /* IdentifierName */, undefined) : allowInAnd(parseExpression);
-            }
             function parseThrowStatement(throwKeyword) {
-                return new TypeScript.ThrowStatementSyntax(parseNodeData, consumeToken(throwKeyword), parseThrowStatementExpression(), eatExplicitOrAutomaticSemicolon(false));
+                return new TypeScript.ThrowStatementSyntax(parseNodeData, consumeToken(throwKeyword), tryParseThrowStatementExpression(), eatExplicitOrAutomaticSemicolon(false));
             }
-            function tryParseReturnStatementExpression() {
-                return !canEatExplicitOrAutomaticSemicolon(false) ? allowInAnd(parseExpression) : undefined;
+            function tryParseThrowStatementExpression() {
+                return canEatExplicitOrAutomaticSemicolon(false) ? undefined : allowInAnd(parseExpression);
             }
             function parseReturnStatement(returnKeyword) {
                 return new TypeScript.ReturnStatementSyntax(parseNodeData, consumeToken(returnKeyword), tryParseReturnStatementExpression(), eatExplicitOrAutomaticSemicolon(false));
+            }
+            function tryParseReturnStatementExpression() {
+                return canEatExplicitOrAutomaticSemicolon(false) ? undefined : allowInAnd(parseExpression);
             }
             function isExpressionStatement(currentToken) {
                 var tokenKind = currentToken.kind;
@@ -26494,7 +26500,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.throwKeyword = throwKeyword, this.expression = expression, this.semicolonToken = semicolonToken, throwKeyword.parent = this, expression.parent = this, semicolonToken && (semicolonToken.parent = this);
+        this.throwKeyword = throwKeyword, this.expression = expression, this.semicolonToken = semicolonToken, throwKeyword.parent = this, expression && (expression.parent = this), semicolonToken && (semicolonToken.parent = this);
     };
     TypeScript.ThrowStatementSyntax.prototype.kind = 162 /* ThrowStatement */;
     TypeScript.ThrowStatementSyntax.prototype.childCount = 3;
@@ -28188,10 +28194,17 @@ var TypeScript;
             _super.prototype.visitSwitchStatement.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitThrowStatement = function (node) {
-            if (this.checkForStatementInAmbientContxt(node)) {
+            if (this.checkForStatementInAmbientContxt(node) || this.checkForMissingThrowStatementExpression(node)) {
                 return;
             }
             _super.prototype.visitThrowStatement.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkForMissingThrowStatementExpression = function (node) {
+            if (node.expression === undefined) {
+                this.diagnostics.push(new TypeScript.Diagnostic(this.syntaxTree.fileName(), this.syntaxTree.lineMap(), TypeScript.fullEnd(node.throwKeyword), 0, TypeScript.DiagnosticCode.Expression_expected));
+                return true;
+            }
+            return false;
         };
         GrammarCheckerWalker.prototype.visitTryStatement = function (node) {
             if (this.checkForStatementInAmbientContxt(node)) {
@@ -29984,7 +29997,7 @@ var TypeScript;
             var semicolonIndex = source.indexOf(";");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 36);
         };
         IncrementalParserTests.testIncremental2 = function () {
             var source = "class C {\r\n";
@@ -30048,21 +30061,21 @@ var TypeScript;
             var semicolonIndex = source.indexOf(";");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, semicolonIndex, " + 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 26);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
         };
         IncrementalParserTests.testTypeMember1 = function () {
             var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
             var index = source.indexOf(": string");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, "?");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 45);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 44);
         };
         IncrementalParserTests.testEnumElement1 = function () {
             var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
             var index = source.indexOf("<<");
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withChange(oldText, index, 2, "+");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
         };
         IncrementalParserTests.testStrictMode1 = function () {
             var source = "foo1();\r\nfoo1();\r\nfoo1();\r\package();";
@@ -30169,14 +30182,14 @@ var TypeScript;
             var index = source.indexOf(';');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withInsert(oldText, index, " => 1");
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
         };
         IncrementalParserTests.testGenerics2 = function () {
             var source = "var v = <T>(a) => 1;";
             var index = source.indexOf(' =>');
             var oldText = TypeScript.SimpleText.fromString(source);
             var newTextAndChange = withDelete(oldText, index, " => 1".length);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 6);
         };
         IncrementalParserTests.testGenerics3 = function () {
             var source = "var v = 1 >> = 2";
@@ -30286,7 +30299,7 @@ else {\
             var oldText = TypeScript.SimpleText.fromString(source);
             var index = source.lastIndexOf(";");
             var newTextAndChange = withDelete(oldText, index, 1);
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 40);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 39);
         };
         IncrementalParserTests.testGenericError1 = function () {
             var source = "class Dictionary<> { }\r\nvar y;\r\n";
@@ -30398,24 +30411,20 @@ var TypeScript;
     var IncrementalParser;
     (function (IncrementalParser) {
         function createParserSource(oldSyntaxTree, textChangeRange, text) {
-            var fileName = oldSyntaxTree.fileName();
-            var languageVersion = oldSyntaxTree.languageVersion();
-            var _scannerParserSource;
-            var _changeRange;
-            var _changeRangeNewSpan;
-            var _changeDelta = 0;
-            var _oldSourceUnitCursor = getSyntaxCursor();
+            var _scannerParserSource = TypeScript.Scanner.createParserSource(oldSyntaxTree.fileName(), text, oldSyntaxTree.languageVersion());
             var oldSourceUnit = oldSyntaxTree.sourceUnit();
             var _outstandingRewindPointCount = 0;
+            var _oldSourceUnitCursor = getSyntaxCursor();
             if (oldSourceUnit.moduleElements.length > 0) {
                 _oldSourceUnitCursor.pushElement(TypeScript.childAt(oldSourceUnit.moduleElements, 0), 0);
             }
-            _changeRange = extendToAffectedRange(textChangeRange, oldSourceUnit);
-            _changeRangeNewSpan = _changeRange.newSpan();
+            var _changeRange = extendToAffectedRange(textChangeRange, oldSourceUnit);
+            var _changeRangeNewSpan = _changeRange.newSpan();
             if (TypeScript.Debug.shouldAssert(2 /* Aggressive */)) {
                 TypeScript.Debug.assert((TypeScript.fullWidth(oldSourceUnit) - _changeRange.span().length() + _changeRange.newLength()) === text.length());
             }
-            _scannerParserSource = TypeScript.Scanner.createParserSource(oldSyntaxTree.fileName(), text, oldSyntaxTree.languageVersion());
+            var delta = _changeRange.newSpan().length() - _changeRange.span().length();
+            updateTokenPositionsAndMarkElements(oldSourceUnit, _changeRange.span().start(), _changeRange.span().end(), delta, 0);
             function release() {
                 _scannerParserSource.release();
                 _scannerParserSource = undefined;
@@ -30442,17 +30451,11 @@ var TypeScript;
             }
             function getRewindPoint() {
                 var rewindPoint = _scannerParserSource.getRewindPoint();
-                var oldSourceUnitCursorClone = cloneSyntaxCursor(_oldSourceUnitCursor);
-                rewindPoint.changeDelta = _changeDelta;
-                rewindPoint.changeRange = _changeRange;
-                rewindPoint.oldSourceUnitCursor = _oldSourceUnitCursor;
-                _oldSourceUnitCursor = oldSourceUnitCursorClone;
+                rewindPoint.oldSourceUnitCursor = cloneSyntaxCursor(_oldSourceUnitCursor);
                 _outstandingRewindPointCount++;
                 return rewindPoint;
             }
             function rewind(rewindPoint) {
-                _changeRange = rewindPoint.changeRange;
-                _changeDelta = rewindPoint.changeDelta;
                 returnSyntaxCursor(_oldSourceUnitCursor);
                 _oldSourceUnitCursor = rewindPoint.oldSourceUnitCursor;
                 rewindPoint.oldSourceUnitCursor = undefined;
@@ -30469,58 +30472,55 @@ var TypeScript;
             function isPinned() {
                 return _outstandingRewindPointCount > 0;
             }
-            function canReadFromOldSourceUnit() {
+            function trySynchronizeCursorToPosition() {
                 if (isPinned()) {
                     return false;
                 }
-                if (_changeRange && _changeRangeNewSpan.intersectsWithPosition(absolutePosition())) {
-                    return false;
-                }
-                syncCursorToNewTextIfBehind();
-                return _changeDelta === 0 && !_oldSourceUnitCursor.isFinished();
-            }
-            function updateTokenPosition(token) {
-                if (isPastChangeRange()) {
-                    token.setFullStart(absolutePosition());
-                }
-            }
-            function updateNodePosition(node) {
-                if (isPastChangeRange()) {
-                    var position = absolutePosition();
-                    var tokens = getTokens(node);
-                    for (var i = 0, n = tokens.length; i < n; i++) {
-                        var token = tokens[i];
-                        token.setFullStart(position);
-                        position += token.fullWidth();
+                var absolutePos = absolutePosition();
+                while (true) {
+                    if (_oldSourceUnitCursor.isFinished()) {
+                        return false;
+                    }
+                    var currentNodeOrToken = _oldSourceUnitCursor.currentNodeOrToken();
+                    if (currentNodeOrToken.intersectsChange) {
+                        if (TypeScript.isNode(currentNodeOrToken)) {
+                            _oldSourceUnitCursor.moveToFirstChild();
+                        }
+                        else {
+                            _oldSourceUnitCursor.moveToNextSibling();
+                        }
+                        continue;
+                    }
+                    var currentNodeOrTokenFullStart = TypeScript.fullStart(currentNodeOrToken);
+                    if (currentNodeOrTokenFullStart === absolutePos) {
+                        return true;
+                    }
+                    if (currentNodeOrTokenFullStart > absolutePos) {
+                        return false;
+                    }
+                    var currentNodeOrTokenFullWidth = TypeScript.fullWidth(currentNodeOrToken);
+                    var currentNodeOrTokenFullEnd = currentNodeOrTokenFullStart + currentNodeOrTokenFullWidth;
+                    if (currentNodeOrTokenFullEnd <= absolutePos || TypeScript.isToken(currentNodeOrToken)) {
+                        _oldSourceUnitCursor.moveToNextSibling();
+                    }
+                    else {
+                        _oldSourceUnitCursor.moveToFirstChild();
                     }
                 }
             }
-            function getTokens(node) {
-                var tokens = node.__cachedTokens;
-                if (!tokens) {
-                    tokens = [];
-                    tokenCollectorWalker.tokens = tokens;
-                    TypeScript.visitNodeOrToken(tokenCollectorWalker, node);
-                    node.__cachedTokens = tokens;
-                    tokenCollectorWalker.tokens = undefined;
-                }
-                return tokens;
-            }
             function currentNode() {
-                if (canReadFromOldSourceUnit()) {
+                if (trySynchronizeCursorToPosition()) {
                     var node = tryGetNodeFromOldSourceUnit();
                     if (node) {
-                        updateNodePosition(node);
                         return node;
                     }
                 }
                 return undefined;
             }
             function currentToken() {
-                if (canReadFromOldSourceUnit()) {
+                if (trySynchronizeCursorToPosition()) {
                     var token = tryGetTokenFromOldSourceUnit();
                     if (token) {
-                        updateTokenPosition(token);
                         return token;
                     }
                 }
@@ -30529,58 +30529,27 @@ var TypeScript;
             function currentContextualToken() {
                 return _scannerParserSource.currentContextualToken();
             }
-            function syncCursorToNewTextIfBehind() {
-                while (true) {
-                    if (_oldSourceUnitCursor.isFinished()) {
-                        break;
-                    }
-                    if (_changeDelta >= 0) {
-                        break;
-                    }
-                    var currentNodeOrToken = _oldSourceUnitCursor.currentNodeOrToken();
-                    if (TypeScript.isNode(currentNodeOrToken) && (TypeScript.fullWidth(currentNodeOrToken) > Math.abs(_changeDelta))) {
-                        _oldSourceUnitCursor.moveToFirstChild();
-                    }
-                    else {
-                        _oldSourceUnitCursor.moveToNextSibling();
-                        _changeDelta += TypeScript.fullWidth(currentNodeOrToken);
-                    }
-                }
-            }
-            function intersectsWithChangeRangeSpanInOriginalText(start, length) {
-                return !isPastChangeRange() && _changeRange.span().intersectsWith(start, length);
-            }
             function tryGetNodeFromOldSourceUnit() {
                 while (true) {
                     var node = _oldSourceUnitCursor.currentNode();
                     if (node === undefined) {
                         return undefined;
                     }
-                    if (!intersectsWithChangeRangeSpanInOriginalText(absolutePosition(), TypeScript.fullWidth(node))) {
-                        var isIncrementallyUnusuable = TypeScript.isIncrementallyUnusable(node);
-                        if (!isIncrementallyUnusuable) {
-                            return node;
-                        }
+                    if (!TypeScript.isIncrementallyUnusable(node)) {
+                        return node;
                     }
                     _oldSourceUnitCursor.moveToFirstChild();
                 }
             }
-            function canReuseTokenFromOldSourceUnit(position, token) {
-                if (token) {
-                    if (!intersectsWithChangeRangeSpanInOriginalText(position, token.fullWidth())) {
-                        if (!token.isIncrementallyUnusable() && !TypeScript.Scanner.isContextualToken(token)) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+            function canReuseTokenFromOldSourceUnit(token) {
+                return token && !token.intersectsChange && !token.isIncrementallyUnusable() && !TypeScript.Scanner.isContextualToken(token);
             }
             function tryGetTokenFromOldSourceUnit() {
                 var token = _oldSourceUnitCursor.currentToken();
-                return canReuseTokenFromOldSourceUnit(absolutePosition(), token) ? token : undefined;
+                return canReuseTokenFromOldSourceUnit(token) ? token : undefined;
             }
             function peekToken(n) {
-                if (canReadFromOldSourceUnit()) {
+                if (trySynchronizeCursorToPosition()) {
                     var token = tryPeekTokenFromOldSourceUnit(n);
                     if (token) {
                         return token;
@@ -30596,55 +30565,30 @@ var TypeScript;
                 return token;
             }
             function tryPeekTokenFromOldSourceUnitWorker(n) {
-                var currentPosition = absolutePosition();
                 _oldSourceUnitCursor.moveToFirstToken();
                 for (var i = 0; i < n; i++) {
                     var interimToken = _oldSourceUnitCursor.currentToken();
-                    if (!canReuseTokenFromOldSourceUnit(currentPosition, interimToken)) {
+                    if (!canReuseTokenFromOldSourceUnit(interimToken)) {
                         return undefined;
                     }
-                    currentPosition += interimToken.fullWidth();
                     _oldSourceUnitCursor.moveToNextSibling();
                 }
                 var token = _oldSourceUnitCursor.currentToken();
-                return canReuseTokenFromOldSourceUnit(currentPosition, token) ? token : undefined;
+                return canReuseTokenFromOldSourceUnit(token) ? token : undefined;
             }
-            function consumeNode(node) {
-                _oldSourceUnitCursor.moveToNextSibling();
-                var _absolutePosition = absolutePosition() + TypeScript.fullWidth(node);
-                _scannerParserSource.resetToPosition(_absolutePosition);
-            }
-            function consumeToken(currentToken) {
-                if (_oldSourceUnitCursor.currentToken() === currentToken) {
-                    _oldSourceUnitCursor.moveToNextSibling();
-                    var _absolutePosition = absolutePosition() + currentToken.fullWidth();
-                    _scannerParserSource.resetToPosition(_absolutePosition);
-                }
-                else {
-                    _changeDelta -= currentToken.fullWidth();
-                    _scannerParserSource.consumeToken(currentToken);
-                    if (!isPastChangeRange()) {
-                        if (absolutePosition() >= _changeRangeNewSpan.end()) {
-                            _changeDelta += _changeRange.newLength() - _changeRange.span().length();
-                            _changeRange = undefined;
-                        }
-                    }
-                }
-            }
-            function isPastChangeRange() {
-                return _changeRange === undefined;
+            function consumeNodeOrToken(nodeOrToken) {
+                _scannerParserSource.consumeNodeOrToken(nodeOrToken);
             }
             return {
                 text: text,
-                fileName: fileName,
-                languageVersion: languageVersion,
+                fileName: oldSyntaxTree.fileName(),
+                languageVersion: oldSyntaxTree.languageVersion(),
                 absolutePosition: absolutePosition,
                 currentNode: currentNode,
                 currentToken: currentToken,
                 currentContextualToken: currentContextualToken,
                 peekToken: peekToken,
-                consumeNode: consumeNode,
-                consumeToken: consumeToken,
+                consumeNodeOrToken: consumeNodeOrToken,
                 getRewindPoint: getRewindPoint,
                 rewind: rewind,
                 releaseRewindPoint: releaseRewindPoint,
@@ -30809,6 +30753,74 @@ var TypeScript;
             return TokenCollectorWalker;
         })(TypeScript.SyntaxWalker);
         var tokenCollectorWalker = new TokenCollectorWalker();
+        function updateTokenPositionsAndMarkElements(element, changeStart, changeRangeOldEnd, delta, fullStart) {
+            if (fullStart > changeRangeOldEnd) {
+                forceUpdateTokenPositionsForElement(element, delta);
+            }
+            else {
+                var fullEnd = fullStart + TypeScript.fullWidth(element);
+                if (fullEnd >= changeStart) {
+                    element.intersectsChange = true;
+                    if (TypeScript.isList(element)) {
+                        var list = element;
+                        for (var i = 0, n = list.length; i < n; i++) {
+                            var child = list[i];
+                            updateTokenPositionsAndMarkElements(child, changeStart, changeRangeOldEnd, delta, fullStart);
+                            fullStart += TypeScript.fullWidth(child);
+                        }
+                    }
+                    else if (TypeScript.isNode(element)) {
+                        var node = element;
+                        for (var i = 0, n = node.childCount; i < n; i++) {
+                            var child = node.childAt(i);
+                            if (child) {
+                                updateTokenPositionsAndMarkElements(child, changeStart, changeRangeOldEnd, delta, fullStart);
+                                fullStart += TypeScript.fullWidth(child);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        function forceUpdateTokenPositionsForElement(element, delta) {
+            if (delta !== 0) {
+                if (TypeScript.isList(element)) {
+                    var list = element;
+                    for (var i = 0, n = list.length; i < n; i++) {
+                        forceUpdateTokenPositionForNodeOrToken(list[i], delta);
+                    }
+                }
+                else {
+                    forceUpdateTokenPositionForNodeOrToken(element, delta);
+                }
+            }
+        }
+        function forceUpdateTokenPosition(token, delta) {
+            token.setFullStart(token.fullStart() + delta);
+        }
+        function forceUpdateTokenPositionForNodeOrToken(nodeOrToken, delta) {
+            if (TypeScript.isToken(nodeOrToken)) {
+                forceUpdateTokenPosition(nodeOrToken, delta);
+            }
+            else {
+                var node = nodeOrToken;
+                var tokens = getTokens(node);
+                for (var i = 0, n = tokens.length; i < n; i++) {
+                    forceUpdateTokenPosition(tokens[i], delta);
+                }
+            }
+        }
+        function getTokens(node) {
+            var tokens = node.__cachedTokens;
+            if (!tokens) {
+                tokens = [];
+                tokenCollectorWalker.tokens = tokens;
+                TypeScript.visitNodeOrToken(tokenCollectorWalker, node);
+                node.__cachedTokens = tokens;
+                tokenCollectorWalker.tokens = undefined;
+            }
+            return tokens;
+        }
         function parse(oldSyntaxTree, textChangeRange, newText) {
             if (textChangeRange.isUnchanged()) {
                 return oldSyntaxTree;
@@ -31150,6 +31162,15 @@ var Program = (function () {
             TypeScript.Environment.standardOut.WriteLine("!!!!!!!!!! WARNING - GENERATING !!!!!!!!!");
             TypeScript.Environment.standardOut.WriteLine("");
         }
+        if (specificFile === undefined) {
+            TypeScript.Environment.standardOut.WriteLine("Testing Incremental 2.");
+            TypeScript.IncrementalParserTests.runAllTests();
+        }
+        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
+        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5", function (fileName) { return _this.runIncremental(fileName, 1 /* ES5 */); });
+        if (specificFile === undefined) {
+            this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
+        }
         TypeScript.Environment.standardOut.Write("Testing scanner ES3:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript3", function (fileName) { return _this.runScanner(fileName, 0 /* ES3 */, verify, generate); });
         TypeScript.Environment.standardOut.Write("Testing scanner ES5:");
@@ -31170,15 +31191,6 @@ var Program = (function () {
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\emitter\\ecmascript5", function (fileName) { return _this.runEmitter(fileName, 1 /* ES5 */, verify, generate, false); });
         TypeScript.Environment.standardOut.Write("Testing pretty printer:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\prettyPrinter\\ecmascript5", function (fileName) { return _this.runPrettyPrinter(fileName, 1 /* ES5 */, verify, generate); });
-        if (specificFile === undefined) {
-            TypeScript.Environment.standardOut.WriteLine("Testing Incremental 2.");
-            TypeScript.IncrementalParserTests.runAllTests();
-        }
-        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
-        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5", function (fileName) { return _this.runIncremental(fileName, 1 /* ES5 */); });
-        if (specificFile === undefined) {
-            this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
-        }
         TypeScript.Environment.standardOut.Write("Testing against 262:");
         this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\test262", function (fileName) { return _this.runParser(fileName, 1 /* ES5 */, verify, generate); });
     };
