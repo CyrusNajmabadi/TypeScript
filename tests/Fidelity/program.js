@@ -24744,12 +24744,12 @@ var TypeScript;
                 }
                 return token0;
             }
-            function tryParseMemberExpressionOrHigher(_currentToken, force, inObjectCreation) {
+            function tryParseMemberExpressionOrHigher(_currentToken, force) {
                 var expression = tryParsePrimaryExpression(_currentToken, force);
                 if (expression === undefined) {
                     return undefined;
                 }
-                return parseMemberExpressionRest(expression, inObjectCreation);
+                return parseMemberExpressionRest(expression);
             }
             function parseCallExpressionRest(expression) {
                 while (true) {
@@ -24767,7 +24767,7 @@ var TypeScript;
                             expression = new TypeScript.InvocationExpressionSyntax(parseNodeData, expression, argumentList);
                             continue;
                         case 76 /* OpenBracketToken */:
-                            expression = parseElementAccessExpression(expression, _currentToken, false);
+                            expression = parseElementAccessExpression(expression, _currentToken);
                             continue;
                         case 78 /* DotToken */:
                             expression = new TypeScript.MemberAccessExpressionSyntax(parseNodeData, expression, consumeToken(_currentToken), eatIdentifierNameToken());
@@ -24780,13 +24780,13 @@ var TypeScript;
                     return expression;
                 }
             }
-            function parseMemberExpressionRest(expression, inObjectCreation) {
+            function parseMemberExpressionRest(expression) {
                 while (true) {
                     var _currentToken = currentToken();
                     var currentTokenKind = _currentToken.kind;
                     switch (currentTokenKind) {
                         case 76 /* OpenBracketToken */:
-                            expression = parseElementAccessExpression(expression, _currentToken, inObjectCreation);
+                            expression = parseElementAccessExpression(expression, _currentToken);
                             continue;
                         case 78 /* DotToken */:
                             expression = new TypeScript.MemberAccessExpressionSyntax(parseNodeData, expression, consumeToken(_currentToken), eatIdentifierNameToken());
@@ -24805,7 +24805,7 @@ var TypeScript;
                     expression = parseSuperExpression(_currentToken);
                 }
                 else {
-                    expression = tryParseMemberExpressionOrHigher(_currentToken, force, false);
+                    expression = tryParseMemberExpressionOrHigher(_currentToken, force);
                     if (expression === undefined) {
                         return undefined;
                     }
@@ -24881,20 +24881,11 @@ var TypeScript;
                 var force = currentToken().kind === 81 /* CommaToken */;
                 return allowInAnd(force ? parseAssignmentExpressionOrHigher : tryParseAssignmentExpressionOrHigher);
             }
-            function parseElementAccessArgumentExpression(openBracketToken, inObjectCreation) {
-                if (inObjectCreation && currentToken().kind === 77 /* CloseBracketToken */) {
-                    var errorStart = TypeScript.start(openBracketToken, source.text);
-                    var errorEnd = TypeScript.fullEnd(currentToken());
-                    var diagnostic = new TypeScript.Diagnostic(fileName, source.text.lineMap(), errorStart, errorEnd - errorStart, TypeScript.DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead, undefined);
-                    addDiagnostic(diagnostic);
-                    return createEmptyToken(9 /* IdentifierName */);
-                }
-                else {
-                    return allowInAnd(parseExpression);
-                }
+            function parseElementAccessArgumentExpression(openBracketToken) {
+                return currentToken().kind === 77 /* CloseBracketToken */ ? undefined : allowInAnd(parseExpression);
             }
-            function parseElementAccessExpression(expression, openBracketToken, inObjectCreation) {
-                return new TypeScript.ElementAccessExpressionSyntax(parseNodeData, expression, consumeToken(openBracketToken), parseElementAccessArgumentExpression(openBracketToken, inObjectCreation), eatToken(77 /* CloseBracketToken */));
+            function parseElementAccessExpression(expression, openBracketToken) {
+                return new TypeScript.ElementAccessExpressionSyntax(parseNodeData, expression, consumeToken(openBracketToken), parseElementAccessArgumentExpression(openBracketToken), eatToken(77 /* CloseBracketToken */));
             }
             function tryParsePrimaryExpression(_currentToken, force) {
                 if (isIdentifier(_currentToken)) {
@@ -24950,7 +24941,7 @@ var TypeScript;
                 return new TypeScript.FunctionExpressionSyntax(parseNodeData, functionKeyword, asteriskToken, enterYieldContextAnd(eatOptionalIdentifierToken), parseCallSignature(false, isGenerator, isGenerator), parseFunctionBlock(isGenerator));
             }
             function parseObjectCreationExpression(newKeyword) {
-                return new TypeScript.ObjectCreationExpressionSyntax(parseNodeData, consumeToken(newKeyword), tryParseMemberExpressionOrHigher(currentToken(), true, true), tryParseArgumentList());
+                return new TypeScript.ObjectCreationExpressionSyntax(parseNodeData, consumeToken(newKeyword), tryParseMemberExpressionOrHigher(currentToken(), true), tryParseArgumentList());
             }
             function parseTemplateExpression(startToken) {
                 startToken = consumeToken(startToken);
@@ -26850,7 +26841,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.expression = expression, this.openBracketToken = openBracketToken, this.argumentExpression = argumentExpression, this.closeBracketToken = closeBracketToken, expression.parent = this, openBracketToken.parent = this, argumentExpression.parent = this, closeBracketToken.parent = this;
+        this.expression = expression, this.openBracketToken = openBracketToken, this.argumentExpression = argumentExpression, this.closeBracketToken = closeBracketToken, expression.parent = this, openBracketToken.parent = this, argumentExpression && (argumentExpression.parent = this), closeBracketToken.parent = this;
     };
     TypeScript.ElementAccessExpressionSyntax.prototype.kind = 185 /* ElementAccessExpression */;
     TypeScript.ElementAccessExpressionSyntax.prototype.childCount = 4;
@@ -27387,7 +27378,10 @@ var TypeScript;
             this.text = syntaxTree.text;
         }
         GrammarCheckerWalker.prototype.pushDiagnostic = function (element, diagnosticKey, args) {
-            this.diagnostics.push(new TypeScript.Diagnostic(this.syntaxTree.fileName(), this.syntaxTree.lineMap(), TypeScript.start(element, this.text), TypeScript.width(element), diagnosticKey, args));
+            this.pushDiagnosticAt(TypeScript.start(element, this.text), TypeScript.width(element), diagnosticKey, args);
+        };
+        GrammarCheckerWalker.prototype.pushDiagnosticAt = function (start, length, diagnosticKey, args) {
+            this.diagnostics.push(new TypeScript.Diagnostic(this.syntaxTree.fileName(), this.syntaxTree.lineMap(), start, length, diagnosticKey, args));
         };
         GrammarCheckerWalker.prototype.visitCatchClause = function (node) {
             if (this.checkForCatchClauseTypeAnnotation(node) || this.checkForDisallowedEvalOrArguments(node, node.identifier)) {
@@ -27813,6 +27807,26 @@ var TypeScript;
             }
             _super.prototype.visitSetAccessor.call(this, node);
         };
+        GrammarCheckerWalker.prototype.visitElementAccessExpression = function (node) {
+            if (this.checkForMissingArgumentExpression(node)) {
+                return;
+            }
+            _super.prototype.visitElementAccessExpression.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.checkForMissingArgumentExpression = function (node) {
+            if (node.argumentExpression === undefined) {
+                if (node.parent.kind === 180 /* ObjectCreationExpression */ && node.parent.expression === node) {
+                    var start = TypeScript.start(node.openBracketToken);
+                    var end = TypeScript.fullEnd(node.closeBracketToken);
+                    this.pushDiagnosticAt(start, end - start, TypeScript.DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead);
+                }
+                else {
+                    this.pushDiagnostic(node.closeBracketToken, TypeScript.DiagnosticCode.Expression_expected);
+                }
+                return true;
+            }
+            return false;
+        };
         GrammarCheckerWalker.prototype.visitEnumDeclaration = function (node) {
             if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.identifier, node.modifiers) || this.checkModuleElementModifiers(node.modifiers), this.checkEnumElements(node)) {
                 return;
@@ -28201,7 +28215,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForMissingThrowStatementExpression = function (node) {
             if (node.expression === undefined) {
-                this.diagnostics.push(new TypeScript.Diagnostic(this.syntaxTree.fileName(), this.syntaxTree.lineMap(), TypeScript.fullEnd(node.throwKeyword), 0, TypeScript.DiagnosticCode.Expression_expected));
+                this.pushDiagnosticAt(TypeScript.fullEnd(node.throwKeyword), 0, TypeScript.DiagnosticCode.Expression_expected);
                 return true;
             }
             return false;
