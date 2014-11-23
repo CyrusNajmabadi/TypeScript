@@ -23730,14 +23730,13 @@ var TypeScript;
                 var fullStart = _skippedTokens ? _skippedTokens[0].fullStart() : source.absolutePosition();
                 return TypeScript.Syntax.emptyToken(kind, fullStart);
             }
-            function createMissingToken(expectedKind, actual, diagnosticCode) {
-                var diagnostic = getExpectedTokenDiagnostic(expectedKind, actual, diagnosticCode);
+            function createMissingToken(expectedKind, actual, diagnosticCode, args) {
+                var diagnostic = getExpectedTokenDiagnostic(expectedKind, actual, diagnosticCode, args);
                 addDiagnostic(diagnostic);
                 return createEmptyToken(expectedKind);
             }
-            function getExpectedTokenDiagnostic(expectedKind, actual, diagnosticCode) {
+            function getExpectedTokenDiagnostic(expectedKind, actual, diagnosticCode, args) {
                 var token = currentToken();
-                var args = undefined;
                 if (!diagnosticCode) {
                     if (TypeScript.SyntaxFacts.isAnyKeyword(expectedKind) || TypeScript.SyntaxFacts.isAnyPunctuation(expectedKind)) {
                         diagnosticCode = TypeScript.DiagnosticCode._0_expected;
@@ -25131,9 +25130,7 @@ var TypeScript;
                     token = consumeToken(token);
                 }
                 else {
-                    var diagnostic = getExpectedTokenDiagnostic(73 /* CloseBraceToken */);
-                    addDiagnostic(diagnostic);
-                    token = createEmptyToken(16 /* TemplateEndToken */);
+                    token = createMissingToken(16 /* TemplateEndToken */, undefined, TypeScript.DiagnosticCode._0_expected, ["{"]);
                 }
                 return new TypeScript.TemplateClauseSyntax(parseNodeData, expression, token);
             }
