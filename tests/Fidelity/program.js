@@ -25022,9 +25022,7 @@ var TypeScript;
                     TypeScript.Debug.assert(typeArgumentList && isOpenParenOrDot);
                     releaseRewindPoint(rewindPoint);
                     if (isDot) {
-                        var diagnostic = new TypeScript.Diagnostic(fileName, source.text.lineMap(), TypeScript.start(token0, source.text), TypeScript.width(token0), TypeScript.DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, undefined);
-                        addDiagnostic(diagnostic);
-                        return new TypeScript.ArgumentListSyntax(parseNodeData, typeArgumentList, createEmptyToken(74 /* OpenParenToken */), [], createEmptyToken(75 /* CloseParenToken */));
+                        return new TypeScript.ArgumentListSyntax(parseNodeData, typeArgumentList, createMissingToken(74 /* OpenParenToken */, undefined, TypeScript.DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected), [], eatToken(75 /* CloseParenToken */));
                     }
                     else {
                         TypeScript.Debug.assert(token0.kind === 74 /* OpenParenToken */);
