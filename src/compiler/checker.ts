@@ -82,6 +82,7 @@ module ts {
             isUndefinedSymbol: symbol => symbol === undefinedSymbol,
             isArgumentsSymbol: symbol => symbol === argumentsSymbol,
             getDiagnostics,
+            getDeclarationDiagnostics,
             getGlobalDiagnostics,
             checkProgram,
             invokeEmitter,
@@ -885,13 +886,13 @@ module ts {
                     if (accessibleSymbolChain) {
                         var hasAccessibleDeclarations = hasVisibleDeclarations(accessibleSymbolChain[0]);
                         if (!hasAccessibleDeclarations) {
-                            return {
+                            return <SymbolAccessiblityResult>{
                                 accessibility: SymbolAccessibility.NotAccessible,
                                 errorSymbolName: symbolToString(initialSymbol, enclosingDeclaration, meaning),
                                 errorModuleName: symbol !== initialSymbol ? symbolToString(symbol, enclosingDeclaration, SymbolFlags.Namespace) : undefined,
                             };
                         }
-                        return { accessibility: SymbolAccessibility.Accessible, aliasesToMakeVisible: hasAccessibleDeclarations.aliasesToMakeVisible };
+                        return hasAccessibleDeclarations;
                     }
 
                     // If we haven't got the accessible symbol, it doesn't mean the symbol is actually inaccessible.
@@ -948,12 +949,12 @@ module ts {
                 (declaration.kind === SyntaxKind.SourceFile && isExternalModule(<SourceFile>declaration));
         }
 
-        function hasVisibleDeclarations(symbol: Symbol): { aliasesToMakeVisible?: ImportDeclaration[]; } {
+        function hasVisibleDeclarations(symbol: Symbol): SymbolVisibilityResult {
             var aliasesToMakeVisible: ImportDeclaration[];
             if (forEach(symbol.declarations, declaration => !getIsDeclarationVisible(declaration))) {
                 return undefined;
             }
-            return { aliasesToMakeVisible };
+            return { accessibility: SymbolAccessibility.Accessible, aliasesToMakeVisible };
 
             function getIsDeclarationVisible(declaration: Declaration) {
                 if (!isDeclarationVisible(declaration)) {
@@ -982,14 +983,33 @@ module ts {
             }
         }
 
-        function isImportDeclarationEntityNameReferenceDeclarationVisibile(entityName: EntityName): SymbolAccessiblityResult {
+        function isEntityNameVisible(entityName: EntityName, enclosingDeclaration: Node): SymbolVisibilityResult {
+            // get symbol of the first identifier of the entityName
+            var meaning: SymbolFlags;
+            if (entityName.parent.kind === SyntaxKind.TypeQuery) {
+                // Typeof value
+                meaning = SymbolFlags.Value | SymbolFlags.ExportValue;
+            }
+            else if (entityName.kind === SyntaxKind.QualifiedName ||
+                entityName.parent.kind === SyntaxKind.ImportDeclaration) {
+                // Left identifier from type reference or TypeAlias
+                // Entity name of the import declaration 
+                meaning = SymbolFlags.Namespace;
+            }
+            else {
+                // Type Reference or TypeAlias entity = Identifier
+                meaning = SymbolFlags.Type;
+            }
+
             var firstIdentifier = getFirstIdentifier(entityName);
-            var symbolOfNameSpace = resolveName(entityName.parent, (<Identifier>firstIdentifier).text, SymbolFlags.Namespace, Diagnostics.Cannot_find_name_0, firstIdentifier);
+            var symbol = resolveName(enclosingDeclaration, (<Identifier>firstIdentifier).text, meaning, /*nodeNotFoundErrorMessage*/ undefined, /*nameArg*/ undefined);
+
             // Verify if the symbol is accessible
-            var hasNamespaceDeclarationsVisibile = hasVisibleDeclarations(symbolOfNameSpace);
-            return hasNamespaceDeclarationsVisibile ?
-                { accessibility: SymbolAccessibility.Accessible, aliasesToMakeVisible: hasNamespaceDeclarationsVisibile.aliasesToMakeVisible } :
-                { accessibility: SymbolAccessibility.NotAccessible, errorSymbolName: declarationNameToString(<Identifier>firstIdentifier) };
+            return hasVisibleDeclarations(symbol) || <SymbolVisibilityResult>{
+                accessibility: SymbolAccessibility.NotAccessible,
+                errorSymbolName: getTextOfNode(firstIdentifier),
+                errorNode: firstIdentifier
+            };
         }
 
         function releaseStringWriter(writer: StringSymbolWriter) {
@@ -1601,6 +1621,7 @@ module ts {
                     case SyntaxKind.IndexSignature:
                     case SyntaxKind.Parameter:
                     case SyntaxKind.ModuleBlock:
+                    case SyntaxKind.TypeParameter:
                         return isDeclarationVisible(node.parent);
 
                     // Source file is always visible
@@ -7986,7 +8007,7 @@ module ts {
                 var enumType = getDeclaredTypeOfSymbol(enumSymbol);
                 var autoValue = 0;
                 var ambient = isInAmbientContext(node);
-                var enumIsConst = isConstEnumDeclaration(node);
+                var enumIsConst = isConst(node);
 
                 forEach(node.members, member => {
                     // TODO(jfreeman): Check that it is not a computed name
@@ -8157,10 +8178,10 @@ module ts {
             var firstDeclaration = getDeclarationOfKind(enumSymbol, node.kind);
             if (node === firstDeclaration) {
                 if (enumSymbol.declarations.length > 1) {
-                    var enumIsConst = isConstEnumDeclaration(node);
+                    var enumIsConst = isConst(node);
                     // check that const is placed\omitted on all enum declarations
                     forEach(enumSymbol.declarations, decl => {
-                        if (isConstEnumDeclaration(<EnumDeclaration>decl) !== enumIsConst) {
+                        if (isConstEnumDeclaration(decl) !== enumIsConst) {
                             error(decl.name, Diagnostics.Enum_declarations_must_all_be_const_or_non_const);
                         }
                     });
@@ -8523,6 +8544,12 @@ module ts {
             }
             checkProgram();
             return getSortedDiagnostics();
+        }
+
+        function getDeclarationDiagnostics(targetSourceFile: SourceFile): Diagnostic[] {
+            var resolver = createResolver();
+            checkSourceFile(targetSourceFile);
+            return ts.getDeclarationDiagnostics(program, resolver, targetSourceFile);
         }
 
         function getGlobalDiagnostics(): Diagnostic[] {
@@ -9118,8 +9145,8 @@ module ts {
             getSymbolDisplayBuilder().buildTypeDisplay(getReturnTypeOfSignature(signature), writer, enclosingDeclaration, flags);
         }
 
-        function invokeEmitter(targetSourceFile?: SourceFile) {
-            var resolver: EmitResolver = {
+        function createResolver(): EmitResolver {
+            return {
                 getProgram: () => program,
                 getLocalNameOfContainer,
                 getExpressionNamePrefix,
@@ -9135,9 +9162,13 @@ module ts {
                 writeTypeAtLocation,
                 writeReturnTypeOfSignatureDeclaration,
                 isSymbolAccessible,
-                isImportDeclarationEntityNameReferenceDeclarationVisibile,
+                isEntityNameVisible,
                 getConstantValue,
             };
+        }
+
+        function invokeEmitter(targetSourceFile?: SourceFile) {
+            var resolver = createResolver();
             checkProgram();
             return emitFiles(resolver, targetSourceFile);
         }
