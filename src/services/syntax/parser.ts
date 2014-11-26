@@ -2535,20 +2535,6 @@ module TypeScript.Parser {
                 return parseAwaitExpression(awaitKeyword);
             }
 
-            // We're in a context where 'await expr' is not allowed.  However, if we can
-            // definitely tell that the user was trying to parse a 'await expr' and not
-            // just a normal expr that start with a 'await' identifier, then parse out
-            // an 'await expr'.  We can then report an error later that they are only 
-            // allowed in async contexts.
-            // 
-            // for example, if we see 'await(foo)', then we'll have to treat that as an
-            // invocation expression of something called 'await'.  However, if we have
-            // 'await foo' then that is not legal as a normal expression, so we can 
-            // definitely recognize this as a await expression.
-            //
-            // for now we just check if the next token is an identifier.  More heuristics
-            // can be added here later as necessary.  We just need to make sure that we
-            // don't accidently consume something legal.
             if (isUnambiguouslyYieldOrAwaitExpression()) {
                 return parseAwaitExpression(awaitKeyword);
             }

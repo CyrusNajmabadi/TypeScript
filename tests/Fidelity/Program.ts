@@ -143,13 +143,8 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         }
     }
 
-    //result.fullStart = TypeScript.fullStart(node);
-    //result.fullEnd = TypeScript.fullEnd(node);
-
     result.start = TypeScript.start(node);
     result.end = TypeScript.fullEnd(node);
-
-    //result.fullWidth = TypeScript.fullWidth(node);
     result.width = TypeScript.width(node);
 
     if (TypeScript.isIncrementallyUnusable(node)) {
@@ -157,15 +152,15 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
     }
 
     if (TypeScript.parsedInStrictModeContext(node)) {
-        result.parsedInStrictMode = true;
+        result.parsedInStrictModeContext = true;
     }
 
     if (TypeScript.parsedInDisallowInContext(node)) {
-        result.parsedInDisallowInMode = true;
+        result.parsedInDisallowInContext = true;
     }
 
     if (TypeScript.parsedInYieldContext(node)) {
-        result.parsedInAllowYieldMode = true;
+        result.parsedInYieldContext = true;
     }
 
     if (TypeScript.parsedInGeneratorParameterContext(node)) {

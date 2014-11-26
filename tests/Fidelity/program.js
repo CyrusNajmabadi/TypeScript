@@ -31732,13 +31732,13 @@ function nodeToJSON(node, text) {
         result.isIncrementallyUnusable = true;
     }
     if (TypeScript.parsedInStrictModeContext(node)) {
-        result.parsedInStrictMode = true;
+        result.parsedInStrictModeContext = true;
     }
     if (TypeScript.parsedInDisallowInContext(node)) {
-        result.parsedInDisallowInMode = true;
+        result.parsedInDisallowInContext = true;
     }
     if (TypeScript.parsedInYieldContext(node)) {
-        result.parsedInAllowYieldMode = true;
+        result.parsedInYieldContext = true;
     }
     if (TypeScript.parsedInGeneratorParameterContext(node)) {
         result.parsedInGeneratorParameterContext = true;
