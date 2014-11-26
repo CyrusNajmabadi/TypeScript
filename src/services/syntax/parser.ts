@@ -3606,7 +3606,8 @@ module TypeScript.Parser {
                 // 'async' might start an asynchronous property, or it might just be the name 
                 // of a property.
                 if (peekToken(1).kind === SyntaxKind.AsteriskToken || isPropertyName(/*peekIndex:*/ 1, inErrorRecovery)) {
-                    return parseFunctionPropertyAssignment(eatToken(SyntaxKind.AsyncKeyword), tryEatToken(SyntaxKind.AsteriskToken), parsePropertyName());
+                    return parseMemberFunctionDeclaration(
+                        Syntax.list([eatToken(SyntaxKind.AsyncKeyword)]), tryEatToken(SyntaxKind.AsteriskToken), parsePropertyName());
                 }
             }
 
@@ -3643,7 +3644,7 @@ module TypeScript.Parser {
                 var propertyName = parsePropertyName();
 
                 if (asterixToken !== undefined || isCallSignature(/*peekIndex:*/ 0)) {
-                    return parseFunctionPropertyAssignment(undefined, asterixToken, propertyName);
+                    return parseMemberFunctionDeclaration([], asterixToken, propertyName);
                 }
                 else {
                     // PropertyName[?Yield] : AssignmentExpression[In, ?Yield]
@@ -3745,15 +3746,6 @@ module TypeScript.Parser {
                 eatToken(SyntaxKind.OpenBracketToken),
                 allowInAnd(parseExpression),
                 eatToken(SyntaxKind.CloseBracketToken));
-        }
-
-        function parseFunctionPropertyAssignment(asyncKeyword: ISyntaxToken, asteriskToken: ISyntaxToken, propertyName: IPropertyNameSyntax): FunctionPropertyAssignmentSyntax {
-            return new FunctionPropertyAssignmentSyntax(contextFlags,
-                asyncKeyword,
-                asteriskToken,
-                propertyName,
-                parseCallSignature(/*requireCompleteTypeParameterList:*/ false, /*yieldAndGeneratorParameterContext:*/ !!asteriskToken, !!asyncKeyword),
-                parseFunctionBody(!!asteriskToken, !!asyncKeyword));
         }
 
         function parseArrayLiteralExpression(openBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
