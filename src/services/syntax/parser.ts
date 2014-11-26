@@ -3605,9 +3605,12 @@ module TypeScript.Parser {
             if (_currentToken.kind === SyntaxKind.AsyncKeyword) {
                 // 'async' might start an asynchronous property, or it might just be the name 
                 // of a property.
-                if (peekToken(1).kind === SyntaxKind.AsteriskToken || isPropertyName(/*peekIndex:*/ 1, inErrorRecovery)) {
-                    return parseMemberFunctionDeclaration(
-                        Syntax.list([eatToken(SyntaxKind.AsyncKeyword)]), tryEatToken(SyntaxKind.AsteriskToken), parsePropertyName());
+                var token1 = peekToken(1);
+                if (!token1.hasLeadingNewLine()) {
+                    if (token1.kind === SyntaxKind.AsteriskToken || isPropertyName(/*peekIndex:*/ 1, inErrorRecovery)) {
+                        return parseMemberFunctionDeclaration(
+                            Syntax.list([eatToken(SyntaxKind.AsyncKeyword)]), tryEatToken(SyntaxKind.AsteriskToken), parsePropertyName());
+                    }
                 }
             }
 
@@ -3655,7 +3658,7 @@ module TypeScript.Parser {
                     //
                     // Also, if we have an identifier and it is followed by a colon then this is 
                     // definitely a simple property assignment.
-                    return new SimplePropertyAssignmentSyntax(contextFlags,
+                    return new PropertyAssignmentSyntax(contextFlags,
                         propertyName,
                         eatToken(SyntaxKind.ColonToken),
                         allowInAnd(parseAssignmentExpressionOrHigher));
