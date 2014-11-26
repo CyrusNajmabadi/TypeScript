@@ -1,0 +1,4 @@
+var v = {
+   async
+   foo() { }
+}

@@ -1,0 +1,2 @@
+async export function foo() {
+}

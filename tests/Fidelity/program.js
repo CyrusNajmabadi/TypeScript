@@ -24327,6 +24327,11 @@ var TypeScript;
             function isModifier(token, index) {
                 if (isModifierKind(token.kind)) {
                     var nextToken = peekToken(index + 1);
+                    if (token.kind === 63 /* AsyncKeyword */) {
+                        if (nextToken.hasLeadingNewLine()) {
+                            return false;
+                        }
+                    }
                     var nextTokenKind = nextToken.kind;
                     switch (nextTokenKind) {
                         case 9 /* IdentifierName */:
@@ -25365,8 +25370,11 @@ var TypeScript;
                 return new TypeScript.ElementAccessExpressionSyntax(contextFlags, expression, consumeToken(openBracketToken), parseElementAccessArgumentExpression(openBracketToken), eatToken(79 /* CloseBracketToken */));
             }
             function tryParsePrimaryExpression(_currentToken, force) {
-                if (_currentToken.kind === 63 /* AsyncKeyword */ && peekToken(1).kind === 29 /* FunctionKeyword */) {
-                    return parseFunctionExpression();
+                if (_currentToken.kind === 63 /* AsyncKeyword */) {
+                    var token1 = peekToken(1);
+                    if (!token1.hasLeadingNewLine() && token1.kind === 29 /* FunctionKeyword */) {
+                        return parseFunctionExpression();
+                    }
                 }
                 if (isIdentifier(_currentToken)) {
                     return eatIdentifierToken();
@@ -25507,8 +25515,11 @@ var TypeScript;
                 if (_currentToken.kind === 89 /* EqualsGreaterThanToken */) {
                     return true;
                 }
-                if (_currentToken.kind === 63 /* AsyncKeyword */ && isIdentifier(peekToken(1))) {
-                    return true;
+                if (_currentToken.kind === 63 /* AsyncKeyword */) {
+                    var token1 = peekToken(1);
+                    if (!token1.hasLeadingNewLine() && isIdentifier(peekToken(1))) {
+                        return true;
+                    }
                 }
                 return isIdentifier(_currentToken) && peekToken(1).kind === 89 /* EqualsGreaterThanToken */;
             }
@@ -25527,6 +25538,9 @@ var TypeScript;
             function isDefinitelyArrowFunctionExpression() {
                 var peekIndex = 0;
                 if (currentToken().kind === 63 /* AsyncKeyword */) {
+                    if (peekToken(1).hasLeadingNewLine()) {
+                        return false;
+                    }
                     peekIndex++;
                 }
                 var token0 = peekToken(peekIndex);
@@ -25574,6 +25588,9 @@ var TypeScript;
             function isPossiblyArrowFunctionExpression() {
                 var peekIndex = 0;
                 if (currentToken().kind === 63 /* AsyncKeyword */) {
+                    if (peekToken(1).hasLeadingNewLine()) {
+                        return false;
+                    }
                     peekIndex++;
                 }
                 var token0 = peekToken(peekIndex);
