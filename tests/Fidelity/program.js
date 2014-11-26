@@ -18096,6 +18096,7 @@ var TypeScript;
         async_arrow_function_parameters_must_be_parenthesized: "'async' arrow function parameters must be parenthesized.",
         A_generator_declaration_cannot_have_the_async_modifier: "A generator declaration cannot have the 'async' modifier.",
         async_modifier_cannot_appear_here: "'async' modifier cannot appear here.",
+        comma_expression_cannot_appear_in_a_computed_property_name: "'comma' expression cannot appear in a computed property name.",
         Duplicate_identifier_0: "Duplicate identifier '{0}'.",
         The_name_0_does_not_exist_in_the_current_scope: "The name '{0}' does not exist in the current scope.",
         The_name_0_does_not_refer_to_a_value: "The name '{0}' does not refer to a value.",
@@ -18560,6 +18561,7 @@ var TypeScript;
         "'async' arrow function parameters must be parenthesized.": { "code": 1117, "category": 1 /* Error */ },
         "A generator declaration cannot have the 'async' modifier.": { "code": 1118, "category": 1 /* Error */ },
         "'async' modifier cannot appear here.": { "code": 1119, "category": 1 /* Error */ },
+        "'comma' expression cannot appear in a computed property name.": { "code": 1120, "category": 1 /* Error */ },
         "Duplicate identifier '{0}'.": { "code": 2000, "category": 1 /* Error */ },
         "The name '{0}' does not exist in the current scope.": { "code": 2001, "category": 1 /* Error */ },
         "The name '{0}' does not refer to a value.": { "code": 2002, "category": 1 /* Error */ },
@@ -23825,7 +23827,7 @@ var TypeScript;
                 setDisallowInContext(false);
                 return result;
             }
-            function enterYieldContextAnd(func) {
+            function doInsideYieldContext(func) {
                 if (inYieldContext()) {
                     return func();
                 }
@@ -23834,7 +23836,7 @@ var TypeScript;
                 setYieldContext(false);
                 return result;
             }
-            function exitYieldContextAnd(func) {
+            function doOutsideYieldContext(func) {
                 if (inYieldContext()) {
                     setYieldContext(false);
                     var result = func();
@@ -23843,7 +23845,7 @@ var TypeScript;
                 }
                 return func();
             }
-            function enterAsyncContextAnd(func) {
+            function doInsideAsyncContext(func) {
                 if (inAsyncContext()) {
                     return func();
                 }
@@ -23852,7 +23854,7 @@ var TypeScript;
                 setAsyncContext(false);
                 return result;
             }
-            function exitAsyncContextAnd(func) {
+            function doOutsideAsyncContext(func) {
                 if (inAsyncContext()) {
                     setAsyncContext(false);
                     var result = func();
@@ -24008,9 +24010,6 @@ var TypeScript;
                 }
                 return createMissingToken(9 /* IdentifierName */, token, diagnosticCode);
             }
-            function isOnDifferentLineThanPreviousToken(token) {
-                return token.hasLeadingNewLine();
-            }
             function canEatAutomaticSemicolon(allowWithoutNewLine) {
                 var token = currentToken();
                 var tokenKind = token.kind;
@@ -24023,7 +24022,7 @@ var TypeScript;
                 if (allowWithoutNewLine) {
                     return true;
                 }
-                if (isOnDifferentLineThanPreviousToken(token)) {
+                if (token.hasLeadingNewLine()) {
                     return true;
                 }
                 return false;
@@ -24263,7 +24262,7 @@ var TypeScript;
             }
             function eatRightSideOfName(allowIdentifierNames) {
                 var _currentToken = currentToken();
-                if (TypeScript.SyntaxFacts.isAnyKeyword(_currentToken.kind) && isOnDifferentLineThanPreviousToken(_currentToken)) {
+                if (TypeScript.SyntaxFacts.isAnyKeyword(_currentToken.kind) && _currentToken.hasLeadingNewLine()) {
                     var token1 = peekToken(1);
                     if (!TypeScript.existsNewLineBetweenTokens(_currentToken, token1, source.text) && TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token1)) {
                         return createMissingToken(9 /* IdentifierName */, _currentToken);
@@ -24368,7 +24367,7 @@ var TypeScript;
             }
             function parseHeritageClauses(isClassHeritageClause) {
                 if (isHeritageClause()) {
-                    return isClassHeritageClause && inGeneratorParameterContext() ? exitYieldContextAnd(parseHeritageClausesWorker) : parseHeritageClausesWorker();
+                    return isClassHeritageClause && inGeneratorParameterContext() ? doOutsideYieldContext(parseHeritageClausesWorker) : parseHeritageClausesWorker();
                 }
                 return [];
             }
@@ -24384,7 +24383,7 @@ var TypeScript;
             }
             function parseClassElement(openBraceToken) {
                 if (openBraceToken.fullWidth() > 0) {
-                    return inGeneratorParameterContext() ? exitYieldContextAnd(parseClassElements) : parseClassElements();
+                    return inGeneratorParameterContext() ? doOutsideYieldContext(parseClassElements) : parseClassElements();
                 }
                 return [];
             }
@@ -24451,7 +24450,7 @@ var TypeScript;
                     case 8 /* EndOfFileToken */:
                         return true;
                     default:
-                        return isOnDifferentLineThanPreviousToken(nextToken);
+                        return nextToken.hasLeadingNewLine();
                 }
             }
             function tryParseClassElement(inErrorRecovery) {
@@ -25041,7 +25040,7 @@ var TypeScript;
                 if (token0.kind === 111 /* EqualsToken */) {
                     return true;
                 }
-                if (!isOnDifferentLineThanPreviousToken(token0)) {
+                if (!token0.hasLeadingNewLine()) {
                     var tokenKind = token0.kind;
                     if (tokenKind === 89 /* EqualsGreaterThanToken */) {
                         return false;
@@ -25120,7 +25119,7 @@ var TypeScript;
             }
             function isUnambiguouslyYieldOrAwaitExpression() {
                 var token1 = peekToken(1);
-                if (isOnDifferentLineThanPreviousToken(token1)) {
+                if (token1.hasLeadingNewLine()) {
                     return false;
                 }
                 if (isIdentifier(token1)) {
@@ -25155,7 +25154,7 @@ var TypeScript;
             function parseYieldExpression(yieldKeyword) {
                 yieldKeyword = consumeToken(yieldKeyword);
                 var _currentToken = currentToken();
-                if (!isOnDifferentLineThanPreviousToken(_currentToken) && (_currentToken.kind === 95 /* AsteriskToken */ || isExpression(_currentToken))) {
+                if (!_currentToken.hasLeadingNewLine() && (_currentToken.kind === 95 /* AsteriskToken */ || isExpression(_currentToken))) {
                     return new TypeScript.YieldExpressionSyntax(contextFlags, yieldKeyword, tryEatToken(95 /* AsteriskToken */), parseAssignmentExpressionOrHigher());
                 }
                 else {
@@ -25311,7 +25310,7 @@ var TypeScript;
                 switch (currentTokenKind) {
                     case 97 /* PlusPlusToken */:
                     case 98 /* MinusMinusToken */:
-                        if (isOnDifferentLineThanPreviousToken(_currentToken)) {
+                        if (_currentToken.hasLeadingNewLine()) {
                             break;
                         }
                         return new TypeScript.PostfixUnaryExpressionSyntax(contextFlags, expression, consumeToken(_currentToken));
@@ -25509,7 +25508,7 @@ var TypeScript;
                 if (isStatement(_modifierCount, false) && !isExpression(currentToken())) {
                     return new TypeScript.BlockSyntax(contextFlags, undefined, eatToken(74 /* OpenBraceToken */), parseFunctionBlockStatements(false, asyncContext), eatToken(75 /* CloseBraceToken */));
                 }
-                return asyncContext ? enterAsyncContextAnd(parseAssignmentExpressionOrHigher) : exitAsyncContextAnd(parseAssignmentExpressionOrHigher);
+                return asyncContext ? doInsideAsyncContext(parseAssignmentExpressionOrHigher) : doOutsideAsyncContext(parseAssignmentExpressionOrHigher);
             }
             function isSimpleArrowFunctionExpression(_currentToken) {
                 if (_currentToken.kind === 89 /* EqualsGreaterThanToken */) {
@@ -25525,7 +25524,7 @@ var TypeScript;
             }
             function parseSimpleArrowFunctionExpression() {
                 var asyncKeyword;
-                return new TypeScript.SimpleArrowFunctionExpressionSyntax(contextFlags, asyncKeyword = tryEatToken(63 /* AsyncKeyword */), asyncKeyword ? enterAsyncContextAnd(eatSimpleParameter) : exitAsyncContextAnd(eatSimpleParameter), eatToken(89 /* EqualsGreaterThanToken */), parseArrowFunctionBody(!!asyncKeyword));
+                return new TypeScript.SimpleArrowFunctionExpressionSyntax(contextFlags, asyncKeyword = tryEatToken(63 /* AsyncKeyword */), asyncKeyword ? doInsideAsyncContext(eatSimpleParameter) : doOutsideAsyncContext(eatSimpleParameter), eatToken(89 /* EqualsGreaterThanToken */), parseArrowFunctionBody(!!asyncKeyword));
             }
             function isFunctionBlock() {
                 var currentTokenKind = currentToken().kind;
@@ -25676,7 +25675,7 @@ var TypeScript;
             function parsePropertyName() {
                 var _currentToken = currentToken();
                 if (_currentToken.kind === 78 /* OpenBracketToken */) {
-                    return inGeneratorParameterContext() ? exitYieldContextAnd(parseComputedPropertyName) : parseComputedPropertyName();
+                    return inGeneratorParameterContext() ? doOutsideYieldContext(parseComputedPropertyName) : parseComputedPropertyName();
                 }
                 else if (TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(_currentToken)) {
                     return eatIdentifierNameToken();
@@ -25689,7 +25688,7 @@ var TypeScript;
                 }
             }
             function parseComputedPropertyName() {
-                return new TypeScript.ComputedPropertyNameSyntax(contextFlags, eatToken(78 /* OpenBracketToken */), allowInAnd(parseAssignmentExpressionOrHigher), eatToken(79 /* CloseBracketToken */));
+                return new TypeScript.ComputedPropertyNameSyntax(contextFlags, eatToken(78 /* OpenBracketToken */), allowInAnd(parseExpression), eatToken(79 /* CloseBracketToken */));
             }
             function parseFunctionPropertyAssignment(asyncKeyword, asteriskToken, propertyName) {
                 return new TypeScript.FunctionPropertyAssignmentSyntax(contextFlags, asyncKeyword, asteriskToken, propertyName, parseCallSignature(false, !!asteriskToken, !!asyncKeyword), parseFunctionBody(!!asteriskToken, !!asyncKeyword));
@@ -25860,7 +25859,7 @@ var TypeScript;
                 var type = tryParseNonArrayType();
                 while (type) {
                     var _currentToken = currentToken();
-                    if (isOnDifferentLineThanPreviousToken(_currentToken) || _currentToken.kind !== 78 /* OpenBracketToken */) {
+                    if (_currentToken.hasLeadingNewLine() || _currentToken.kind !== 78 /* OpenBracketToken */) {
                         break;
                     }
                     type = new TypeScript.ArrayTypeSyntax(contextFlags, type, consumeToken(_currentToken), eatToken(79 /* CloseBracketToken */));
@@ -25897,7 +25896,7 @@ var TypeScript;
                 if (name === undefined) {
                     return undefined;
                 }
-                if (isOnDifferentLineThanPreviousToken(currentToken())) {
+                if (currentToken().hasLeadingNewLine()) {
                     return name;
                 }
                 var typeArgumentList = tryParseTypeArgumentList(false);
@@ -25964,12 +25963,12 @@ var TypeScript;
                         return undefined;
                     }
                 }
-                var identifier = inGeneratorParameterContext() ? enterYieldContextAnd(eatIdentifierToken) : eatIdentifierToken();
+                var identifier = inGeneratorParameterContext() ? doInsideYieldContext(eatIdentifierToken) : eatIdentifierToken();
                 var questionToken = tryEatToken(109 /* QuestionToken */);
                 var typeAnnotation = parseOptionalTypeAnnotation(true);
                 var equalsValueClause = undefined;
                 if (isEqualsValueClause(true)) {
-                    equalsValueClause = inGeneratorParameterContext() ? exitYieldContextAnd(parseEqualsValueClause) : parseEqualsValueClause();
+                    equalsValueClause = inGeneratorParameterContext() ? doOutsideYieldContext(parseEqualsValueClause) : parseEqualsValueClause();
                 }
                 return new TypeScript.ParameterSyntax(contextFlags, dotDotDotToken, modifiers, identifier, questionToken, typeAnnotation, equalsValueClause);
             }
@@ -28605,6 +28604,13 @@ var TypeScript;
                 return;
             }
             _super.prototype.visitBreakStatement.call(this, node);
+        };
+        GrammarCheckerWalker.prototype.visitComputedPropertyName = function (node) {
+            if (node.expression.kind === 176 /* BinaryExpression */ && node.expression.operatorToken.kind === 83 /* CommaToken */) {
+                this.pushDiagnostic(node.expression.operatorToken, TypeScript.DiagnosticCode.comma_expression_cannot_appear_in_a_computed_property_name);
+                return;
+            }
+            _super.prototype.visitComputedPropertyName.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitContinueStatement = function (node) {
             if (this.checkForStatementInAmbientContxt(node) || this.checkContinueStatementTarget(node)) {
@@ -31640,7 +31646,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
