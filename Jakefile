@@ -586,7 +586,7 @@ var syntaxGeneratorOutFile = servicesDirectory + "syntax/SyntaxGenerator.js";
 var syntaxGeneratorInFile = servicesDirectory + "syntax/SyntaxGenerator.ts";
 file(servicesDirectory + "syntax/syntaxKind.ts");
 file(servicesDirectory + "syntax/syntaxFacts.ts");
-compileFile(syntaxGeneratorOutFile, [syntaxGeneratorInFile], [syntaxGeneratorInFile, servicesDirectory + "syntax/syntaxKind.ts", servicesDirectory + "syntax/syntaxFacts.ts"], [], /*useBuiltCompiler:*/ false);
+compileFile(syntaxGeneratorOutFile, [syntaxGeneratorInFile], [syntaxGeneratorInFile, servicesDirectory + "syntax/syntaxKind.ts", servicesDirectory + "syntax/syntaxFacts.ts"], [], /*useBuiltCompiler:*/ true);
 
 desc("Builds and runs the syntax generator");
 task("run-syntax-generator", [syntaxGeneratorOutFile], function() {

@@ -10164,7 +10164,8 @@ var ts;
                 }
             }
             function emitModuleDeclaration(node) {
-                if (ts.getModuleInstanceState(node) !== 1 /* Instantiated */) {
+                var shouldEmit = ts.getModuleInstanceState(node) === 1 /* Instantiated */ || (ts.getModuleInstanceState(node) === 2 /* ConstEnumOnly */ && compilerOptions.preserveConstEnums);
+                if (!shouldEmit) {
                     return emitPinnedOrTripleSlashComments(node);
                 }
                 emitLeadingComments(node);
@@ -19409,6 +19410,133 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    (function (CharacterCodes) {
+        CharacterCodes[CharacterCodes["nullCharacter"] = 0] = "nullCharacter";
+        CharacterCodes[CharacterCodes["maxAsciiCharacter"] = 127] = "maxAsciiCharacter";
+        CharacterCodes[CharacterCodes["lineFeed"] = 10] = "lineFeed";
+        CharacterCodes[CharacterCodes["carriageReturn"] = 13] = "carriageReturn";
+        CharacterCodes[CharacterCodes["lineSeparator"] = 8232] = "lineSeparator";
+        CharacterCodes[CharacterCodes["paragraphSeparator"] = 8233] = "paragraphSeparator";
+        CharacterCodes[CharacterCodes["nextLine"] = 133] = "nextLine";
+        CharacterCodes[CharacterCodes["space"] = 32] = "space";
+        CharacterCodes[CharacterCodes["nonBreakingSpace"] = 160] = "nonBreakingSpace";
+        CharacterCodes[CharacterCodes["enQuad"] = 8192] = "enQuad";
+        CharacterCodes[CharacterCodes["emQuad"] = 8193] = "emQuad";
+        CharacterCodes[CharacterCodes["enSpace"] = 8194] = "enSpace";
+        CharacterCodes[CharacterCodes["emSpace"] = 8195] = "emSpace";
+        CharacterCodes[CharacterCodes["threePerEmSpace"] = 8196] = "threePerEmSpace";
+        CharacterCodes[CharacterCodes["fourPerEmSpace"] = 8197] = "fourPerEmSpace";
+        CharacterCodes[CharacterCodes["sixPerEmSpace"] = 8198] = "sixPerEmSpace";
+        CharacterCodes[CharacterCodes["figureSpace"] = 8199] = "figureSpace";
+        CharacterCodes[CharacterCodes["punctuationSpace"] = 8200] = "punctuationSpace";
+        CharacterCodes[CharacterCodes["thinSpace"] = 8201] = "thinSpace";
+        CharacterCodes[CharacterCodes["hairSpace"] = 8202] = "hairSpace";
+        CharacterCodes[CharacterCodes["zeroWidthSpace"] = 8203] = "zeroWidthSpace";
+        CharacterCodes[CharacterCodes["narrowNoBreakSpace"] = 8239] = "narrowNoBreakSpace";
+        CharacterCodes[CharacterCodes["ideographicSpace"] = 12288] = "ideographicSpace";
+        CharacterCodes[CharacterCodes["_"] = 95] = "_";
+        CharacterCodes[CharacterCodes["$"] = 36] = "$";
+        CharacterCodes[CharacterCodes["_0"] = 48] = "_0";
+        CharacterCodes[CharacterCodes["_1"] = 49] = "_1";
+        CharacterCodes[CharacterCodes["_2"] = 50] = "_2";
+        CharacterCodes[CharacterCodes["_3"] = 51] = "_3";
+        CharacterCodes[CharacterCodes["_4"] = 52] = "_4";
+        CharacterCodes[CharacterCodes["_5"] = 53] = "_5";
+        CharacterCodes[CharacterCodes["_6"] = 54] = "_6";
+        CharacterCodes[CharacterCodes["_7"] = 55] = "_7";
+        CharacterCodes[CharacterCodes["_8"] = 56] = "_8";
+        CharacterCodes[CharacterCodes["_9"] = 57] = "_9";
+        CharacterCodes[CharacterCodes["a"] = 97] = "a";
+        CharacterCodes[CharacterCodes["b"] = 98] = "b";
+        CharacterCodes[CharacterCodes["c"] = 99] = "c";
+        CharacterCodes[CharacterCodes["d"] = 100] = "d";
+        CharacterCodes[CharacterCodes["e"] = 101] = "e";
+        CharacterCodes[CharacterCodes["f"] = 102] = "f";
+        CharacterCodes[CharacterCodes["g"] = 103] = "g";
+        CharacterCodes[CharacterCodes["h"] = 104] = "h";
+        CharacterCodes[CharacterCodes["i"] = 105] = "i";
+        CharacterCodes[CharacterCodes["j"] = 106] = "j";
+        CharacterCodes[CharacterCodes["k"] = 107] = "k";
+        CharacterCodes[CharacterCodes["l"] = 108] = "l";
+        CharacterCodes[CharacterCodes["m"] = 109] = "m";
+        CharacterCodes[CharacterCodes["n"] = 110] = "n";
+        CharacterCodes[CharacterCodes["o"] = 111] = "o";
+        CharacterCodes[CharacterCodes["p"] = 112] = "p";
+        CharacterCodes[CharacterCodes["q"] = 113] = "q";
+        CharacterCodes[CharacterCodes["r"] = 114] = "r";
+        CharacterCodes[CharacterCodes["s"] = 115] = "s";
+        CharacterCodes[CharacterCodes["t"] = 116] = "t";
+        CharacterCodes[CharacterCodes["u"] = 117] = "u";
+        CharacterCodes[CharacterCodes["v"] = 118] = "v";
+        CharacterCodes[CharacterCodes["w"] = 119] = "w";
+        CharacterCodes[CharacterCodes["x"] = 120] = "x";
+        CharacterCodes[CharacterCodes["y"] = 121] = "y";
+        CharacterCodes[CharacterCodes["z"] = 122] = "z";
+        CharacterCodes[CharacterCodes["A"] = 65] = "A";
+        CharacterCodes[CharacterCodes["B"] = 66] = "B";
+        CharacterCodes[CharacterCodes["C"] = 67] = "C";
+        CharacterCodes[CharacterCodes["D"] = 68] = "D";
+        CharacterCodes[CharacterCodes["E"] = 69] = "E";
+        CharacterCodes[CharacterCodes["F"] = 70] = "F";
+        CharacterCodes[CharacterCodes["G"] = 71] = "G";
+        CharacterCodes[CharacterCodes["H"] = 72] = "H";
+        CharacterCodes[CharacterCodes["I"] = 73] = "I";
+        CharacterCodes[CharacterCodes["J"] = 74] = "J";
+        CharacterCodes[CharacterCodes["K"] = 75] = "K";
+        CharacterCodes[CharacterCodes["L"] = 76] = "L";
+        CharacterCodes[CharacterCodes["M"] = 77] = "M";
+        CharacterCodes[CharacterCodes["N"] = 78] = "N";
+        CharacterCodes[CharacterCodes["O"] = 79] = "O";
+        CharacterCodes[CharacterCodes["P"] = 80] = "P";
+        CharacterCodes[CharacterCodes["Q"] = 81] = "Q";
+        CharacterCodes[CharacterCodes["R"] = 82] = "R";
+        CharacterCodes[CharacterCodes["S"] = 83] = "S";
+        CharacterCodes[CharacterCodes["T"] = 84] = "T";
+        CharacterCodes[CharacterCodes["U"] = 85] = "U";
+        CharacterCodes[CharacterCodes["V"] = 86] = "V";
+        CharacterCodes[CharacterCodes["W"] = 87] = "W";
+        CharacterCodes[CharacterCodes["X"] = 88] = "X";
+        CharacterCodes[CharacterCodes["Y"] = 89] = "Y";
+        CharacterCodes[CharacterCodes["Z"] = 90] = "Z";
+        CharacterCodes[CharacterCodes["ampersand"] = 38] = "ampersand";
+        CharacterCodes[CharacterCodes["asterisk"] = 42] = "asterisk";
+        CharacterCodes[CharacterCodes["at"] = 64] = "at";
+        CharacterCodes[CharacterCodes["backslash"] = 92] = "backslash";
+        CharacterCodes[CharacterCodes["backtick"] = 96] = "backtick";
+        CharacterCodes[CharacterCodes["bar"] = 124] = "bar";
+        CharacterCodes[CharacterCodes["caret"] = 94] = "caret";
+        CharacterCodes[CharacterCodes["closeBrace"] = 125] = "closeBrace";
+        CharacterCodes[CharacterCodes["closeBracket"] = 93] = "closeBracket";
+        CharacterCodes[CharacterCodes["closeParen"] = 41] = "closeParen";
+        CharacterCodes[CharacterCodes["colon"] = 58] = "colon";
+        CharacterCodes[CharacterCodes["comma"] = 44] = "comma";
+        CharacterCodes[CharacterCodes["dot"] = 46] = "dot";
+        CharacterCodes[CharacterCodes["doubleQuote"] = 34] = "doubleQuote";
+        CharacterCodes[CharacterCodes["equals"] = 61] = "equals";
+        CharacterCodes[CharacterCodes["exclamation"] = 33] = "exclamation";
+        CharacterCodes[CharacterCodes["greaterThan"] = 62] = "greaterThan";
+        CharacterCodes[CharacterCodes["lessThan"] = 60] = "lessThan";
+        CharacterCodes[CharacterCodes["minus"] = 45] = "minus";
+        CharacterCodes[CharacterCodes["openBrace"] = 123] = "openBrace";
+        CharacterCodes[CharacterCodes["openBracket"] = 91] = "openBracket";
+        CharacterCodes[CharacterCodes["openParen"] = 40] = "openParen";
+        CharacterCodes[CharacterCodes["percent"] = 37] = "percent";
+        CharacterCodes[CharacterCodes["plus"] = 43] = "plus";
+        CharacterCodes[CharacterCodes["question"] = 63] = "question";
+        CharacterCodes[CharacterCodes["semicolon"] = 59] = "semicolon";
+        CharacterCodes[CharacterCodes["singleQuote"] = 39] = "singleQuote";
+        CharacterCodes[CharacterCodes["slash"] = 47] = "slash";
+        CharacterCodes[CharacterCodes["tilde"] = 126] = "tilde";
+        CharacterCodes[CharacterCodes["backspace"] = 8] = "backspace";
+        CharacterCodes[CharacterCodes["formFeed"] = 12] = "formFeed";
+        CharacterCodes[CharacterCodes["byteOrderMark"] = 65279] = "byteOrderMark";
+        CharacterCodes[CharacterCodes["tab"] = 9] = "tab";
+        CharacterCodes[CharacterCodes["verticalTab"] = 11] = "verticalTab";
+    })(TypeScript.CharacterCodes || (TypeScript.CharacterCodes = {}));
+    var CharacterCodes = TypeScript.CharacterCodes;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
     var ScriptSnapshot;
     (function (ScriptSnapshot) {
         var StringScriptSnapshot = (function () {
@@ -20029,26 +20157,26 @@ var TypeScript;
         SyntaxKind[SyntaxKind["PropertyAssignment"] = 215] = "PropertyAssignment";
         SyntaxKind[SyntaxKind["ExternalModuleReference"] = 216] = "ExternalModuleReference";
         SyntaxKind[SyntaxKind["ModuleNameModuleReference"] = 217] = "ModuleNameModuleReference";
-        SyntaxKind[SyntaxKind["FirstStandardKeyword"] = SyntaxKind.BreakKeyword] = "FirstStandardKeyword";
-        SyntaxKind[SyntaxKind["LastStandardKeyword"] = SyntaxKind.WithKeyword] = "LastStandardKeyword";
-        SyntaxKind[SyntaxKind["FirstFutureReservedKeyword"] = SyntaxKind.ClassKeyword] = "FirstFutureReservedKeyword";
-        SyntaxKind[SyntaxKind["LastFutureReservedKeyword"] = SyntaxKind.SuperKeyword] = "LastFutureReservedKeyword";
-        SyntaxKind[SyntaxKind["FirstFutureReservedStrictKeyword"] = SyntaxKind.ImplementsKeyword] = "FirstFutureReservedStrictKeyword";
-        SyntaxKind[SyntaxKind["LastFutureReservedStrictKeyword"] = SyntaxKind.YieldKeyword] = "LastFutureReservedStrictKeyword";
-        SyntaxKind[SyntaxKind["FirstTypeScriptKeyword"] = SyntaxKind.AnyKeyword] = "FirstTypeScriptKeyword";
-        SyntaxKind[SyntaxKind["LastTypeScriptKeyword"] = SyntaxKind.StringKeyword] = "LastTypeScriptKeyword";
-        SyntaxKind[SyntaxKind["FirstKeyword"] = SyntaxKind.FirstStandardKeyword] = "FirstKeyword";
-        SyntaxKind[SyntaxKind["LastKeyword"] = SyntaxKind.LastTypeScriptKeyword] = "LastKeyword";
-        SyntaxKind[SyntaxKind["FirstToken"] = SyntaxKind.ErrorToken] = "FirstToken";
-        SyntaxKind[SyntaxKind["LastToken"] = SyntaxKind.SlashEqualsToken] = "LastToken";
-        SyntaxKind[SyntaxKind["FirstPunctuation"] = SyntaxKind.OpenBraceToken] = "FirstPunctuation";
-        SyntaxKind[SyntaxKind["LastPunctuation"] = SyntaxKind.SlashEqualsToken] = "LastPunctuation";
-        SyntaxKind[SyntaxKind["FirstFixedWidth"] = SyntaxKind.FirstKeyword] = "FirstFixedWidth";
-        SyntaxKind[SyntaxKind["LastFixedWidth"] = SyntaxKind.LastPunctuation] = "LastFixedWidth";
-        SyntaxKind[SyntaxKind["FirstTrivia"] = SyntaxKind.WhitespaceTrivia] = "FirstTrivia";
-        SyntaxKind[SyntaxKind["LastTrivia"] = SyntaxKind.SkippedTokenTrivia] = "LastTrivia";
-        SyntaxKind[SyntaxKind["FirstNode"] = SyntaxKind.SourceUnit] = "FirstNode";
-        SyntaxKind[SyntaxKind["LastNode"] = SyntaxKind.ModuleNameModuleReference] = "LastNode";
+        SyntaxKind[SyntaxKind["FirstStandardKeyword"] = 17] = "FirstStandardKeyword";
+        SyntaxKind[SyntaxKind["LastStandardKeyword"] = 45] = "LastStandardKeyword";
+        SyntaxKind[SyntaxKind["FirstFutureReservedKeyword"] = 46] = "FirstFutureReservedKeyword";
+        SyntaxKind[SyntaxKind["LastFutureReservedKeyword"] = 52] = "LastFutureReservedKeyword";
+        SyntaxKind[SyntaxKind["FirstFutureReservedStrictKeyword"] = 53] = "FirstFutureReservedStrictKeyword";
+        SyntaxKind[SyntaxKind["LastFutureReservedStrictKeyword"] = 61] = "LastFutureReservedStrictKeyword";
+        SyntaxKind[SyntaxKind["FirstTypeScriptKeyword"] = 62] = "FirstTypeScriptKeyword";
+        SyntaxKind[SyntaxKind["LastTypeScriptKeyword"] = 73] = "LastTypeScriptKeyword";
+        SyntaxKind[SyntaxKind["FirstKeyword"] = 17] = "FirstKeyword";
+        SyntaxKind[SyntaxKind["LastKeyword"] = 73] = "LastKeyword";
+        SyntaxKind[SyntaxKind["FirstToken"] = 7] = "FirstToken";
+        SyntaxKind[SyntaxKind["LastToken"] = 123] = "LastToken";
+        SyntaxKind[SyntaxKind["FirstPunctuation"] = 74] = "FirstPunctuation";
+        SyntaxKind[SyntaxKind["LastPunctuation"] = 123] = "LastPunctuation";
+        SyntaxKind[SyntaxKind["FirstFixedWidth"] = 17] = "FirstFixedWidth";
+        SyntaxKind[SyntaxKind["LastFixedWidth"] = 123] = "LastFixedWidth";
+        SyntaxKind[SyntaxKind["FirstTrivia"] = 2] = "FirstTrivia";
+        SyntaxKind[SyntaxKind["LastTrivia"] = 6] = "LastTrivia";
+        SyntaxKind[SyntaxKind["FirstNode"] = 124] = "FirstNode";
+        SyntaxKind[SyntaxKind["LastNode"] = 217] = "LastNode";
     })(TypeScript.SyntaxKind || (TypeScript.SyntaxKind = {}));
     var SyntaxKind = TypeScript.SyntaxKind;
 })(TypeScript || (TypeScript = {}));
@@ -20185,11 +20313,11 @@ var TypeScript;
         }
         SyntaxFacts.getText = getText;
         function isAnyKeyword(kind) {
-            return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
+            return kind >= 17 /* FirstKeyword */ && kind <= 73 /* LastKeyword */;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
         function isAnyPunctuation(kind) {
-            return kind >= TypeScript.SyntaxKind.FirstPunctuation && kind <= TypeScript.SyntaxKind.LastPunctuation;
+            return kind >= 74 /* FirstPunctuation */ && kind <= 123 /* LastPunctuation */;
         }
         SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
         function isPrefixUnaryExpressionOperatorToken(tokenKind) {
@@ -20446,7 +20574,7 @@ var TypeScript;
 (function (TypeScript) {
     var Scanner;
     (function (Scanner) {
-        TypeScript.Debug.assert(TypeScript.SyntaxKind.LastToken <= 127);
+        TypeScript.Debug.assert(123 /* LastToken */ <= 127);
         var ScannerConstants;
         (function (ScannerConstants) {
             ScannerConstants[ScannerConstants["LargeTokenFullWidthShift"] = 3] = "LargeTokenFullWidthShift";
@@ -20493,7 +20621,7 @@ var TypeScript;
                 isIdentifierPartCharacter[character] = true;
             }
         }
-        for (var keywordKind = TypeScript.SyntaxKind.FirstKeyword; keywordKind <= TypeScript.SyntaxKind.LastKeyword; keywordKind++) {
+        for (var keywordKind = 17 /* FirstKeyword */; keywordKind <= 73 /* LastKeyword */; keywordKind++) {
             var keyword = TypeScript.SyntaxFacts.getText(keywordKind);
             isKeywordStartCharacter[keyword.charCodeAt(0)] = 1;
         }
@@ -20697,7 +20825,7 @@ var TypeScript;
                 var fullEnd = index;
                 var fullWidth = fullEnd - fullStart;
                 var kind = kindAndIsVariableWidth & 127 /* KindMask */;
-                var isFixedWidth = kind >= TypeScript.SyntaxKind.FirstFixedWidth && kind <= TypeScript.SyntaxKind.LastFixedWidth && ((kindAndIsVariableWidth & 128 /* IsVariableWidthMask */) === 0);
+                var isFixedWidth = kind >= 17 /* FirstFixedWidth */ && kind <= 123 /* LastFixedWidth */ && ((kindAndIsVariableWidth & 128 /* IsVariableWidthMask */) === 0);
                 if (isFixedWidth && leadingTriviaInfo === 0) {
                     return new FixedWidthTokenWithNoTrivia(fullStart, kind);
                 }
@@ -21036,7 +21164,7 @@ var TypeScript;
                 var text = str.substr(startIndex, length);
                 var valueText = TypeScript.massageEscapes(text);
                 var keywordKind = TypeScript.SyntaxFacts.getTokenKind(valueText);
-                if (keywordKind >= TypeScript.SyntaxKind.FirstKeyword && keywordKind <= TypeScript.SyntaxKind.LastKeyword) {
+                if (keywordKind >= 17 /* FirstKeyword */ && keywordKind <= 73 /* LastKeyword */) {
                     return keywordKind | 128 /* IsVariableWidthMask */;
                 }
                 return 9 /* IdentifierName */;
@@ -21950,13 +22078,13 @@ var TypeScript;
     function isNode(element) {
         if (element) {
             var kind = element.kind;
-            return kind >= TypeScript.SyntaxKind.FirstNode && kind <= TypeScript.SyntaxKind.LastNode;
+            return kind >= 124 /* FirstNode */ && kind <= 217 /* LastNode */;
         }
         return false;
     }
     TypeScript.isNode = isNode;
     function isTokenKind(kind) {
-        return kind >= TypeScript.SyntaxKind.FirstToken && kind <= TypeScript.SyntaxKind.LastToken;
+        return kind >= 7 /* FirstToken */ && kind <= 123 /* LastToken */;
     }
     function isToken(element) {
         if (element) {
@@ -23969,11 +24097,11 @@ var TypeScript;
                 if (tokenKind === 64 /* AwaitKeyword */ && inAsyncContext()) {
                     return false;
                 }
-                if (tokenKind >= TypeScript.SyntaxKind.FirstFutureReservedStrictKeyword) {
-                    if (tokenKind <= TypeScript.SyntaxKind.LastFutureReservedStrictKeyword) {
+                if (tokenKind >= 53 /* FirstFutureReservedStrictKeyword */) {
+                    if (tokenKind <= 61 /* LastFutureReservedStrictKeyword */) {
                         return !inStrictModeContext();
                     }
-                    return tokenKind <= TypeScript.SyntaxKind.LastTypeScriptKeyword;
+                    return tokenKind <= 73 /* LastTypeScriptKeyword */;
                 }
                 return false;
             }
@@ -24654,6 +24782,7 @@ var TypeScript;
                         case 54 /* InterfaceKeyword */:
                         case 46 /* ClassKeyword */:
                         case 48 /* EnumKeyword */:
+                        case 49 /* ExportKeyword */:
                             return true;
                     }
                 }
@@ -27928,8 +28057,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForCatchClauseTypeAnnotation = function (node) {
             if (node.typeAnnotation) {
-                this.pushDiagnostic(node.typeAnnotation.colonToken, TypeScript.DiagnosticCode.Catch_clause_parameter_cannot_have_a_type_annotation);
-                return true;
+                return this.pushDiagnostic(node.typeAnnotation.colonToken, TypeScript.DiagnosticCode.Catch_clause_parameter_cannot_have_a_type_annotation);
             }
             return false;
         };
@@ -27940,29 +28068,24 @@ var TypeScript;
                 var parameter = TypeScript.nonSeparatorAt(node.parameters, i);
                 if (parameter.dotDotDotToken) {
                     if (i !== (parameterCount - 1)) {
-                        this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_must_be_last_in_a_parameter_list);
-                        return true;
+                        return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_must_be_last_in_a_parameter_list);
                     }
                     if (parameter.questionToken) {
-                        this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_cannot_be_optional);
-                        return true;
+                        return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_cannot_be_optional);
                     }
                     if (parameter.equalsValueClause) {
-                        this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_cannot_have_an_initializer);
-                        return true;
+                        return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_rest_parameter_cannot_have_an_initializer);
                     }
                 }
                 else if (parameter.questionToken || parameter.equalsValueClause) {
                     seenOptionalParameter = true;
                     if (parameter.questionToken && parameter.equalsValueClause) {
-                        this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer);
-                        return true;
+                        return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Parameter_cannot_have_question_mark_and_initializer);
                     }
                 }
                 else {
                     if (seenOptionalParameter) {
-                        this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_required_parameter_cannot_follow_an_optional_parameter);
-                        return true;
+                        return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.A_required_parameter_cannot_follow_an_optional_parameter);
                     }
                 }
             }
@@ -27982,13 +28105,11 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkParameterAccessibilityModifier = function (modifier, modifierIndex) {
             if (!TypeScript.SyntaxFacts.isAccessibilityModifier(modifier.kind)) {
-                this.pushDiagnostic(modifier, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_parameter, [modifier.text()]);
-                return true;
+                return this.pushDiagnostic(modifier, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_parameter, [modifier.text()]);
             }
             else {
                 if (modifierIndex > 0) {
-                    this.pushDiagnostic(modifier, TypeScript.DiagnosticCode.Accessibility_modifier_already_seen);
-                    return true;
+                    return this.pushDiagnostic(modifier, TypeScript.DiagnosticCode.Accessibility_modifier_already_seen);
                 }
             }
             return false;
@@ -27998,15 +28119,13 @@ var TypeScript;
                 return false;
             }
             var child = list[list.length - 1];
-            this.pushDiagnostic(child, TypeScript.DiagnosticCode.Trailing_comma_not_allowed);
-            return true;
+            return this.pushDiagnostic(child, TypeScript.DiagnosticCode.Trailing_comma_not_allowed);
         };
         GrammarCheckerWalker.prototype.checkForAtLeastOneElement = function (list, reportToken, listKind) {
             if (TypeScript.childCount(list) > 0) {
                 return false;
             }
-            this.pushDiagnostic(reportToken, TypeScript.DiagnosticCode._0_list_cannot_be_empty, [listKind]);
-            return true;
+            return this.pushDiagnostic(reportToken, TypeScript.DiagnosticCode._0_list_cannot_be_empty, [listKind]);
         };
         GrammarCheckerWalker.prototype.visitParameterList = function (node) {
             if (this.checkParameterListOrder(node) || this.checkForTrailingComma(node.parameters)) {
@@ -28052,33 +28171,26 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkIndexSignatureParameter = function (node) {
             if (node.parameters.length !== 1) {
-                this.pushDiagnostic(node.openBracketToken, TypeScript.DiagnosticCode.Index_signature_must_have_exactly_one_parameter);
-                return true;
+                return this.pushDiagnostic(node.openBracketToken, TypeScript.DiagnosticCode.Index_signature_must_have_exactly_one_parameter);
             }
             var parameter = TypeScript.nonSeparatorAt(node.parameters, 0);
             if (parameter.dotDotDotToken) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signatures_cannot_have_rest_parameters);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signatures_cannot_have_rest_parameters);
             }
             else if (parameter.modifiers.length > 0) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_modifiers);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_modifiers);
             }
             else if (parameter.questionToken) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_a_question_mark);
             }
             else if (parameter.equalsValueClause) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_cannot_have_an_initializer);
             }
             else if (!parameter.typeAnnotation) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_must_have_a_type_annotation);
             }
             else if (parameter.typeAnnotation.type.kind !== 73 /* StringKeyword */ && parameter.typeAnnotation.type.kind !== 71 /* NumberKeyword */) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_type_must_be_string_or_number);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.Index_signature_parameter_type_must_be_string_or_number);
             }
             return false;
         };
@@ -28100,24 +28212,20 @@ var TypeScript;
                 var heritageClause = node.heritageClauses[i];
                 if (heritageClause.extendsOrImplementsKeyword.kind === 50 /* ExtendsKeyword */) {
                     if (seenExtendsClause) {
-                        this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_already_seen);
-                        return true;
+                        return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_already_seen);
                     }
                     if (seenImplementsClause) {
-                        this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_must_precede_implements_clause);
-                        return true;
+                        return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_must_precede_implements_clause);
                     }
                     if (TypeScript.nonSeparatorCount(heritageClause.typeNames) > 1) {
-                        this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.Classes_can_only_extend_a_single_class);
-                        return true;
+                        return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.Classes_can_only_extend_a_single_class);
                     }
                     seenExtendsClause = true;
                 }
                 else {
                     TypeScript.Debug.assert(heritageClause.extendsOrImplementsKeyword.kind === 53 /* ImplementsKeyword */);
                     if (seenImplementsClause) {
-                        this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.implements_clause_already_seen);
-                        return true;
+                        return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.implements_clause_already_seen);
                     }
                     seenImplementsClause = true;
                 }
@@ -28128,8 +28236,7 @@ var TypeScript;
             if (this.inAmbientDeclaration) {
                 var declareToken = TypeScript.SyntaxUtilities.getToken(modifiers, 67 /* DeclareKeyword */);
                 if (declareToken) {
-                    this.pushDiagnostic(declareToken, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_in_an_already_ambient_context);
-                    return true;
+                    return this.pushDiagnostic(declareToken, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_in_an_already_ambient_context);
                 }
             }
             return false;
@@ -28137,8 +28244,7 @@ var TypeScript;
         GrammarCheckerWalker.prototype.checkForRequiredDeclareModifier = function (moduleElement, reportToken, modifiers) {
             if (!this.inAmbientDeclaration && this.syntaxTree.isDeclaration()) {
                 if (!TypeScript.SyntaxUtilities.containsToken(modifiers, 67 /* DeclareKeyword */)) {
-                    this.pushDiagnostic(reportToken, TypeScript.DiagnosticCode.A_declare_modifier_is_required_for_a_top_level_declaration_in_a_d_ts_file);
-                    return true;
+                    return this.pushDiagnostic(reportToken, TypeScript.DiagnosticCode.A_declare_modifier_is_required_for_a_top_level_declaration_in_a_d_ts_file);
                 }
             }
         };
@@ -28158,15 +28264,13 @@ var TypeScript;
                 var heritageClause = node.heritageClauses[i];
                 if (heritageClause.extendsOrImplementsKeyword.kind === 50 /* ExtendsKeyword */) {
                     if (seenExtendsClause) {
-                        this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_already_seen);
-                        return true;
+                        return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.extends_clause_already_seen);
                     }
                     seenExtendsClause = true;
                 }
                 else {
                     TypeScript.Debug.assert(heritageClause.extendsOrImplementsKeyword.kind === 53 /* ImplementsKeyword */);
-                    this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.Interface_declaration_cannot_have_implements_clause);
-                    return true;
+                    return this.pushDiagnostic(heritageClause, TypeScript.DiagnosticCode.Interface_declaration_cannot_have_implements_clause);
                 }
             }
             return false;
@@ -28175,8 +28279,7 @@ var TypeScript;
             for (var i = 0, n = modifiers.length; i < n; i++) {
                 var modifier = modifiers[i];
                 if (modifier.kind === 67 /* DeclareKeyword */) {
-                    this.pushDiagnostic(modifier, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_with_an_interface_declaration);
-                    return true;
+                    return this.pushDiagnostic(modifier, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_with_an_interface_declaration);
                 }
             }
             return false;
@@ -28271,8 +28374,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkGetAccessorParameter = function (node) {
             if (node.callSignature.parameterList.parameters.length !== 0) {
-                this.pushDiagnostic(node.propertyName, TypeScript.DiagnosticCode.get_accessor_cannot_have_parameters);
-                return true;
+                return this.pushDiagnostic(node.propertyName, TypeScript.DiagnosticCode.get_accessor_cannot_have_parameters);
             }
             return false;
         };
@@ -28284,15 +28386,13 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkIndexMemberModifiers = function (node) {
             if (node.modifiers.length > 0) {
-                this.pushDiagnostic(node.modifiers[0], TypeScript.DiagnosticCode.Modifiers_cannot_appear_here);
-                return true;
+                return this.pushDiagnostic(node.modifiers[0], TypeScript.DiagnosticCode.Modifiers_cannot_appear_here);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkEcmaScriptVersionIsAtLeast = function (reportToken, languageVersion, diagnosticKey) {
             if (this.syntaxTree.languageVersion() < languageVersion) {
-                this.pushDiagnostic(reportToken, diagnosticKey);
-                return true;
+                return this.pushDiagnostic(reportToken, diagnosticKey);
             }
             return false;
         };
@@ -28310,54 +28410,45 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForSemicolonInsteadOfBlock = function (parent, node) {
             if (node === undefined) {
-                this.pushDiagnosticAt(TypeScript.fullEnd(parent), 0, TypeScript.DiagnosticCode._0_expected, ["{"]);
-                return true;
+                return this.pushDiagnosticAt(TypeScript.fullEnd(parent), 0, TypeScript.DiagnosticCode._0_expected, ["{"]);
             }
             else if (node.kind === 82 /* SemicolonToken */) {
-                this.pushDiagnostic(node, TypeScript.DiagnosticCode._0_expected, ["{"]);
-                return true;
+                return this.pushDiagnostic(node, TypeScript.DiagnosticCode._0_expected, ["{"]);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedSetAccessorTypeAnnotation = function (accessor) {
             if (accessor.callSignature.typeAnnotation) {
-                this.pushDiagnostic(accessor.callSignature.typeAnnotation, TypeScript.DiagnosticCode.Type_annotation_cannot_appear_on_a_set_accessor);
-                return true;
+                return this.pushDiagnostic(accessor.callSignature.typeAnnotation, TypeScript.DiagnosticCode.Type_annotation_cannot_appear_on_a_set_accessor);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedAccessorTypeParameters = function (callSignature) {
             if (callSignature.typeParameterList) {
-                this.pushDiagnostic(callSignature.typeParameterList, TypeScript.DiagnosticCode.Type_parameters_cannot_appear_on_an_accessor);
-                return true;
+                return this.pushDiagnostic(callSignature.typeParameterList, TypeScript.DiagnosticCode.Type_parameters_cannot_appear_on_an_accessor);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForAccessorDeclarationInAmbientContext = function (accessor) {
             if (this.inAmbientDeclaration) {
-                this.pushDiagnostic(accessor, TypeScript.DiagnosticCode.Accessors_are_not_allowed_in_ambient_contexts);
-                return true;
+                return this.pushDiagnostic(accessor, TypeScript.DiagnosticCode.Accessors_are_not_allowed_in_ambient_contexts);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkSetAccessorParameter = function (node) {
             var parameters = node.callSignature.parameterList.parameters;
             if (TypeScript.nonSeparatorCount(parameters) !== 1) {
-                this.pushDiagnostic(node.propertyName, TypeScript.DiagnosticCode.set_accessor_must_have_exactly_one_parameter);
-                return true;
+                return this.pushDiagnostic(node.propertyName, TypeScript.DiagnosticCode.set_accessor_must_have_exactly_one_parameter);
             }
             var parameter = TypeScript.nonSeparatorAt(parameters, 0);
             if (parameter.questionToken) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_parameter_cannot_be_optional);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_parameter_cannot_be_optional);
             }
             if (parameter.equalsValueClause) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_parameter_cannot_have_an_initializer);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_parameter_cannot_have_an_initializer);
             }
             if (parameter.dotDotDotToken) {
-                this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_cannot_have_rest_parameter);
-                return true;
+                return this.pushDiagnostic(parameter, TypeScript.DiagnosticCode.set_accessor_cannot_have_rest_parameter);
             }
             return false;
         };
@@ -28398,12 +28489,11 @@ var TypeScript;
                 if (node.parent.kind === 182 /* ObjectCreationExpression */ && node.parent.expression === node) {
                     var start = TypeScript.start(node.openBracketToken);
                     var end = TypeScript.fullEnd(node.closeBracketToken);
-                    this.pushDiagnosticAt(start, end - start, TypeScript.DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead);
+                    return this.pushDiagnosticAt(start, end - start, TypeScript.DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead);
                 }
                 else {
-                    this.pushDiagnostic(node.closeBracketToken, TypeScript.DiagnosticCode.Expression_expected);
+                    return this.pushDiagnostic(node.closeBracketToken, TypeScript.DiagnosticCode.Expression_expected);
                 }
-                return true;
             }
             return false;
         };
@@ -28421,8 +28511,7 @@ var TypeScript;
             for (var i = 0, n = TypeScript.nonSeparatorCount(node.enumElements); i < n; i++) {
                 var enumElement = TypeScript.nonSeparatorAt(node.enumElements, i);
                 if (!enumElement.equalsValueClause && previousValueWasComputed) {
-                    this.pushDiagnostic(enumElement, TypeScript.DiagnosticCode.Enum_member_must_have_initializer);
-                    return true;
+                    return this.pushDiagnostic(enumElement, TypeScript.DiagnosticCode.Enum_member_must_have_initializer);
                 }
                 if (enumElement.equalsValueClause) {
                     var value = enumElement.equalsValueClause.value;
@@ -28457,8 +28546,7 @@ var TypeScript;
             for (var i = 0, n = modifiers.length; i < n; i++) {
                 var modifier = modifiers[i];
                 if (TypeScript.SyntaxFacts.isAccessibilityModifier(modifier.kind) || modifier.kind === 60 /* StaticKeyword */) {
-                    this.pushDiagnostic(modifier, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_module_element, [modifier.text()]);
-                    return true;
+                    return this.pushDiagnostic(modifier, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_module_element, [modifier.text()]);
                 }
                 if (modifier.kind === 67 /* DeclareKeyword */) {
                     if (seenDeclareModifier) {
@@ -28513,8 +28601,7 @@ var TypeScript;
         GrammarCheckerWalker.prototype.checkForDisallowedDeclareModifierOnImportDeclaration = function (modifiers) {
             var declareToken = TypeScript.SyntaxUtilities.getToken(modifiers, 67 /* DeclareKeyword */);
             if (declareToken) {
-                this.pushDiagnostic(declareToken, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_with_an_import_declaration);
-                return true;
+                return this.pushDiagnostic(declareToken, TypeScript.DiagnosticCode.A_declare_modifier_cannot_be_used_with_an_import_declaration);
             }
         };
         GrammarCheckerWalker.prototype.visitImportDeclaration = function (node) {
@@ -28545,8 +28632,7 @@ var TypeScript;
             for (var i = 0, n = node.moduleElements.length; i < n; i++) {
                 var child = node.moduleElements[i];
                 if (child.kind === 141 /* ExportAssignment */) {
-                    this.pushDiagnostic(child, TypeScript.DiagnosticCode.Export_assignment_cannot_be_used_in_internal_modules);
-                    return true;
+                    return this.pushDiagnostic(child, TypeScript.DiagnosticCode.Export_assignment_cannot_be_used_in_internal_modules);
                 }
             }
             return false;
@@ -28562,27 +28648,24 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForMalformedBlock = function (node) {
             if (node.equalsGreaterThanToken || node.openBraceToken === undefined) {
-                this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode._0_expected, ["{"]);
-                return true;
+                return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode._0_expected, ["{"]);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForBlockInAmbientContext = function (node) {
             if (this.inAmbientDeclaration || this.syntaxTree.isDeclaration()) {
                 if (node.parent.kind === 1 /* List */) {
-                    this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
+                    return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
                 }
                 else {
-                    this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.A_function_implementation_cannot_be_declared_in_an_ambient_context);
+                    return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.A_function_implementation_cannot_be_declared_in_an_ambient_context);
                 }
-                return true;
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForStatementInAmbientContxt = function (node) {
             if (this.inAmbientDeclaration || this.syntaxTree.isDeclaration()) {
-                this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
-                return true;
+                return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.Statements_are_not_allowed_in_ambient_contexts);
             }
             return false;
         };
@@ -28621,22 +28704,20 @@ var TypeScript;
                 if (!TypeScript.ArrayUtilities.any(breakableLabels, function (s) { return TypeScript.tokenValueText(s.identifier) === TypeScript.tokenValueText(node.identifier); })) {
                     var breakableLabels = this.getEnclosingLabels(node, true, true);
                     if (TypeScript.ArrayUtilities.any(breakableLabels, function (s) { return TypeScript.tokenValueText(s.identifier) === TypeScript.tokenValueText(node.identifier); })) {
-                        this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                        return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                     }
                     else {
-                        this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_not_found);
+                        return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_not_found);
                     }
-                    return true;
                 }
             }
             else if (!this.inIterationStatement(node, false) && !this.inSwitchStatement(node)) {
                 if (this.inIterationStatement(node, true)) {
-                    this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                    return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                 }
                 else {
-                    this.pushDiagnostic(node, TypeScript.DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement);
+                    return this.pushDiagnostic(node, TypeScript.DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement);
                 }
-                return true;
             }
             return false;
         };
@@ -28712,24 +28793,22 @@ var TypeScript;
         GrammarCheckerWalker.prototype.checkContinueStatementTarget = function (node) {
             if (!this.inIterationStatement(node, false)) {
                 if (this.inIterationStatement(node, true)) {
-                    this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                    return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                 }
                 else {
-                    this.pushDiagnostic(node, TypeScript.DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement);
+                    return this.pushDiagnostic(node, TypeScript.DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement);
                 }
-                return true;
             }
             else if (node.identifier) {
                 var continuableLabels = this.getEnclosingLabels(node, false, false);
                 if (!TypeScript.ArrayUtilities.any(continuableLabels, function (s) { return TypeScript.tokenValueText(s.identifier) === TypeScript.tokenValueText(node.identifier); })) {
                     var continuableLabels = this.getEnclosingLabels(node, false, true);
                     if (TypeScript.ArrayUtilities.any(continuableLabels, function (s) { return TypeScript.tokenValueText(s.identifier) === TypeScript.tokenValueText(node.identifier); })) {
-                        this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                        return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                     }
                     else {
-                        this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_not_found);
+                        return this.pushDiagnostic(node, TypeScript.DiagnosticCode.Jump_target_not_found);
                     }
-                    return true;
                 }
             }
             return false;
@@ -28766,15 +28845,13 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForInLeftHandSideExpression = function (node) {
             if (node.left.kind !== 194 /* VariableDeclaration */ && !TypeScript.SyntaxUtilities.isLeftHandSizeExpression(node.left)) {
-                this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Invalid_left_hand_side_in_for_in_statement);
-                return true;
+                return this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Invalid_left_hand_side_in_for_in_statement);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForInStatementVariableDeclaration = function (node) {
             if (node.left.kind === 194 /* VariableDeclaration */ && node.left.variableDeclarators.length > 1) {
-                this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Only_a_single_variable_declaration_is_allowed_in_a_for_in_statement);
-                return true;
+                return this.pushDiagnostic(node.left, TypeScript.DiagnosticCode.Only_a_single_variable_declaration_is_allowed_in_a_for_in_statement);
             }
             return false;
         };
@@ -28801,8 +28878,7 @@ var TypeScript;
             var breakableLabels = this.getEnclosingLabels(node, true, false);
             var matchingLabel = TypeScript.ArrayUtilities.firstOrDefault(breakableLabels, function (s) { return TypeScript.tokenValueText(s.identifier) === labelIdentifier; });
             if (matchingLabel) {
-                this.pushDiagnostic(node.identifier, TypeScript.DiagnosticCode.Duplicate_identifier_0, [labelIdentifier]);
-                return true;
+                return this.pushDiagnostic(node.identifier, TypeScript.DiagnosticCode.Duplicate_identifier_0, [labelIdentifier]);
             }
             return false;
         };
@@ -28818,8 +28894,7 @@ var TypeScript;
                     return false;
                 }
             }
-            this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.return_statement_must_be_contained_within_a_function_body);
-            return true;
+            return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.return_statement_must_be_contained_within_a_function_body);
         };
         GrammarCheckerWalker.prototype.visitSwitchStatement = function (node) {
             if (this.checkForStatementInAmbientContxt(node)) {
@@ -28835,8 +28910,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForMissingThrowStatementExpression = function (node) {
             if (node.expression === undefined) {
-                this.pushDiagnosticAt(TypeScript.fullEnd(node.throwKeyword), 0, TypeScript.DiagnosticCode.Expression_expected);
-                return true;
+                return this.pushDiagnosticAt(TypeScript.fullEnd(node.throwKeyword), 0, TypeScript.DiagnosticCode.Expression_expected);
             }
             return false;
         };
@@ -28860,16 +28934,14 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForWithInStrictMode = function (node) {
             if (TypeScript.parsedInStrictModeContext(node)) {
-                this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.with_statements_are_not_allowed_in_strict_mode);
-                return true;
+                return this.pushDiagnostic(TypeScript.firstToken(node), TypeScript.DiagnosticCode.with_statements_are_not_allowed_in_strict_mode);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedModifiers = function (modifiers) {
             if (this.inBlock || this.inObjectLiteralExpression) {
                 if (modifiers.length > 0) {
-                    this.pushDiagnostic(modifiers[0], TypeScript.DiagnosticCode.Modifiers_cannot_appear_here);
-                    return true;
+                    return this.pushDiagnostic(modifiers[0], TypeScript.DiagnosticCode.Modifiers_cannot_appear_here);
                 }
             }
             return false;
@@ -28894,8 +28966,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForAsyncGenerator = function (asyncKeyword, asterixToken) {
             if (asyncKeyword && asterixToken) {
-                this.pushDiagnostic(asyncKeyword, TypeScript.DiagnosticCode.A_generator_declaration_cannot_have_the_async_modifier);
-                return true;
+                return this.pushDiagnostic(asyncKeyword, TypeScript.DiagnosticCode.A_generator_declaration_cannot_have_the_async_modifier);
             }
             return false;
         };
@@ -28958,15 +29029,13 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedTemplatePropertyName = function (propertyName) {
             if (propertyName.kind === 13 /* NoSubstitutionTemplateToken */) {
-                this.pushDiagnostic(propertyName, TypeScript.DiagnosticCode.Template_literal_cannot_be_used_as_an_element_name);
-                return true;
+                return this.pushDiagnostic(propertyName, TypeScript.DiagnosticCode.Template_literal_cannot_be_used_as_an_element_name);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkForDisallowedComputedPropertyName = function (propertyName) {
             if (propertyName.kind === 214 /* ComputedPropertyName */) {
-                this.pushDiagnostic(propertyName, TypeScript.DiagnosticCode.Computed_property_names_cannot_be_used_here);
-                return true;
+                return this.pushDiagnostic(propertyName, TypeScript.DiagnosticCode.Computed_property_names_cannot_be_used_here);
             }
             return false;
         };
@@ -28981,8 +29050,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkVariableDeclaratorInitializer = function (node) {
             if (this.inAmbientDeclaration && node.equalsValueClause) {
-                this.pushDiagnostic(TypeScript.firstToken(node.equalsValueClause.value), TypeScript.DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts);
-                return true;
+                return this.pushDiagnostic(TypeScript.firstToken(node.equalsValueClause.value), TypeScript.DiagnosticCode.Initializers_are_not_allowed_in_ambient_contexts);
             }
             return false;
         };
@@ -28996,23 +29064,20 @@ var TypeScript;
             for (var i = 0, n = modifiers.length; i < n; i++) {
                 var child = modifiers[i];
                 if (child.kind !== 59 /* PublicKeyword */) {
-                    this.pushDiagnostic(child, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_constructor_declaration, [TypeScript.SyntaxFacts.getText(child.kind)]);
-                    return true;
+                    return this.pushDiagnostic(child, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_constructor_declaration, [TypeScript.SyntaxFacts.getText(child.kind)]);
                 }
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkConstructorTypeParameterList = function (node) {
             if (node.callSignature.typeParameterList) {
-                this.pushDiagnostic(node.callSignature.typeParameterList, TypeScript.DiagnosticCode.Type_parameters_cannot_appear_on_a_constructor_declaration);
-                return true;
+                return this.pushDiagnostic(node.callSignature.typeParameterList, TypeScript.DiagnosticCode.Type_parameters_cannot_appear_on_a_constructor_declaration);
             }
             return false;
         };
         GrammarCheckerWalker.prototype.checkConstructorTypeAnnotation = function (node) {
             if (node.callSignature.typeAnnotation) {
-                this.pushDiagnostic(node.callSignature.typeAnnotation, TypeScript.DiagnosticCode.Type_annotation_cannot_appear_on_a_constructor_declaration);
-                return true;
+                return this.pushDiagnostic(node.callSignature.typeAnnotation, TypeScript.DiagnosticCode.Type_annotation_cannot_appear_on_a_constructor_declaration);
             }
             return false;
         };
@@ -29043,8 +29108,7 @@ var TypeScript;
         GrammarCheckerWalker.prototype.checkForDisallowedEvalOrArguments = function (node, token) {
             if (token) {
                 if (TypeScript.parsedInStrictModeContext(node) && this.isEvalOrArguments(token)) {
-                    this.pushDiagnostic(token, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(token)]);
-                    return true;
+                    return this.pushDiagnostic(token, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(token)]);
                 }
             }
             return false;
@@ -29080,8 +29144,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkIllegalAssignment = function (node) {
             if (TypeScript.parsedInStrictModeContext(node) && TypeScript.SyntaxFacts.isAssignmentOperatorToken(node.operatorToken.kind) && this.isEvalOrArguments(node.left)) {
-                this.pushDiagnostic(node.operatorToken, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(node.left)]);
-                return true;
+                return this.pushDiagnostic(node.operatorToken, TypeScript.DiagnosticCode.Invalid_use_of_0_in_strict_mode, [this.getEvalOrArguments(node.left)]);
             }
             return false;
         };
@@ -29105,8 +29168,7 @@ var TypeScript;
         };
         GrammarCheckerWalker.prototype.checkConstraintType = function (node) {
             if (!TypeScript.SyntaxFacts.isType(node.typeOrExpression.kind)) {
-                this.pushDiagnostic(node.typeOrExpression, TypeScript.DiagnosticCode.Type_expected);
-                return true;
+                return this.pushDiagnostic(node.typeOrExpression, TypeScript.DiagnosticCode.Type_expected);
             }
             return false;
         };
@@ -31654,8 +31716,8 @@ function tokenToJSON(token, text, mergeTrivia) {
     var isSkippedToken = token.parent && token.parent.kind === 6 /* SkippedTokenTrivia */;
     var isMissingToken = token.fullWidth() === 0 && token.kind !== 8 /* EndOfFileToken */;
     var result = {};
-    for (var name in TypeScript.SyntaxKind) {
-        if (TypeScript.SyntaxKind[name] === token.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === token.kind) {
             result.kind = name;
             break;
         }
@@ -31709,8 +31771,8 @@ function triviaListToJSON(trivia, text) {
 }
 function triviaToJSON(trivia, text) {
     var result = {};
-    for (var name in TypeScript.SyntaxKind) {
-        if (TypeScript.SyntaxKind[name] === trivia.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === trivia.kind) {
             result.kind = name;
             break;
         }
@@ -31725,10 +31787,14 @@ function triviaToJSON(trivia, text) {
     }
     return result;
 }
+function getSyntaxKindEnum() {
+    var name = "SyntaxKind";
+    return TypeScript[name];
+}
 function nodeToJSON(node, text) {
     var result = {};
-    for (var name in TypeScript.SyntaxKind) {
-        if (TypeScript.SyntaxKind[name] === node.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === node.kind) {
             result.kind = name;
             break;
         }

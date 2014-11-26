@@ -42,8 +42,8 @@ function tokenToJSON(token: TypeScript.ISyntaxToken, text: TypeScript.ISimpleTex
 
     var result: any = {};
 
-    for (var name in TypeScript.SyntaxKind) {
-        if (<any>TypeScript.SyntaxKind[name] === token.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === token.kind) {
             result.kind = name;
             break;
         }
@@ -114,8 +114,8 @@ function triviaListToJSON(trivia: TypeScript.ISyntaxTrivia[], text: TypeScript.I
 function triviaToJSON(trivia: TypeScript.ISyntaxTrivia, text: TypeScript.ISimpleText): any {
     var result: any = {};
 
-    for (var name in TypeScript.SyntaxKind) {
-        if (<any>TypeScript.SyntaxKind[name] === trivia.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === trivia.kind) {
             result.kind = name;
             break;
         }
@@ -133,11 +133,16 @@ function triviaToJSON(trivia: TypeScript.ISyntaxTrivia, text: TypeScript.ISimple
     return result;
 }
 
+function getSyntaxKindEnum() {
+    var name = "SyntaxKind";
+    return (<any>TypeScript)[name];
+}
+
 function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText): any {
     var result: any = {}
 
-    for (var name in TypeScript.SyntaxKind) {
-        if (<any>TypeScript.SyntaxKind[name] === node.kind) {
+    for (var name in getSyntaxKindEnum()) {
+        if (getSyntaxKindEnum()[name] === node.kind) {
             result.kind = name;
             break;
         }
