@@ -1,0 +1,2 @@
+async enum C {
+}

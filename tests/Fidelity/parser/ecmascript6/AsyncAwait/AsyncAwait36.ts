@@ -1,0 +1,2 @@
+async interface I {
+}

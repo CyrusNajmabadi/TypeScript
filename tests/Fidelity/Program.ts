@@ -168,6 +168,14 @@ function nodeToJSON(node: TypeScript.ISyntaxNode, text: TypeScript.ISimpleText):
         result.parsedInAllowYieldMode = true;
     }
 
+    if (TypeScript.parsedInGeneratorParameterContext(node)) {
+        result.parsedInGeneratorParameterContext = true;
+    }
+
+    if (TypeScript.parsedInAsyncContext(node)) {
+        result.parsedInAsyncContext = true;
+    }
+
     var usedNames: any = {};
     var thisAsIndexable: ts.Map<any> = <any>node;
     for (var i = 0, n = TypeScript.childCount(node); i < n; i++) {

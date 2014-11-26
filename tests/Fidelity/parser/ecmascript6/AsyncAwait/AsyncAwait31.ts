@@ -1,0 +1,2 @@
+async async function foo() {
+}
