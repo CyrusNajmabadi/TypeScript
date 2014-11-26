@@ -20026,7 +20026,7 @@ var TypeScript;
         SyntaxKind[SyntaxKind["TypeAnnotation"] = 212] = "TypeAnnotation";
         SyntaxKind[SyntaxKind["ExpressionBody"] = 213] = "ExpressionBody";
         SyntaxKind[SyntaxKind["ComputedPropertyName"] = 214] = "ComputedPropertyName";
-        SyntaxKind[SyntaxKind["SimplePropertyAssignment"] = 215] = "SimplePropertyAssignment";
+        SyntaxKind[SyntaxKind["PropertyAssignment"] = 215] = "PropertyAssignment";
         SyntaxKind[SyntaxKind["ExternalModuleReference"] = 216] = "ExternalModuleReference";
         SyntaxKind[SyntaxKind["ModuleNameModuleReference"] = 217] = "ModuleNameModuleReference";
         SyntaxKind[SyntaxKind["FirstStandardKeyword"] = SyntaxKind.BreakKeyword] = "FirstStandardKeyword";
@@ -23205,7 +23205,7 @@ var TypeScript;
             case 212 /* TypeAnnotation */: return visitor.visitTypeAnnotation(element);
             case 213 /* ExpressionBody */: return visitor.visitExpressionBody(element);
             case 214 /* ComputedPropertyName */: return visitor.visitComputedPropertyName(element);
-            case 215 /* SimplePropertyAssignment */: return visitor.visitSimplePropertyAssignment(element);
+            case 215 /* PropertyAssignment */: return visitor.visitPropertyAssignment(element);
             case 216 /* ExternalModuleReference */: return visitor.visitExternalModuleReference(element);
             case 217 /* ModuleNameModuleReference */: return visitor.visitModuleNameModuleReference(element);
             default: return visitor.visitToken(element);
@@ -23731,7 +23731,7 @@ var TypeScript;
             TypeScript.visitNodeOrToken(this, node.expression);
             this.visitToken(node.closeBracketToken);
         };
-        SyntaxWalker.prototype.visitSimplePropertyAssignment = function (node) {
+        SyntaxWalker.prototype.visitPropertyAssignment = function (node) {
             TypeScript.visitNodeOrToken(this, node.propertyName);
             this.visitToken(node.colonToken);
             TypeScript.visitNodeOrToken(this, node.expression);
@@ -25615,8 +25615,11 @@ var TypeScript;
                 }
                 var _currentToken = currentToken();
                 if (_currentToken.kind === 63 /* AsyncKeyword */) {
-                    if (peekToken(1).kind === 95 /* AsteriskToken */ || isPropertyName(1, inErrorRecovery)) {
-                        return parseMemberFunctionDeclaration(TypeScript.Syntax.list([eatToken(63 /* AsyncKeyword */)]), tryEatToken(95 /* AsteriskToken */), parsePropertyName());
+                    var token1 = peekToken(1);
+                    if (!token1.hasLeadingNewLine()) {
+                        if (token1.kind === 95 /* AsteriskToken */ || isPropertyName(1, inErrorRecovery)) {
+                            return parseMemberFunctionDeclaration(TypeScript.Syntax.list([eatToken(63 /* AsyncKeyword */)]), tryEatToken(95 /* AsteriskToken */), parsePropertyName());
+                        }
                     }
                 }
                 if (isIdentifier(_currentToken)) {
@@ -25632,7 +25635,7 @@ var TypeScript;
                         return parseMemberFunctionDeclaration([], asterixToken, propertyName);
                     }
                     else {
-                        return new TypeScript.SimplePropertyAssignmentSyntax(contextFlags, propertyName, eatToken(110 /* ColonToken */), allowInAnd(parseAssignmentExpressionOrHigher));
+                        return new TypeScript.PropertyAssignmentSyntax(contextFlags, propertyName, eatToken(110 /* ColonToken */), allowInAnd(parseAssignmentExpressionOrHigher));
                     }
                 }
                 return undefined;
@@ -27772,15 +27775,15 @@ var TypeScript;
             case 2: return this.closeBracketToken;
         }
     };
-    TypeScript.SimplePropertyAssignmentSyntax = function (data, propertyName, colonToken, expression) {
+    TypeScript.PropertyAssignmentSyntax = function (data, propertyName, colonToken, expression) {
         if (data) {
             this.__data = data;
         }
         this.propertyName = propertyName, this.colonToken = colonToken, this.expression = expression, propertyName.parent = this, colonToken.parent = this, expression.parent = this;
     };
-    TypeScript.SimplePropertyAssignmentSyntax.prototype.kind = 215 /* SimplePropertyAssignment */;
-    TypeScript.SimplePropertyAssignmentSyntax.prototype.childCount = 3;
-    TypeScript.SimplePropertyAssignmentSyntax.prototype.childAt = function (index) {
+    TypeScript.PropertyAssignmentSyntax.prototype.kind = 215 /* PropertyAssignment */;
+    TypeScript.PropertyAssignmentSyntax.prototype.childCount = 3;
+    TypeScript.PropertyAssignmentSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.colonToken;
@@ -28367,11 +28370,11 @@ var TypeScript;
             }
             _super.prototype.visitSimpleArrowFunctionExpression.call(this, node);
         };
-        GrammarCheckerWalker.prototype.visitSimplePropertyAssignment = function (node) {
+        GrammarCheckerWalker.prototype.visitPropertyAssignment = function (node) {
             if (this.checkForDisallowedTemplatePropertyName(node.propertyName)) {
                 return;
             }
-            _super.prototype.visitSimplePropertyAssignment.call(this, node);
+            _super.prototype.visitPropertyAssignment.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitSetAccessor = function (node) {
             if (this.checkForAccessorDeclarationInAmbientContext(node) || this.checkEcmaScriptVersionIsAtLeast(node.setKeyword, 1 /* ES5 */, TypeScript.DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) || this.checkForDisallowedModifiers(node.modifiers) || this.checkClassElementModifiers(node.modifiers) || this.checkForDisallowedAccessorTypeParameters(node.callSignature) || this.checkForDisallowedSetAccessorTypeAnnotation(node) || this.checkSetAccessorParameter(node) || this.checkForDisallowedTemplatePropertyName(node.propertyName) || this.checkForSemicolonInsteadOfBlock(node, node.body) || this.checkForDisallowedAsyncModifier(node.modifiers)) {
@@ -29991,7 +29994,7 @@ var TypeScript;
                 TypeScript.visitNodeOrToken(this, node.expression);
                 this.appendToken(node.closeBracketToken);
             };
-            PrettyPrinterImpl.prototype.visitSimplePropertyAssignment = function (node) {
+            PrettyPrinterImpl.prototype.visitPropertyAssignment = function (node) {
                 TypeScript.visitNodeOrToken(this, node.propertyName);
                 this.appendToken(node.colonToken);
                 this.ensureSpace();
