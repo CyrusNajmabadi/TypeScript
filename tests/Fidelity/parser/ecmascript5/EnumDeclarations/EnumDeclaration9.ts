@@ -1,0 +1,2 @@
+const export enum E {
+}

@@ -24461,6 +24461,7 @@ var TypeScript;
                     case 60 /* StaticKeyword */:
                     case 67 /* DeclareKeyword */:
                     case 63 /* AsyncKeyword */:
+                    case 47 /* ConstKeyword */:
                         return true;
                 }
                 return false;
@@ -24472,6 +24473,9 @@ var TypeScript;
                         if (nextToken.hasLeadingNewLine()) {
                             return false;
                         }
+                    }
+                    if (token.kind === 47 /* ConstKeyword */) {
+                        return nextToken.kind === 48 /* EnumKeyword */;
                     }
                     var nextTokenKind = nextToken.kind;
                     switch (nextTokenKind) {
