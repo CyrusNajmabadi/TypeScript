@@ -23767,7 +23767,7 @@ var TypeScript;
             TypeScript.visitNodeOrToken(this, node.expression);
         };
         SyntaxWalker.prototype.visitVariableDeclaration = function (node) {
-            this.visitToken(node.varKeyword);
+            this.visitToken(node.varConstOrLetKeyword);
             this.visitList(node.variableDeclarators);
         };
         SyntaxWalker.prototype.visitVariableDeclarator = function (node) {
@@ -24991,7 +24991,7 @@ var TypeScript;
                 var openParenToken = eatToken(77 /* OpenParenToken */);
                 var _currentToken = currentToken();
                 var tokenKind = _currentToken.kind;
-                var initializer = tokenKind === 83 /* SemicolonToken */ ? undefined : tokenKind === 42 /* VarKeyword */ ? disallowInAnd(parseVariableDeclaration) : disallowInAnd(parseExpression);
+                var initializer = tokenKind === 83 /* SemicolonToken */ ? undefined : isVariableDeclaration(tokenKind) ? disallowInAnd(parseVariableDeclaration) : disallowInAnd(parseExpression);
                 if (initializer !== undefined && currentToken().kind === 31 /* InKeyword */) {
                     return new TypeScript.ForInStatementSyntax(contextFlags, forKeyword, openParenToken, initializer, eatToken(31 /* InKeyword */), allowInAnd(parseExpression), eatToken(78 /* CloseParenToken */), parseStatement(false));
                 }
@@ -25146,13 +25146,25 @@ var TypeScript;
                 return new TypeScript.ElseClauseSyntax(contextFlags, eatToken(25 /* ElseKeyword */), parseStatement(false));
             }
             function isVariableStatement(modifierCount) {
-                return peekToken(modifierCount).kind === 42 /* VarKeyword */;
+                return isVariableDeclaration(peekToken(modifierCount).kind);
+            }
+            function isVariableDeclaration(tokenKind) {
+                if (tokenKind === 42 /* VarKeyword */ || tokenKind === 47 /* ConstKeyword */) {
+                    return true;
+                }
+                if (tokenKind === 55 /* LetKeyword */) {
+                    if (inStrictModeContext()) {
+                        return true;
+                    }
+                    return isIdentifier(peekToken(1));
+                }
+                return false;
             }
             function parseVariableStatement() {
                 return new TypeScript.VariableStatementSyntax(contextFlags, parseModifiers(), allowInAnd(parseVariableDeclaration), eatExplicitOrAutomaticSemicolon(false));
             }
             function parseVariableDeclaration() {
-                return new TypeScript.VariableDeclarationSyntax(contextFlags, eatToken(42 /* VarKeyword */), parseSeparatedSyntaxList(12 /* VariableDeclaration_VariableDeclarators */));
+                return new TypeScript.VariableDeclarationSyntax(contextFlags, consumeToken(currentToken()), parseSeparatedSyntaxList(12 /* VariableDeclaration_VariableDeclarators */));
             }
             function isVariableDeclarator() {
                 var node = currentNode();
@@ -27622,17 +27634,17 @@ var TypeScript;
             case 1: return this.expression;
         }
     };
-    TypeScript.VariableDeclarationSyntax = function (data, varKeyword, variableDeclarators) {
+    TypeScript.VariableDeclarationSyntax = function (data, varConstOrLetKeyword, variableDeclarators) {
         if (data) {
             this.__data = data;
         }
-        this.varKeyword = varKeyword, this.variableDeclarators = variableDeclarators, varKeyword.parent = this, variableDeclarators.parent = this;
+        this.varConstOrLetKeyword = varConstOrLetKeyword, this.variableDeclarators = variableDeclarators, varConstOrLetKeyword.parent = this, variableDeclarators.parent = this;
     };
     TypeScript.VariableDeclarationSyntax.prototype.kind = 195 /* VariableDeclaration */;
     TypeScript.VariableDeclarationSyntax.prototype.childCount = 2;
     TypeScript.VariableDeclarationSyntax.prototype.childAt = function (index) {
         switch (index) {
-            case 0: return this.varKeyword;
+            case 0: return this.varConstOrLetKeyword;
             case 1: return this.variableDeclarators;
         }
     };
@@ -28196,7 +28208,7 @@ var TypeScript;
             _super.prototype.visitArgumentList.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitVariableDeclaration = function (node) {
-            if (this.checkForAtLeastOneElement(node.variableDeclarators, node.varKeyword, TypeScript.getLocalizedText(TypeScript.DiagnosticCode.variable_declaration, undefined)) || this.checkForTrailingComma(node.variableDeclarators)) {
+            if (this.checkForAtLeastOneElement(node.variableDeclarators, node.varConstOrLetKeyword, TypeScript.getLocalizedText(TypeScript.DiagnosticCode.variable_declaration, undefined)) || this.checkForTrailingComma(node.variableDeclarators)) {
                 return;
             }
             _super.prototype.visitVariableDeclaration.call(this, node);
@@ -29034,7 +29046,7 @@ var TypeScript;
             _super.prototype.visitFunctionExpression.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitVariableStatement = function (node) {
-            if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForDisallowedModifiers(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.variableDeclaration.varKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkForDisallowedAsyncModifier(node.modifiers)) {
+            if (this.checkForDisallowedDeclareModifier(node.modifiers) || this.checkForDisallowedModifiers(node.modifiers) || this.checkForRequiredDeclareModifier(node, node.variableDeclaration.varConstOrLetKeyword, node.modifiers) || this.checkModuleElementModifiers(node.modifiers) || this.checkForDisallowedAsyncModifier(node.modifiers)) {
                 return;
             }
             var savedInAmbientDeclaration = this.inAmbientDeclaration;
@@ -29646,7 +29658,7 @@ var TypeScript;
                 this.appendToken(node.semicolonToken);
             };
             PrettyPrinterImpl.prototype.visitVariableDeclaration = function (node) {
-                this.appendToken(node.varKeyword);
+                this.appendToken(node.varConstOrLetKeyword);
                 this.ensureSpace();
                 this.appendSeparatorSpaceList(node.variableDeclarators);
             };
@@ -31762,7 +31774,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
