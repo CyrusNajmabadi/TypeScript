@@ -20295,7 +20295,7 @@ var TypeScript;
         SyntaxKind[SyntaxKind["ParenthesizedExpression"] = 183] = "ParenthesizedExpression";
         SyntaxKind[SyntaxKind["ParenthesizedArrowFunctionExpression"] = 184] = "ParenthesizedArrowFunctionExpression";
         SyntaxKind[SyntaxKind["SimpleArrowFunctionExpression"] = 185] = "SimpleArrowFunctionExpression";
-        SyntaxKind[SyntaxKind["CastExpression"] = 186] = "CastExpression";
+        SyntaxKind[SyntaxKind["TypeAssertionExpression"] = 186] = "TypeAssertionExpression";
         SyntaxKind[SyntaxKind["ElementAccessExpression"] = 187] = "ElementAccessExpression";
         SyntaxKind[SyntaxKind["FunctionExpression"] = 188] = "FunctionExpression";
         SyntaxKind[SyntaxKind["OmittedExpression"] = 189] = "OmittedExpression";
@@ -22421,17 +22421,6 @@ var TypeScript;
         return fullStart(element) + fullWidth(element);
     }
     TypeScript.fullEnd = fullEnd;
-    function existsNewLineBetweenTokens(token1, token2, text) {
-        if (token1 === token2) {
-            return false;
-        }
-        if (!token1 || !token2) {
-            return true;
-        }
-        var lineMap = text.lineMap();
-        return lineMap.getLineNumberFromPosition(fullEnd(token1)) !== lineMap.getLineNumberFromPosition(start(token2, text));
-    }
-    TypeScript.existsNewLineBetweenTokens = existsNewLineBetweenTokens;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -23336,7 +23325,7 @@ var TypeScript;
                 switch (parent.kind) {
                     case 198 /* TypeArgumentList */:
                     case 199 /* TypeParameterList */:
-                    case 186 /* CastExpression */:
+                    case 186 /* TypeAssertionExpression */:
                         return true;
                 }
             }
@@ -23476,7 +23465,7 @@ var TypeScript;
             case 183 /* ParenthesizedExpression */: return visitor.visitParenthesizedExpression(element);
             case 184 /* ParenthesizedArrowFunctionExpression */: return visitor.visitParenthesizedArrowFunctionExpression(element);
             case 185 /* SimpleArrowFunctionExpression */: return visitor.visitSimpleArrowFunctionExpression(element);
-            case 186 /* CastExpression */: return visitor.visitCastExpression(element);
+            case 186 /* TypeAssertionExpression */: return visitor.visitTypeAssertionExpression(element);
             case 187 /* ElementAccessExpression */: return visitor.visitElementAccessExpression(element);
             case 188 /* FunctionExpression */: return visitor.visitFunctionExpression(element);
             case 189 /* OmittedExpression */: return visitor.visitOmittedExpression(element);
@@ -23891,7 +23880,7 @@ var TypeScript;
             this.visitToken(node.equalsGreaterThanToken);
             TypeScript.visitNodeOrToken(this, node.body);
         };
-        SyntaxWalker.prototype.visitCastExpression = function (node) {
+        SyntaxWalker.prototype.visitTypeAssertionExpression = function (node) {
             this.visitToken(node.lessThanToken);
             TypeScript.visitNodeOrToken(this, node.type);
             this.visitToken(node.greaterThanToken);
@@ -24570,7 +24559,7 @@ var TypeScript;
                 var _currentToken = currentToken();
                 if (TypeScript.SyntaxFacts.isAnyKeyword(_currentToken.kind) && _currentToken.hasLeadingNewLine()) {
                     var token1 = peekToken(1);
-                    if (!TypeScript.existsNewLineBetweenTokens(_currentToken, token1, source.text) && TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token1)) {
+                    if (!token1.hasLeadingNewLine() && TypeScript.SyntaxFacts.isIdentifierNameOrAnyKeyword(token1)) {
                         return createMissingToken(9 /* IdentifierName */, _currentToken);
                     }
                 }
@@ -24863,7 +24852,7 @@ var TypeScript;
                 var _currentToken = currentToken();
                 if (isModifier(_currentToken, 0)) {
                     var token1 = peekToken(1);
-                    if (!TypeScript.existsNewLineBetweenTokens(_currentToken, token1, source.text) && isPropertyNameToken(token1, inErrorRecovery)) {
+                    if (!token1.hasLeadingNewLine() && isPropertyNameToken(token1, inErrorRecovery)) {
                         return false;
                     }
                 }
@@ -25252,7 +25241,7 @@ var TypeScript;
                 if (currentToken().kind === 84 /* CommaToken */) {
                     return new TypeScript.OmittedExpressionSyntax(contextFlags);
                 }
-                return allowInAnd(tryParseAssignmentExpressionOrHigher);
+                return isExpression(currentToken()) ? allowInAnd(parseAssignmentExpressionOrHigher) : undefined;
             }
             function isExpression(currentToken) {
                 switch (currentToken.kind) {
@@ -25392,13 +25381,7 @@ var TypeScript;
                 }
                 return leftOperand;
             }
-            function tryParseAssignmentExpressionOrHigher() {
-                return tryParseAssignmentExpressionOrHigherWorker(false);
-            }
             function parseAssignmentExpressionOrHigher() {
-                return tryParseAssignmentExpressionOrHigherWorker(true);
-            }
-            function tryParseAssignmentExpressionOrHigherWorker(force) {
                 var _currentToken = currentToken();
                 if (isYieldExpression(_currentToken)) {
                     return parseYieldExpression(_currentToken);
@@ -25407,10 +25390,7 @@ var TypeScript;
                 if (arrowFunction) {
                     return arrowFunction;
                 }
-                var leftOperand = tryParseBinaryExpressionOrHigher(_currentToken, force, 1 /* Lowest */);
-                if (leftOperand === undefined) {
-                    return undefined;
-                }
+                var leftOperand = parseBinaryExpressionOrHigher(_currentToken, 1 /* Lowest */);
                 if (TypeScript.SyntaxUtilities.isLeftHandSizeExpression(leftOperand)) {
                     var operatorToken = currentOperatorToken();
                     if (TypeScript.SyntaxFacts.isAssignmentOperatorToken(operatorToken.kind)) {
@@ -25426,7 +25406,7 @@ var TypeScript;
                 if (isUnambiguouslyYieldOrAwaitExpression()) {
                     return parseAwaitExpression(awaitKeyword);
                 }
-                return tryParsePostfixExpressionOrHigher(awaitKeyword, true);
+                return parsePostfixExpressionOrHigher(awaitKeyword);
             }
             function parseAwaitExpression(awaitKeyword) {
                 return new TypeScript.AwaitExpressionSyntax(contextFlags, consumeToken(awaitKeyword), parseAssignmentExpressionOrHigher());
@@ -25490,7 +25470,7 @@ var TypeScript;
             function tryParseAnyArrowFunctionExpression(_currentToken) {
                 return isSimpleArrowFunctionExpression(_currentToken) ? parseSimpleArrowFunctionExpression() : tryParseParenthesizedArrowFunctionExpression();
             }
-            function tryParseUnaryExpressionOrHigher(_currentToken, force) {
+            function parseUnaryExpressionOrHigher(_currentToken) {
                 var currentTokenKind = _currentToken.kind;
                 switch (currentTokenKind) {
                     case 94 /* PlusToken */:
@@ -25499,7 +25479,7 @@ var TypeScript;
                     case 106 /* ExclamationToken */:
                     case 98 /* PlusPlusToken */:
                     case 99 /* MinusMinusToken */:
-                        return new TypeScript.PrefixUnaryExpressionSyntax(contextFlags, consumeToken(_currentToken), tryParseUnaryExpressionOrHigher(currentToken(), true));
+                        return new TypeScript.PrefixUnaryExpressionSyntax(contextFlags, consumeToken(_currentToken), parseUnaryExpressionOrHigher(currentToken()));
                     case 41 /* TypeOfKeyword */:
                         return parseTypeOfExpression(_currentToken);
                     case 43 /* VoidKeyword */:
@@ -25507,18 +25487,15 @@ var TypeScript;
                     case 23 /* DeleteKeyword */:
                         return parseDeleteExpression(_currentToken);
                     case 85 /* LessThanToken */:
-                        return parseCastExpression(_currentToken);
+                        return parseTypeAssertionExpression(_currentToken);
                     case 64 /* AwaitKeyword */:
                         return parsePossibleAwaitExpression(_currentToken);
                     default:
-                        return tryParsePostfixExpressionOrHigher(_currentToken, force);
+                        return parsePostfixExpressionOrHigher(_currentToken);
                 }
             }
-            function tryParseBinaryExpressionOrHigher(_currentToken, force, precedence) {
-                var leftOperand = tryParseUnaryExpressionOrHigher(_currentToken, force);
-                if (leftOperand === undefined) {
-                    return undefined;
-                }
+            function parseBinaryExpressionOrHigher(_currentToken, precedence) {
+                var leftOperand = parseUnaryExpressionOrHigher(_currentToken);
                 return parseBinaryExpressionRest(precedence, leftOperand);
             }
             function parseConditionalExpressionRest(leftOperand) {
@@ -25542,7 +25519,7 @@ var TypeScript;
                     if (newPrecedence <= precedence) {
                         break;
                     }
-                    leftOperand = new TypeScript.BinaryExpressionSyntax(contextFlags, leftOperand, consumeToken(operatorToken), tryParseBinaryExpressionOrHigher(currentToken(), true, newPrecedence));
+                    leftOperand = new TypeScript.BinaryExpressionSyntax(contextFlags, leftOperand, consumeToken(operatorToken), parseBinaryExpressionOrHigher(currentToken(), newPrecedence));
                 }
                 return leftOperand;
             }
@@ -25553,41 +25530,9 @@ var TypeScript;
                 }
                 return token0;
             }
-            function tryParseMemberExpressionOrHigher(_currentToken, force) {
-                var expression = tryParsePrimaryExpression(_currentToken, force);
-                if (expression === undefined) {
-                    return undefined;
-                }
+            function parseMemberExpressionOrHigher(_currentToken) {
+                var expression = parsePrimaryExpression(_currentToken);
                 return parseMemberExpressionRest(expression);
-            }
-            function parseCallExpressionRest(expression) {
-                while (true) {
-                    var _currentToken = currentToken();
-                    var currentTokenKind = _currentToken.kind;
-                    switch (currentTokenKind) {
-                        case 77 /* OpenParenToken */:
-                            expression = new TypeScript.InvocationExpressionSyntax(contextFlags, expression, parseArgumentList(undefined, _currentToken));
-                            continue;
-                        case 85 /* LessThanToken */:
-                            var argumentList = tryParseArgumentList();
-                            if (argumentList === undefined) {
-                                break;
-                            }
-                            expression = new TypeScript.InvocationExpressionSyntax(contextFlags, expression, argumentList);
-                            continue;
-                        case 79 /* OpenBracketToken */:
-                            expression = parseElementAccessExpression(expression, _currentToken);
-                            continue;
-                        case 81 /* DotToken */:
-                            expression = new TypeScript.MemberAccessExpressionSyntax(contextFlags, expression, consumeToken(_currentToken), eatIdentifierNameToken());
-                            continue;
-                        case 13 /* NoSubstitutionTemplateToken */:
-                        case 14 /* TemplateStartToken */:
-                            expression = new TypeScript.TemplateAccessExpressionSyntax(contextFlags, expression, parseTemplateExpression(_currentToken));
-                            continue;
-                    }
-                    return expression;
-                }
             }
             function parseMemberExpressionRest(expression) {
                 while (true) {
@@ -25608,17 +25553,28 @@ var TypeScript;
                     return expression;
                 }
             }
-            function tryParseLeftHandSideExpressionOrHigher(_currentToken, force) {
-                var expression = undefined;
-                if (_currentToken.kind === 52 /* SuperKeyword */) {
-                    expression = parseSuperExpression(_currentToken);
-                }
-                else {
-                    expression = tryParseMemberExpressionOrHigher(_currentToken, force);
-                    if (expression === undefined) {
-                        return undefined;
+            function parseCallExpressionRest(expression) {
+                while (true) {
+                    expression = parseMemberExpressionRest(expression);
+                    var _currentToken = currentToken();
+                    var currentTokenKind = _currentToken.kind;
+                    switch (currentTokenKind) {
+                        case 77 /* OpenParenToken */:
+                            expression = new TypeScript.InvocationExpressionSyntax(contextFlags, expression, parseArgumentList(undefined, _currentToken));
+                            continue;
+                        case 85 /* LessThanToken */:
+                            var argumentList = tryParseArgumentList();
+                            if (argumentList === undefined) {
+                                break;
+                            }
+                            expression = new TypeScript.InvocationExpressionSyntax(contextFlags, expression, argumentList);
+                            continue;
                     }
+                    return expression;
                 }
+            }
+            function parseLeftHandSideExpressionOrHigher(_currentToken) {
+                var expression = _currentToken.kind === 52 /* SuperKeyword */ ? parseSuperExpression(_currentToken) : parseMemberExpressionOrHigher(_currentToken);
                 return parseCallExpressionRest(expression);
             }
             function parseSuperExpression(superToken) {
@@ -25626,11 +25582,8 @@ var TypeScript;
                 var currentTokenKind = currentToken().kind;
                 return currentTokenKind === 77 /* OpenParenToken */ || currentTokenKind === 81 /* DotToken */ ? expression : new TypeScript.MemberAccessExpressionSyntax(contextFlags, expression, eatToken(81 /* DotToken */), eatIdentifierNameToken());
             }
-            function tryParsePostfixExpressionOrHigher(_currentToken, force) {
-                var expression = tryParseLeftHandSideExpressionOrHigher(_currentToken, force);
-                if (expression === undefined) {
-                    return undefined;
-                }
+            function parsePostfixExpressionOrHigher(_currentToken) {
+                var expression = parseLeftHandSideExpressionOrHigher(_currentToken);
                 var _currentToken = currentToken();
                 var currentTokenKind = _currentToken.kind;
                 switch (currentTokenKind) {
@@ -25686,7 +25639,7 @@ var TypeScript;
             }
             function tryParseArgumentListExpression() {
                 var force = currentToken().kind === 84 /* CommaToken */;
-                return allowInAnd(force ? parseAssignmentExpressionOrHigher : tryParseAssignmentExpressionOrHigher);
+                return (force || isExpression(currentToken())) ? allowInAnd(parseAssignmentExpressionOrHigher) : undefined;
             }
             function parseElementAccessArgumentExpression(openBracketToken) {
                 return currentToken().kind === 80 /* CloseBracketToken */ ? undefined : allowInAnd(parseExpression);
@@ -25694,16 +25647,7 @@ var TypeScript;
             function parseElementAccessExpression(expression, openBracketToken) {
                 return new TypeScript.ElementAccessExpressionSyntax(contextFlags, expression, consumeToken(openBracketToken), parseElementAccessArgumentExpression(openBracketToken), eatToken(80 /* CloseBracketToken */));
             }
-            function tryParsePrimaryExpression(_currentToken, force) {
-                if (_currentToken.kind === 63 /* AsyncKeyword */) {
-                    var token1 = peekToken(1);
-                    if (!token1.hasLeadingNewLine() && token1.kind === 29 /* FunctionKeyword */) {
-                        return parseFunctionExpression();
-                    }
-                }
-                if (isIdentifier(_currentToken)) {
-                    return eatIdentifierToken();
-                }
+            function parsePrimaryExpression(_currentToken) {
                 var currentTokenKind = _currentToken.kind;
                 switch (currentTokenKind) {
                     case 37 /* ThisKeyword */:
@@ -25730,9 +25674,12 @@ var TypeScript;
                     case 123 /* SlashToken */:
                     case 124 /* SlashEqualsToken */:
                         return reparseDivideAsRegularExpression();
-                }
-                if (!force) {
-                    return undefined;
+                    case 63 /* AsyncKeyword */:
+                        var token1 = peekToken(1);
+                        if (!token1.hasLeadingNewLine() && token1.kind === 29 /* FunctionKeyword */) {
+                            return parseFunctionExpression();
+                        }
+                        break;
                 }
                 return eatIdentifierToken(TypeScript.DiagnosticCode.Expression_expected);
             }
@@ -25743,13 +25690,13 @@ var TypeScript;
                 return consumeToken(currentToken);
             }
             function parseTypeOfExpression(typeOfKeyword) {
-                return new TypeScript.TypeOfExpressionSyntax(contextFlags, consumeToken(typeOfKeyword), tryParseUnaryExpressionOrHigher(currentToken(), true));
+                return new TypeScript.TypeOfExpressionSyntax(contextFlags, consumeToken(typeOfKeyword), parseUnaryExpressionOrHigher(currentToken()));
             }
             function parseDeleteExpression(deleteKeyword) {
-                return new TypeScript.DeleteExpressionSyntax(contextFlags, consumeToken(deleteKeyword), tryParseUnaryExpressionOrHigher(currentToken(), true));
+                return new TypeScript.DeleteExpressionSyntax(contextFlags, consumeToken(deleteKeyword), parseUnaryExpressionOrHigher(currentToken()));
             }
             function parseVoidExpression(voidKeyword) {
-                return new TypeScript.VoidExpressionSyntax(contextFlags, consumeToken(voidKeyword), tryParseUnaryExpressionOrHigher(currentToken(), true));
+                return new TypeScript.VoidExpressionSyntax(contextFlags, consumeToken(voidKeyword), parseUnaryExpressionOrHigher(currentToken()));
             }
             function parseFunctionExpression() {
                 var asyncKeyword;
@@ -25767,7 +25714,7 @@ var TypeScript;
                 return result;
             }
             function parseObjectCreationExpression(newKeyword) {
-                return new TypeScript.ObjectCreationExpressionSyntax(contextFlags, consumeToken(newKeyword), tryParseMemberExpressionOrHigher(currentToken(), true), tryParseArgumentList());
+                return new TypeScript.ObjectCreationExpressionSyntax(contextFlags, consumeToken(newKeyword), parseMemberExpressionOrHigher(currentToken()), tryParseArgumentList());
             }
             function parseTemplateExpression(startToken) {
                 startToken = consumeToken(startToken);
@@ -25793,8 +25740,8 @@ var TypeScript;
                 }
                 return new TypeScript.TemplateClauseSyntax(contextFlags, expression, token);
             }
-            function parseCastExpression(lessThanToken) {
-                return new TypeScript.CastExpressionSyntax(contextFlags, consumeToken(lessThanToken), parseType(), eatToken(86 /* GreaterThanToken */), tryParseUnaryExpressionOrHigher(currentToken(), true));
+            function parseTypeAssertionExpression(lessThanToken) {
+                return new TypeScript.TypeAssertionExpressionSyntax(contextFlags, consumeToken(lessThanToken), parseType(), eatToken(86 /* GreaterThanToken */), parseUnaryExpressionOrHigher(currentToken()));
             }
             function parseParenthesizedExpression(openParenToken) {
                 return new TypeScript.ParenthesizedExpressionSyntax(contextFlags, consumeToken(openParenToken), allowInAnd(parseExpression), eatToken(78 /* CloseParenToken */));
@@ -26150,7 +26097,7 @@ var TypeScript;
                 }
                 var _currentToken = currentToken();
                 if (isExpression(_currentToken)) {
-                    return tryParseUnaryExpressionOrHigher(_currentToken, true);
+                    return parseUnaryExpressionOrHigher(_currentToken);
                 }
                 return eatIdentifierToken(TypeScript.DiagnosticCode.Type_expected);
             }
@@ -27672,15 +27619,15 @@ var TypeScript;
             case 3: return this.body;
         }
     };
-    TypeScript.CastExpressionSyntax = function (data, lessThanToken, type, greaterThanToken, expression) {
+    TypeScript.TypeAssertionExpressionSyntax = function (data, lessThanToken, type, greaterThanToken, expression) {
         if (data) {
             this.__data = data;
         }
         this.lessThanToken = lessThanToken, this.type = type, this.greaterThanToken = greaterThanToken, this.expression = expression, lessThanToken.parent = this, type.parent = this, greaterThanToken.parent = this, expression.parent = this;
     };
-    TypeScript.CastExpressionSyntax.prototype.kind = 186 /* CastExpression */;
-    TypeScript.CastExpressionSyntax.prototype.childCount = 4;
-    TypeScript.CastExpressionSyntax.prototype.childAt = function (index) {
+    TypeScript.TypeAssertionExpressionSyntax.prototype.kind = 186 /* TypeAssertionExpression */;
+    TypeScript.TypeAssertionExpressionSyntax.prototype.childCount = 4;
+    TypeScript.TypeAssertionExpressionSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.lessThanToken;
             case 1: return this.type;
@@ -30262,7 +30209,7 @@ var TypeScript;
                 this.ensureSpace();
                 this.appendNode(node.equalsValueClause);
             };
-            PrettyPrinterImpl.prototype.visitCastExpression = function (node) {
+            PrettyPrinterImpl.prototype.visitTypeAssertionExpression = function (node) {
                 this.appendToken(node.lessThanToken);
                 TypeScript.visitNodeOrToken(this, node.type);
                 this.appendToken(node.greaterThanToken);
@@ -31921,7 +31868,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
