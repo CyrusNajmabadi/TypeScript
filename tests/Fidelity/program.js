@@ -20252,8 +20252,8 @@ var TypeScript;
         SyntaxKind[SyntaxKind["EnumDeclaration"] = 140] = "EnumDeclaration";
         SyntaxKind[SyntaxKind["ImportDeclaration"] = 141] = "ImportDeclaration";
         SyntaxKind[SyntaxKind["ExportAssignment"] = 142] = "ExportAssignment";
-        SyntaxKind[SyntaxKind["MemberFunctionDeclaration"] = 143] = "MemberFunctionDeclaration";
-        SyntaxKind[SyntaxKind["MemberVariableDeclaration"] = 144] = "MemberVariableDeclaration";
+        SyntaxKind[SyntaxKind["MethodDeclaration"] = 143] = "MethodDeclaration";
+        SyntaxKind[SyntaxKind["PropertyDeclaration"] = 144] = "PropertyDeclaration";
         SyntaxKind[SyntaxKind["ConstructorDeclaration"] = 145] = "ConstructorDeclaration";
         SyntaxKind[SyntaxKind["GetAccessor"] = 146] = "GetAccessor";
         SyntaxKind[SyntaxKind["SetAccessor"] = 147] = "SetAccessor";
@@ -23168,7 +23168,7 @@ var TypeScript;
                 case 184 /* ParenthesizedArrowFunctionExpression */:
                 case 188 /* FunctionExpression */:
                 case 137 /* FunctionDeclaration */:
-                case 143 /* MemberFunctionDeclaration */:
+                case 143 /* MethodDeclaration */:
                 case 145 /* ConstructorDeclaration */:
                 case 146 /* GetAccessor */:
                 case 147 /* SetAccessor */:
@@ -23245,11 +23245,10 @@ var TypeScript;
                 switch (element.kind) {
                     case 145 /* ConstructorDeclaration */:
                     case 151 /* IndexSignature */:
-                    case 143 /* MemberFunctionDeclaration */:
+                    case 143 /* MethodDeclaration */:
                     case 146 /* GetAccessor */:
                     case 147 /* SetAccessor */:
-                    case 143 /* MemberFunctionDeclaration */:
-                    case 144 /* MemberVariableDeclaration */:
+                    case 144 /* PropertyDeclaration */:
                         return true;
                 }
             }
@@ -23365,36 +23364,6 @@ var TypeScript;
             }
         }
         SyntaxUtilities.getExportKeyword = getExportKeyword;
-        function isAmbientDeclarationSyntax(positionNode) {
-            if (!positionNode) {
-                return false;
-            }
-            var node = positionNode;
-            switch (node.kind) {
-                case 138 /* ModuleDeclaration */:
-                case 139 /* ClassDeclaration */:
-                case 137 /* FunctionDeclaration */:
-                case 155 /* VariableStatement */:
-                case 140 /* EnumDeclaration */:
-                    if (SyntaxUtilities.containsToken(node.modifiers, 67 /* DeclareKeyword */)) {
-                        return true;
-                    }
-                case 141 /* ImportDeclaration */:
-                case 145 /* ConstructorDeclaration */:
-                case 143 /* MemberFunctionDeclaration */:
-                case 146 /* GetAccessor */:
-                case 147 /* SetAccessor */:
-                case 144 /* MemberVariableDeclaration */:
-                    if (SyntaxUtilities.isClassElement(node) || SyntaxUtilities.isModuleElement(node)) {
-                        return SyntaxUtilities.isAmbientDeclarationSyntax(TypeScript.Syntax.containingNode(positionNode));
-                    }
-                case 211 /* EnumElement */:
-                    return SyntaxUtilities.isAmbientDeclarationSyntax(TypeScript.Syntax.containingNode(TypeScript.Syntax.containingNode(positionNode)));
-                default:
-                    return SyntaxUtilities.isAmbientDeclarationSyntax(TypeScript.Syntax.containingNode(positionNode));
-            }
-        }
-        SyntaxUtilities.isAmbientDeclarationSyntax = isAmbientDeclarationSyntax;
     })(SyntaxUtilities = TypeScript.SyntaxUtilities || (TypeScript.SyntaxUtilities = {}));
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
@@ -23422,8 +23391,8 @@ var TypeScript;
             case 140 /* EnumDeclaration */: return visitor.visitEnumDeclaration(element);
             case 141 /* ImportDeclaration */: return visitor.visitImportDeclaration(element);
             case 142 /* ExportAssignment */: return visitor.visitExportAssignment(element);
-            case 143 /* MemberFunctionDeclaration */: return visitor.visitMemberFunctionDeclaration(element);
-            case 144 /* MemberVariableDeclaration */: return visitor.visitMemberVariableDeclaration(element);
+            case 143 /* MethodDeclaration */: return visitor.visitMethodDeclaration(element);
+            case 144 /* PropertyDeclaration */: return visitor.visitPropertyDeclaration(element);
             case 145 /* ConstructorDeclaration */: return visitor.visitConstructorDeclaration(element);
             case 146 /* GetAccessor */: return visitor.visitGetAccessor(element);
             case 147 /* SetAccessor */: return visitor.visitSetAccessor(element);
@@ -23633,14 +23602,14 @@ var TypeScript;
             this.visitToken(node.identifier);
             this.visitOptionalToken(node.semicolonToken);
         };
-        SyntaxWalker.prototype.visitMemberFunctionDeclaration = function (node) {
+        SyntaxWalker.prototype.visitMethodDeclaration = function (node) {
             this.visitList(node.modifiers);
             this.visitOptionalToken(node.asterixToken);
             TypeScript.visitNodeOrToken(this, node.propertyName);
             TypeScript.visitNodeOrToken(this, node.callSignature);
             TypeScript.visitNodeOrToken(this, node.body);
         };
-        SyntaxWalker.prototype.visitMemberVariableDeclaration = function (node) {
+        SyntaxWalker.prototype.visitPropertyDeclaration = function (node) {
             this.visitList(node.modifiers);
             TypeScript.visitNodeOrToken(this, node.variableDeclarator);
             this.visitOptionalToken(node.semicolonToken);
@@ -24773,10 +24742,10 @@ var TypeScript;
                     var asterixToken = tryEatToken(96 /* AsteriskToken */);
                     var propertyName = parsePropertyName();
                     if (asterixToken || isCallSignature(0)) {
-                        return parseMemberFunctionDeclaration(modifiers, asterixToken, propertyName);
+                        return parseMethodDeclaration(modifiers, asterixToken, propertyName);
                     }
                     else {
-                        return parseMemberVariableDeclaration(modifiers, propertyName);
+                        return parsePropertyDeclaration(modifiers, propertyName);
                     }
                 }
                 else {
@@ -24789,10 +24758,10 @@ var TypeScript;
             function parseConstructorDeclaration(modifiers) {
                 return new TypeScript.ConstructorDeclarationSyntax(contextFlags, modifiers, eatToken(66 /* ConstructorKeyword */), parseCallSignatureWithoutSemicolonOrComma(false, false, false), parseFunctionBody(false, false));
             }
-            function parseMemberFunctionDeclaration(modifiers, asteriskToken, propertyName) {
+            function parseMethodDeclaration(modifiers, asteriskToken, propertyName) {
                 var asyncContext = containsAsync(modifiers);
                 var isGenerator = asteriskToken !== undefined;
-                return new TypeScript.MemberFunctionDeclarationSyntax(contextFlags, modifiers, asteriskToken, propertyName, parseCallSignatureWithoutSemicolonOrComma(false, isGenerator, asyncContext), parseFunctionBody(isGenerator, asyncContext));
+                return new TypeScript.MethodDeclarationSyntax(contextFlags, modifiers, asteriskToken, propertyName, parseCallSignatureWithoutSemicolonOrComma(false, isGenerator, asyncContext), parseFunctionBody(isGenerator, asyncContext));
             }
             function containsAsync(modifiers) {
                 for (var i = 0, n = modifiers.length; i < n; i++) {
@@ -24802,8 +24771,8 @@ var TypeScript;
                 }
                 return false;
             }
-            function parseMemberVariableDeclaration(modifiers, propertyName) {
-                return new TypeScript.MemberVariableDeclarationSyntax(contextFlags, modifiers, new TypeScript.VariableDeclaratorSyntax(contextFlags, propertyName, parseOptionalTypeAnnotation(false), isEqualsValueClause(false) ? allowInAnd(parseEqualsValueClause) : undefined), eatExplicitOrAutomaticSemicolon(false));
+            function parsePropertyDeclaration(modifiers, propertyName) {
+                return new TypeScript.PropertyDeclarationSyntax(contextFlags, modifiers, new TypeScript.VariableDeclaratorSyntax(contextFlags, propertyName, parseOptionalTypeAnnotation(false), isEqualsValueClause(false) ? allowInAnd(parseEqualsValueClause) : undefined), eatExplicitOrAutomaticSemicolon(false));
             }
             function isIndexMemberDeclaration() {
                 return isIndexSignature(0);
@@ -25910,7 +25879,7 @@ var TypeScript;
                     var asterixToken = tryEatToken(96 /* AsteriskToken */);
                     var propertyName = parsePropertyName();
                     if (modifiers.length > 0 || asterixToken !== undefined || isCallSignature(0)) {
-                        return parseMemberFunctionDeclaration(modifiers, asterixToken, propertyName);
+                        return parseMethodDeclaration(modifiers, asterixToken, propertyName);
                     }
                     else {
                         return new TypeScript.PropertyAssignmentSyntax(contextFlags, propertyName, eatToken(111 /* ColonToken */), allowInAnd(parseAssignmentExpressionOrHigher));
@@ -26942,15 +26911,15 @@ var TypeScript;
             case 4: return this.semicolonToken;
         }
     };
-    TypeScript.MemberFunctionDeclarationSyntax = function (data, modifiers, asterixToken, propertyName, callSignature, body) {
+    TypeScript.MethodDeclarationSyntax = function (data, modifiers, asterixToken, propertyName, callSignature, body) {
         if (data) {
             this.__data = data;
         }
         this.modifiers = modifiers, this.asterixToken = asterixToken, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body, modifiers.parent = this, asterixToken && (asterixToken.parent = this), propertyName.parent = this, callSignature.parent = this, body && (body.parent = this);
     };
-    TypeScript.MemberFunctionDeclarationSyntax.prototype.kind = 143 /* MemberFunctionDeclaration */;
-    TypeScript.MemberFunctionDeclarationSyntax.prototype.childCount = 5;
-    TypeScript.MemberFunctionDeclarationSyntax.prototype.childAt = function (index) {
+    TypeScript.MethodDeclarationSyntax.prototype.kind = 143 /* MethodDeclaration */;
+    TypeScript.MethodDeclarationSyntax.prototype.childCount = 5;
+    TypeScript.MethodDeclarationSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.asterixToken;
@@ -26959,15 +26928,15 @@ var TypeScript;
             case 4: return this.body;
         }
     };
-    TypeScript.MemberVariableDeclarationSyntax = function (data, modifiers, variableDeclarator, semicolonToken) {
+    TypeScript.PropertyDeclarationSyntax = function (data, modifiers, variableDeclarator, semicolonToken) {
         if (data) {
             this.__data = data;
         }
         this.modifiers = modifiers, this.variableDeclarator = variableDeclarator, this.semicolonToken = semicolonToken, modifiers.parent = this, variableDeclarator.parent = this, semicolonToken && (semicolonToken.parent = this);
     };
-    TypeScript.MemberVariableDeclarationSyntax.prototype.kind = 144 /* MemberVariableDeclaration */;
-    TypeScript.MemberVariableDeclarationSyntax.prototype.childCount = 3;
-    TypeScript.MemberVariableDeclarationSyntax.prototype.childAt = function (index) {
+    TypeScript.PropertyDeclarationSyntax.prototype.kind = 144 /* PropertyDeclaration */;
+    TypeScript.PropertyDeclarationSyntax.prototype.childCount = 3;
+    TypeScript.PropertyDeclarationSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.variableDeclarator;
@@ -28512,11 +28481,11 @@ var TypeScript;
             }
             return false;
         };
-        GrammarCheckerWalker.prototype.visitMemberVariableDeclaration = function (node) {
+        GrammarCheckerWalker.prototype.visitPropertyDeclaration = function (node) {
             if (this.checkClassElementModifiers(node.modifiers) || this.checkForDisallowedAsyncModifier(node.modifiers)) {
                 return;
             }
-            _super.prototype.visitMemberVariableDeclaration.call(this, node);
+            _super.prototype.visitPropertyDeclaration.call(this, node);
         };
         GrammarCheckerWalker.prototype.visitMethodSignature = function (node) {
             if (this.checkForDisallowedTemplatePropertyName(node.propertyName) || this.checkForDisallowedComputedPropertyName(node.propertyName)) {
@@ -28530,7 +28499,7 @@ var TypeScript;
             }
             _super.prototype.visitPropertySignature.call(this, node);
         };
-        GrammarCheckerWalker.prototype.visitMemberFunctionDeclaration = function (node) {
+        GrammarCheckerWalker.prototype.visitMethodDeclaration = function (node) {
             if (node.parent && node.parent.parent && node.parent.kind === 1 /* List */ && node.parent.parent.kind === 181 /* ObjectLiteralExpression */) {
                 if (this.checkForSemicolonInsteadOfBlock(node, node.body) || this.checkForDisallowedObjectLiteralMethod(node.modifiers)) {
                     return;
@@ -28544,7 +28513,7 @@ var TypeScript;
             if (this.checkForDisallowedTemplatePropertyName(node.propertyName) || this.checkForAsyncGenerator(this.getAsyncModifier(node.modifiers), node.asterixToken)) {
                 return;
             }
-            _super.prototype.visitMemberFunctionDeclaration.call(this, node);
+            _super.prototype.visitMethodDeclaration.call(this, node);
         };
         GrammarCheckerWalker.prototype.checkForDisallowedObjectLiteralMethod = function (modifiers) {
             for (var i = 0, n = modifiers.length; i < n; i++) {
@@ -29205,7 +29174,7 @@ var TypeScript;
             return false;
         };
         GrammarCheckerWalker.prototype.checkVariableDeclaratorIdentifier = function (node) {
-            if (node.parent.kind !== 144 /* MemberVariableDeclaration */) {
+            if (node.parent.kind !== 144 /* PropertyDeclaration */) {
                 TypeScript.Debug.assert(TypeScript.isToken(node.propertyName), "A normal variable declarator must always have a token for a name.");
                 if (this.checkForDisallowedEvalOrArguments(node, node.propertyName)) {
                     return true;
@@ -30029,7 +29998,7 @@ var TypeScript;
                 TypeScript.visitNodeOrToken(this, node.callSignature);
                 this.appendBody(node.body);
             };
-            PrettyPrinterImpl.prototype.visitMemberFunctionDeclaration = function (node) {
+            PrettyPrinterImpl.prototype.visitMethodDeclaration = function (node) {
                 this.appendSpaceList(node.modifiers);
                 this.ensureSpace();
                 TypeScript.visitNodeOrToken(this, node.propertyName);
@@ -30056,7 +30025,7 @@ var TypeScript;
                 this.ensureSpace();
                 TypeScript.visitNodeOrToken(this, node.body);
             };
-            PrettyPrinterImpl.prototype.visitMemberVariableDeclaration = function (node) {
+            PrettyPrinterImpl.prototype.visitPropertyDeclaration = function (node) {
                 this.appendSpaceList(node.modifiers);
                 this.ensureSpace();
                 TypeScript.visitNodeOrToken(this, node.variableDeclarator);
