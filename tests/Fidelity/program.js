@@ -20287,7 +20287,7 @@ var TypeScript;
         SyntaxKind[SyntaxKind["ConditionalExpression"] = 175] = "ConditionalExpression";
         SyntaxKind[SyntaxKind["BinaryExpression"] = 176] = "BinaryExpression";
         SyntaxKind[SyntaxKind["PostfixUnaryExpression"] = 177] = "PostfixUnaryExpression";
-        SyntaxKind[SyntaxKind["MemberAccessExpression"] = 178] = "MemberAccessExpression";
+        SyntaxKind[SyntaxKind["PropertyAccessExpression"] = 178] = "PropertyAccessExpression";
         SyntaxKind[SyntaxKind["InvocationExpression"] = 179] = "InvocationExpression";
         SyntaxKind[SyntaxKind["ArrayLiteralExpression"] = 180] = "ArrayLiteralExpression";
         SyntaxKind[SyntaxKind["ObjectLiteralExpression"] = 181] = "ObjectLiteralExpression";
@@ -23191,7 +23191,7 @@ var TypeScript;
         function isLeftHandSizeExpression(element) {
             if (element) {
                 switch (element.kind) {
-                    case 178 /* MemberAccessExpression */:
+                    case 178 /* PropertyAccessExpression */:
                     case 187 /* ElementAccessExpression */:
                     case 191 /* TemplateAccessExpression */:
                     case 182 /* ObjectCreationExpression */:
@@ -23426,7 +23426,7 @@ var TypeScript;
             case 175 /* ConditionalExpression */: return visitor.visitConditionalExpression(element);
             case 176 /* BinaryExpression */: return visitor.visitBinaryExpression(element);
             case 177 /* PostfixUnaryExpression */: return visitor.visitPostfixUnaryExpression(element);
-            case 178 /* MemberAccessExpression */: return visitor.visitMemberAccessExpression(element);
+            case 178 /* PropertyAccessExpression */: return visitor.visitPropertyAccessExpression(element);
             case 179 /* InvocationExpression */: return visitor.visitInvocationExpression(element);
             case 180 /* ArrayLiteralExpression */: return visitor.visitArrayLiteralExpression(element);
             case 181 /* ObjectLiteralExpression */: return visitor.visitObjectLiteralExpression(element);
@@ -23808,7 +23808,7 @@ var TypeScript;
             TypeScript.visitNodeOrToken(this, node.operand);
             this.visitToken(node.operatorToken);
         };
-        SyntaxWalker.prototype.visitMemberAccessExpression = function (node) {
+        SyntaxWalker.prototype.visitPropertyAccessExpression = function (node) {
             TypeScript.visitNodeOrToken(this, node.expression);
             this.visitToken(node.dotToken);
             this.visitToken(node.name);
@@ -25512,7 +25512,7 @@ var TypeScript;
                             expression = parseElementAccessExpression(expression, _currentToken);
                             continue;
                         case 81 /* DotToken */:
-                            expression = new TypeScript.MemberAccessExpressionSyntax(contextFlags, expression, consumeToken(_currentToken), eatIdentifierNameToken());
+                            expression = new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, consumeToken(_currentToken), eatIdentifierNameToken());
                             continue;
                         case 13 /* NoSubstitutionTemplateToken */:
                         case 14 /* TemplateStartToken */:
@@ -25549,7 +25549,7 @@ var TypeScript;
             function parseSuperExpression(superToken) {
                 var expression = consumeToken(superToken);
                 var currentTokenKind = currentToken().kind;
-                return currentTokenKind === 77 /* OpenParenToken */ || currentTokenKind === 81 /* DotToken */ ? expression : new TypeScript.MemberAccessExpressionSyntax(contextFlags, expression, eatToken(81 /* DotToken */), eatIdentifierNameToken());
+                return currentTokenKind === 77 /* OpenParenToken */ || currentTokenKind === 81 /* DotToken */ ? expression : new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, eatToken(81 /* DotToken */), eatIdentifierNameToken());
             }
             function parsePostfixExpressionOrHigher(_currentToken) {
                 var expression = parseLeftHandSideExpressionOrHigher(_currentToken);
@@ -27467,15 +27467,15 @@ var TypeScript;
             case 1: return this.operatorToken;
         }
     };
-    TypeScript.MemberAccessExpressionSyntax = function (data, expression, dotToken, name) {
+    TypeScript.PropertyAccessExpressionSyntax = function (data, expression, dotToken, name) {
         if (data) {
             this.__data = data;
         }
         this.expression = expression, this.dotToken = dotToken, this.name = name, expression.parent = this, dotToken.parent = this, name.parent = this;
     };
-    TypeScript.MemberAccessExpressionSyntax.prototype.kind = 178 /* MemberAccessExpression */;
-    TypeScript.MemberAccessExpressionSyntax.prototype.childCount = 3;
-    TypeScript.MemberAccessExpressionSyntax.prototype.childAt = function (index) {
+    TypeScript.PropertyAccessExpressionSyntax.prototype.kind = 178 /* PropertyAccessExpression */;
+    TypeScript.PropertyAccessExpressionSyntax.prototype.childCount = 3;
+    TypeScript.PropertyAccessExpressionSyntax.prototype.childAt = function (index) {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.dotToken;
@@ -29864,7 +29864,7 @@ var TypeScript;
                 this.appendNode(node.typeAnnotation);
                 this.appendNode(node.equalsValueClause);
             };
-            PrettyPrinterImpl.prototype.visitMemberAccessExpression = function (node) {
+            PrettyPrinterImpl.prototype.visitPropertyAccessExpression = function (node) {
                 TypeScript.visitNodeOrToken(this, node.expression);
                 this.appendToken(node.dotToken);
                 this.appendToken(node.name);
