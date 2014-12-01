@@ -24524,7 +24524,7 @@ var TypeScript;
             function parseName(allowIdentifierName) {
                 return tryParseName(allowIdentifierName) || eatIdentifierToken();
             }
-            function eatRightSideOfName(allowIdentifierNames) {
+            function eatRightSideOfDot(allowIdentifierNames) {
                 var _currentToken = currentToken();
                 if (TypeScript.SyntaxFacts.isAnyKeyword(_currentToken.kind) && _currentToken.hasLeadingNewLine()) {
                     var token1 = peekToken(1);
@@ -24543,7 +24543,7 @@ var TypeScript;
                 var current = eatIdentifierToken();
                 while (shouldContinue && currentToken().kind === 81 /* DotToken */) {
                     var dotToken = consumeToken(currentToken());
-                    var identifierName = eatRightSideOfName(allowIdentifierNames);
+                    var identifierName = eatRightSideOfDot(allowIdentifierNames);
                     current = new TypeScript.QualifiedNameSyntax(contextFlags, current, dotToken, identifierName);
                     shouldContinue = identifierName.fullWidth() > 0;
                 }
@@ -25378,7 +25378,7 @@ var TypeScript;
                 return parsePostfixExpressionOrHigher(awaitKeyword);
             }
             function parseAwaitExpression(awaitKeyword) {
-                return new TypeScript.AwaitExpressionSyntax(contextFlags, consumeToken(awaitKeyword), parseAssignmentExpressionOrHigher());
+                return new TypeScript.AwaitExpressionSyntax(contextFlags, consumeToken(awaitKeyword), parseUnaryExpressionOrHigher(currentToken()));
             }
             function isYieldExpression(_currentToken) {
                 if (_currentToken.kind === 61 /* YieldKeyword */) {
@@ -25512,7 +25512,7 @@ var TypeScript;
                             expression = parseElementAccessExpression(expression, _currentToken);
                             continue;
                         case 81 /* DotToken */:
-                            expression = new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, consumeToken(_currentToken), eatIdentifierNameToken());
+                            expression = new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, consumeToken(_currentToken), eatRightSideOfDot(true));
                             continue;
                         case 13 /* NoSubstitutionTemplateToken */:
                         case 14 /* TemplateStartToken */:
@@ -25549,7 +25549,10 @@ var TypeScript;
             function parseSuperExpression(superToken) {
                 var expression = consumeToken(superToken);
                 var currentTokenKind = currentToken().kind;
-                return currentTokenKind === 77 /* OpenParenToken */ || currentTokenKind === 81 /* DotToken */ ? expression : new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, eatToken(81 /* DotToken */), eatIdentifierNameToken());
+                if (currentTokenKind === 77 /* OpenParenToken */ || currentTokenKind === 81 /* DotToken */) {
+                    return expression;
+                }
+                return new TypeScript.PropertyAccessExpressionSyntax(contextFlags, expression, eatToken(81 /* DotToken */), eatRightSideOfDot(true));
             }
             function parsePostfixExpressionOrHigher(_currentToken) {
                 var expression = parseLeftHandSideExpressionOrHigher(_currentToken);
@@ -31837,7 +31840,7 @@ var TypeScript;
     TypeScript.treeStructuralEquals = treeStructuralEquals;
 })(TypeScript || (TypeScript = {}));
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 function isDTSFile(s) {
     return ts.fileExtensionIs(s, ".d.ts");
 }
