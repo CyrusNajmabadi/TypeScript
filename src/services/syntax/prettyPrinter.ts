@@ -193,7 +193,7 @@ module TypeScript.PrettyPrinter {
         public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void {
             this.appendToken(node.requireKeyword);
             this.appendToken(node.openParenToken);
-            this.appendToken(node.stringLiteral);
+            visitNodeOrToken(this, node.expression);
             this.appendToken(node.closeParenToken);
         }
 

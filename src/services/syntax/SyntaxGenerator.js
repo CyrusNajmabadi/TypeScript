@@ -918,10 +918,10 @@ var definitions = [
         baseType: 'ISyntaxNode',
         interfaces: ['IModuleReferenceSyntax'],
         children: [
-            { name: 'requireKeyword', isToken: true, excludeFromAST: true },
-            { name: 'openParenToken', isToken: true, excludeFromAST: true },
-            { name: 'stringLiteral', isToken: true },
-            { name: 'closeParenToken', isToken: true, excludeFromAST: true }
+            { name: 'requireKeyword', isToken: true },
+            { name: 'openParenToken', isToken: true },
+            { name: 'expression', type: 'IExpressionSyntax' },
+            { name: 'closeParenToken', isToken: true }
         ],
         isTypeScriptSpecific: true
     },

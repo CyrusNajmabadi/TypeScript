@@ -909,7 +909,10 @@ module TypeScript.Parser {
 
         function parseExternalModuleReference(): ExternalModuleReferenceSyntax {
             return new ExternalModuleReferenceSyntax(contextFlags,
-                eatToken(SyntaxKind.RequireKeyword), eatToken(SyntaxKind.OpenParenToken), eatToken(SyntaxKind.StringLiteral), eatToken(SyntaxKind.CloseParenToken));
+                eatToken(SyntaxKind.RequireKeyword),
+                eatToken(SyntaxKind.OpenParenToken),
+                parseExpression(),
+                eatToken(SyntaxKind.CloseParenToken));
         }
 
         function parseModuleNameModuleReference(): ModuleNameModuleReferenceSyntax {

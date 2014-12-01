@@ -55,10 +55,10 @@ var definitions:ITypeDefinition[] = [
         baseType: 'ISyntaxNode',
         interfaces: ['IModuleReferenceSyntax'],
         children: [
-            <any>{ name: 'requireKeyword', isToken: true, excludeFromAST: true }, 
-            <any>{ name: 'openParenToken', isToken: true, excludeFromAST: true },
-            <any>{ name: 'stringLiteral', isToken: true },
-            <any>{ name: 'closeParenToken', isToken: true, excludeFromAST: true }
+            <any>{ name: 'requireKeyword', isToken: true }, 
+            <any>{ name: 'openParenToken', isToken: true },
+            <any>{ name: 'expression', type: 'IExpressionSyntax' },
+            <any>{ name: 'closeParenToken', isToken: true }
         ],
         isTypeScriptSpecific: true
     },

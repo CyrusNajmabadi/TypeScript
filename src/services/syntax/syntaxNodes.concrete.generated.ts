@@ -1907,15 +1907,15 @@ module TypeScript {
         }
     }
 
-    export var ExternalModuleReferenceSyntax: ExternalModuleReferenceConstructor = <any>function(data: number, requireKeyword: ISyntaxToken, openParenToken: ISyntaxToken, stringLiteral: ISyntaxToken, closeParenToken: ISyntaxToken) {
+    export var ExternalModuleReferenceSyntax: ExternalModuleReferenceConstructor = <any>function(data: number, requireKeyword: ISyntaxToken, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.requireKeyword = requireKeyword,
         this.openParenToken = openParenToken,
-        this.stringLiteral = stringLiteral,
+        this.expression = expression,
         this.closeParenToken = closeParenToken,
         requireKeyword.parent = this,
         openParenToken.parent = this,
-        stringLiteral.parent = this,
+        expression.parent = this,
         closeParenToken.parent = this;
     };
     ExternalModuleReferenceSyntax.prototype.kind = SyntaxKind.ExternalModuleReference;
@@ -1924,7 +1924,7 @@ module TypeScript {
         switch (index) {
             case 0: return this.requireKeyword;
             case 1: return this.openParenToken;
-            case 2: return this.stringLiteral;
+            case 2: return this.expression;
             case 3: return this.closeParenToken;
         }
     }
