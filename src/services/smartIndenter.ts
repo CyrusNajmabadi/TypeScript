@@ -253,7 +253,8 @@ module ts.formatting {
                             rangeContainsStartEnd((<CallExpression>node.parent).typeArguments, start, node.getEnd())) {
                             return (<CallExpression>node.parent).typeArguments;
                         }
-                        if (rangeContainsStartEnd((<CallExpression>node.parent).arguments, start, node.getEnd())) {
+                        if ((<CallExpression>node.parent).arguments &&
+                            rangeContainsStartEnd((<CallExpression>node.parent).arguments, start, node.getEnd())) {
                             return (<CallExpression>node.parent).arguments;
                         }
                         break;
@@ -393,6 +394,10 @@ module ts.formatting {
          * This function is always called when position of the cursor is located after the node
          */
         function isCompletedNode(n: Node, sourceFile: SourceFile): boolean {
+            if (n.getFullWidth() === 0) {
+                return false;
+            }
+
             switch (n.kind) {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:
@@ -426,8 +431,6 @@ module ts.formatting {
                     return isCompletedNode((<ExpressionStatement>n).expression, sourceFile);
                 case SyntaxKind.ArrayLiteralExpression:
                     return nodeEndsWith(n, SyntaxKind.CloseBracketToken, sourceFile);
-                case SyntaxKind.Missing:
-                    return false;
                 case SyntaxKind.CaseClause:
                 case SyntaxKind.DefaultClause:
                     // there is no such thing as terminator token for CaseClause\DefaultClause so for simplicitly always consider them non-completed

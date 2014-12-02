@@ -218,7 +218,7 @@ module ts {
         }
 
         private createChildren(sourceFile?: SourceFile) {
-            if (this.kind > SyntaxKind.Missing) {
+            if (this.kind >= SyntaxKind.FirstNode) {
                 scanner.setText((sourceFile || this.getSourceFile()).text);
                 var children: Node[] = [];
                 var pos = this.pos;
@@ -264,8 +264,11 @@ module ts {
             var children = this.getChildren();
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
-                if (child.kind < SyntaxKind.Missing) return child;
-                if (child.kind > SyntaxKind.Missing) return child.getFirstToken(sourceFile);
+                if (child.kind < SyntaxKind.FirstNode) {
+                    return child;
+                }
+
+                return child.getFirstToken(sourceFile);
             }
         }
 
@@ -273,8 +276,11 @@ module ts {
             var children = this.getChildren(sourceFile);
             for (var i = children.length - 1; i >= 0; i--) {
                 var child = children[i];
-                if (child.kind < SyntaxKind.Missing) return child;
-                if (child.kind > SyntaxKind.Missing) return child.getLastToken(sourceFile);
+                if (child.kind < SyntaxKind.FirstNode) {
+                    return child;
+                }
+
+                return child.getLastToken(sourceFile);
             }
         }
     }
@@ -758,7 +764,7 @@ module ts {
                         case SyntaxKind.Method:
                             var functionDeclaration = <FunctionLikeDeclaration>node;
 
-                            if (functionDeclaration.name && functionDeclaration.name.kind !== SyntaxKind.Missing) {
+                            if (functionDeclaration.name && functionDeclaration.name.getFullWidth() > 0) {
                                 var lastDeclaration = namedDeclarations.length > 0 ?
                                     namedDeclarations[namedDeclarations.length - 1] :
                                     undefined;
@@ -863,7 +869,7 @@ module ts {
         getLocalizedDiagnosticMessages(): any;
         getCancellationToken(): CancellationToken;
         getCurrentDirectory(): string;
-        getDefaultLibFilename(): string;
+        getDefaultLibFilename(options: CompilerOptions): string;
     }
 
     //
@@ -1980,9 +1986,12 @@ module ts {
     }
 
     function isNameOfExternalModuleImportOrDeclaration(node: Node): boolean {
-        return node.kind === SyntaxKind.StringLiteral &&
-            (isNameOfModuleDeclaration(node) ||
-            (node.parent.kind === SyntaxKind.ImportDeclaration && (<ImportDeclaration>node.parent).externalModuleName === node));
+        if (node.kind === SyntaxKind.StringLiteral) {
+            return isNameOfModuleDeclaration(node) ||
+                (isExternalModuleImportDeclaration(node.parent.parent) && getExternalModuleImportDeclarationExpression(node.parent.parent) === node);
+        }
+
+        return false;
     }
 
     /** Returns true if the position is within a comment */
@@ -2098,8 +2107,8 @@ module ts {
                 getCanonicalFileName: (filename) => useCaseSensitivefilenames ? filename : filename.toLowerCase(),
                 useCaseSensitiveFileNames: () => useCaseSensitivefilenames,
                 getNewLine: () => "\r\n",
-                getDefaultLibFilename: (): string => {
-                    return host.getDefaultLibFilename();
+                getDefaultLibFilename: (options): string => {
+                    return host.getDefaultLibFilename(options);
                 },
                 writeFile: (filename, data, writeByteOrderMark) => {
                     writer(filename, data, writeByteOrderMark);
@@ -2244,7 +2253,7 @@ module ts {
 
             filename = normalizeSlashes(filename);
 
-            return program.getDiagnostics(getSourceFile(filename).getSourceFile());
+            return program.getDiagnostics(getSourceFile(filename));
         }
 
         /**
@@ -2501,10 +2510,11 @@ module ts {
             }
 
             function isInStringOrRegularExpressionOrTemplateLiteral(previousToken: Node): boolean {
-                if (previousToken.kind === SyntaxKind.StringLiteral || isTemplateLiteralKind(previousToken.kind)) {
+                if (previousToken.kind === SyntaxKind.StringLiteral
+                    || previousToken.kind === SyntaxKind.RegularExpressionLiteral
+                    || isTemplateLiteralKind(previousToken.kind)) {
                     // The position has to be either: 1. entirely within the token text, or 
-                    // 2. at the end position, and the string literal is not terminated
-                    
+                    // 2. at the end position of an unterminated token.
                     var start = previousToken.getStart();
                     var end = previousToken.getEnd();
 
@@ -2512,35 +2522,8 @@ module ts {
                         return true;
                     }
                     else if (position === end) {
-                        var width = end - start;
-                        var text = previousToken.getSourceFile().text;
-
-                        // If the token is a single character, or its second-to-last charcter indicates an escape code,
-                        // then we can immediately say that we are in the middle of an unclosed string.
-                        if (width <= 1 || text.charCodeAt(end - 2) === CharacterCodes.backslash) {
-                            return true;
-                        }
-
-                        // Now check if the last character is a closing character for the token.
-                        switch (previousToken.kind) {
-                            case SyntaxKind.StringLiteral:
-                            case SyntaxKind.NoSubstitutionTemplateLiteral:
-                                return text.charCodeAt(start) !== text.charCodeAt(end - 1);
-
-                            case SyntaxKind.TemplateHead:
-                            case SyntaxKind.TemplateMiddle:
-                                return text.charCodeAt(end - 1) !== CharacterCodes.openBrace
-                                    || text.charCodeAt(end - 2) !== CharacterCodes.$;
-
-                            case SyntaxKind.TemplateTail:
-                                return text.charCodeAt(end - 1) !== CharacterCodes.backtick;
-                        }
-
-                        return false;
+                        return !!(<LiteralExpression>previousToken).isUnterminated;
                     }
-                }
-                else if (previousToken.kind === SyntaxKind.RegularExpressionLiteral) {
-                    return previousToken.getStart() < position && position < previousToken.getEnd();
                 }
 
                 return false;
@@ -2885,7 +2868,7 @@ module ts {
                     if (location.parent && location.parent.kind === SyntaxKind.PropertyAccessExpression) {
                         var right = (<PropertyAccessExpression>location.parent).name;
                         // Either the location is on the right of a property access, or on the left and the right is missing
-                        if (right === location || (right && right.kind === SyntaxKind.Missing)){
+                        if (right === location || (right && right.getFullWidth() === 0)){
                             location = location.parent;
                         }
                     }
@@ -3080,17 +3063,17 @@ module ts {
                 ts.forEach(symbol.declarations, declaration => {
                     if (declaration.kind === SyntaxKind.ImportDeclaration) {
                         var importDeclaration = <ImportDeclaration>declaration;
-                        if (importDeclaration.externalModuleName) {
+                        if (isExternalModuleImportDeclaration(importDeclaration)) {
                             displayParts.push(spacePart());
                             displayParts.push(punctuationPart(SyntaxKind.EqualsToken));
                             displayParts.push(spacePart());
                             displayParts.push(keywordPart(SyntaxKind.RequireKeyword));
                             displayParts.push(punctuationPart(SyntaxKind.OpenParenToken));
-                            displayParts.push(displayPart(getTextOfNode(importDeclaration.externalModuleName), SymbolDisplayPartKind.stringLiteral));
+                            displayParts.push(displayPart(getTextOfNode(getExternalModuleImportDeclarationExpression(importDeclaration)), SymbolDisplayPartKind.stringLiteral));
                             displayParts.push(punctuationPart(SyntaxKind.CloseParenToken));
                         }
                         else {
-                            var internalAliasSymbol = typeResolver.getSymbolInfo(importDeclaration.entityName);
+                            var internalAliasSymbol = typeResolver.getSymbolInfo(importDeclaration.moduleReference);
                             if (internalAliasSymbol) {
                                 displayParts.push(spacePart());
                                 displayParts.push(punctuationPart(SyntaxKind.EqualsToken));
@@ -4814,7 +4797,7 @@ module ts {
             while (node.parent.kind === SyntaxKind.QualifiedName) {
                 node = node.parent;
             }
-            return node.parent.kind === SyntaxKind.ImportDeclaration && (<ImportDeclaration>node.parent).entityName === node;
+            return isInternalModuleImportDeclaration(node.parent) && (<ImportDeclaration>node.parent).moduleReference === node;
         }
 
         function getMeaningFromRightHandSideOfImport(node: Node) {
@@ -5665,23 +5648,29 @@ module ts {
                 addResult(end - start, classFromKind(token));
 
                 if (end >= text.length) {
-                    // We're at the end.
                     if (token === SyntaxKind.StringLiteral) {
                         // Check to see if we finished up on a multiline string literal.
                         var tokenText = scanner.getTokenText();
-                        if (tokenText.length > 0 && tokenText.charCodeAt(tokenText.length - 1) === CharacterCodes.backslash) {
-                            var quoteChar = tokenText.charCodeAt(0);
-                            result.finalLexState = quoteChar === CharacterCodes.doubleQuote
-                                ? EndOfLineState.InDoubleQuoteStringLiteral
-                                : EndOfLineState.InSingleQuoteStringLiteral;
+                        if (scanner.isUnterminated()) {
+                            var lastCharIndex = tokenText.length - 1;
+
+                            var numBackslashes = 0;
+                            while (tokenText.charCodeAt(lastCharIndex - numBackslashes) === CharacterCodes.backslash) {
+                                numBackslashes++;
+                            }
+
+                            // If we have an odd number of backslashes, then the multiline string is unclosed
+                            if (numBackslashes & 1) {
+                                var quoteChar = tokenText.charCodeAt(0);
+                                result.finalLexState = quoteChar === CharacterCodes.doubleQuote
+                                    ? EndOfLineState.InDoubleQuoteStringLiteral
+                                    : EndOfLineState.InSingleQuoteStringLiteral;
+                            }
                         }
                     }
                     else if (token === SyntaxKind.MultiLineCommentTrivia) {
                         // Check to see if the multiline comment was unclosed.
-                        var tokenText = scanner.getTokenText()
-                        if (!(tokenText.length > 3 && // need to avoid catching '/*/'
-                            tokenText.charCodeAt(tokenText.length - 2) === CharacterCodes.asterisk &&
-                            tokenText.charCodeAt(tokenText.length - 1) === CharacterCodes.slash)) {
+                        if (scanner.isUnterminated()) {
                             result.finalLexState = EndOfLineState.InMultiLineCommentTrivia;
                         }
                     }
