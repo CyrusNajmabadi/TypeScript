@@ -85,8 +85,7 @@ module ts {
             getDiagnostics,
             getDeclarationDiagnostics,
             getGlobalDiagnostics,
-            getParentOfSymbol,
-            getNarrowedTypeOfSymbol,
+            getTypeOfSymbolAtLocation,
             getDeclaredTypeOfSymbol,
             getPropertiesOfType,
             getPropertyOfType,
@@ -94,9 +93,9 @@ module ts {
             getIndexTypeOfType,
             getReturnTypeOfSignature,
             getSymbolsInScope,
-            getSymbolInfo,
+            getSymbolAtLocation,
             getShorthandAssignmentValueSymbol,
-            getTypeOfNode,
+            getTypeAtLocation,
             typeToString,
             getSymbolDisplayBuilder,
             symbolToString,
@@ -1031,10 +1030,6 @@ module ts {
 
         function writePunctuation(writer: SymbolWriter, kind: SyntaxKind) {
             writer.writePunctuation(tokenToString(kind));
-        }
-
-        function writeOperator(writer: SymbolWriter, kind: SyntaxKind) {
-            writer.writeOperator(tokenToString(kind));
         }
 
         function writeSpace(writer: SymbolWriter) {
@@ -4393,6 +4388,47 @@ module ts {
                 }
                 return false;
             }
+        }
+
+        function resolveLocation(node: Node) {
+            // Resolve location from top down towards node if it is a context sensitive expression
+            // That helps in making sure not assigning types as any when resolved out of order
+            var containerNodes: Node[] = [];
+            for (var parent = node.parent; parent; parent = parent.parent) {
+                if ((isExpression(parent) || isObjectLiteralMethod(node)) &&
+                    isContextSensitive(<Expression>parent)) {
+                    containerNodes.unshift(parent);
+                }
+            }
+
+            ts.forEach(containerNodes, node => { getTypeOfNode(node); });
+        }
+
+        function getSymbolAtLocation(node: Node): Symbol {
+            resolveLocation(node);
+            return getSymbolInfo(node);
+        }
+
+        function getTypeAtLocation(node: Node): Type {
+            resolveLocation(node);
+            return getTypeOfNode(node);
+        }
+
+        function getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type {
+            resolveLocation(node);
+            // Get the narrowed type of symbol at given location instead of just getting 
+            // the type of the symbol.
+            // eg. 
+            // function foo(a: string | number) {
+            //     if (typeof a === "string") {
+            //         a/**/
+            //     }
+            // }
+            // getTypeOfSymbol for a would return type of parameter symbol string | number
+            // Unless we provide location /**/, checker wouldn't know how to narrow the type
+            // By using getNarrowedTypeOfSymbol would return string since it would be able to narrow
+            // it by typeguard in the if true condition
+            return getNarrowedTypeOfSymbol(symbol, node);
         }
 
         // Get the narrowed type of a given symbol at a given location
@@ -7820,7 +7856,9 @@ module ts {
         }
 
         function checkThrowStatement(node: ThrowStatement) {
-            checkExpression(node.expression);
+            if (node.expression) {
+                checkExpression(node.expression);
+            }
         }
 
         function checkTryStatement(node: TryStatement) {
@@ -8739,20 +8777,6 @@ module ts {
         }
 
         // Language service support
-
-        function getNodeAtPosition(sourceFile: SourceFile, position: number): Node {
-            function findChildAtPosition(parent: Node): Node {
-                var child = forEachChild(parent, node => {
-                    if (position >= node.pos && position <= node.end && position >= getTokenPosOfNode(node)) {
-                        return findChildAtPosition(node);
-                    }
-                });
-                return child || parent;
-            }
-            if (position < sourceFile.pos) position = sourceFile.pos;
-            if (position > sourceFile.end) position = sourceFile.end;
-            return findChildAtPosition(sourceFile);
-        }
 
         function isInsideWithStatementBody(node: Node): boolean {
             if (node) {

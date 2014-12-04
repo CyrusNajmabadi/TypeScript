@@ -9,6 +9,33 @@ module ts {
         return node.end - node.pos;
     }
 
+    function hasFlag(val: number, flag: number): boolean {
+        return (val & flag) !== 0;
+    }
+
+    // Returns true if this node contains a parse error anywhere underneath it.
+    export function containsParseError(node: Node): boolean {
+        if (!hasFlag(node.parserContextFlags, ParserContextFlags.HasPropagatedChildContainsErrorFlag)) {
+            // A node is considered to contain a parse error if:
+            //  a) the parser explicitly marked that it had an error
+            //  b) any of it's children reported that it had an error.
+            var val = hasFlag(node.parserContextFlags, ParserContextFlags.ContainsError) ||
+                forEachChild(node, containsParseError);
+
+            // If so, mark ourselves accordingly. 
+            if (val) {
+                node.parserContextFlags |= ParserContextFlags.ContainsError;
+            }
+
+            // Also mark that we've propogated the child information to this node.  This way we can
+            // always consult the bit directly on this node without needing to check its children
+            // again.
+            node.parserContextFlags |= ParserContextFlags.HasPropagatedChildContainsErrorFlag;
+        }
+
+        return hasFlag(node.parserContextFlags, ParserContextFlags.ContainsError);
+    }
+
     export function getNodeConstructor(kind: SyntaxKind): new () => Node {
         return nodeConstructors[kind] || (nodeConstructors[kind] = objectAllocator.getNodeConstructor(kind));
     }
@@ -43,21 +70,34 @@ module ts {
         return node.pos;
     }
 
+    export function isMissingNode(node: Node) {
+        return node.pos === node.end && node.kind !== SyntaxKind.EndOfFileToken;
+    }
+
     export function getTokenPosOfNode(node: Node, sourceFile?: SourceFile): number {
         // With nodes that have no width (i.e. 'Missing' nodes), we actually *don't*
         // want to skip trivia because this will launch us forward to the next token.
-        if (node.pos === node.end) {
+        if (isMissingNode(node)) {
             return node.pos;
         }
+
         return skipTrivia((sourceFile || getSourceFileOfNode(node)).text, node.pos);
     }
 
     export function getSourceTextOfNodeFromSourceFile(sourceFile: SourceFile, node: Node): string {
+        if (isMissingNode(node)) {
+            return "";
+        }
+
         var text = sourceFile.text;
         return text.substring(skipTrivia(text, node.pos), node.end);
     }
 
     export function getTextOfNodeFromSourceText(sourceText: string, node: Node): string {
+        if (isMissingNode(node)) {
+            return "";
+        }
+
         return sourceText.substring(skipTrivia(sourceText, node.pos), node.end);
     }
 
@@ -869,12 +909,6 @@ module ts {
         }
     };
 
-    const enum LookAheadMode {
-        NotLookingAhead,
-        NoErrorYet,
-        Error
-    }
-
     export interface ReferencePathMatchResult {
         fileReference?: FileReference
         diagnosticMessage?: DiagnosticMessage
@@ -951,16 +985,12 @@ module ts {
     }
 
     export function createSourceFile(filename: string, sourceText: string, languageVersion: ScriptTarget, version: string, isOpen: boolean = false): SourceFile {
-        var scanner: Scanner;
         var token: SyntaxKind;
         var parsingContext: ParsingContext;
-        var commentRanges: TextRange[];
         var identifiers: Map<string> = {};
         var identifierCount = 0;
         var nodeCount = 0;
         var lineStarts: number[];
-
-        var lookAheadMode = LookAheadMode.NotLookingAhead;
 
         // Flags that dictate what parsing context we're in.  For example:
         // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
@@ -1005,7 +1035,40 @@ module ts {
         //
         // Getting this all correct is tricky and requires careful reading of the grammar to 
         // understand when these values should be changed versus when they should be inherited.
+        //
+        // Note: it should not be necessary to save/restore these flags during speculative/lookahead
+        // parsing.  These context flags are naturally stored and restored through normal recursive
+        // descent parsing and unwinding.
         var contextFlags: ParserContextFlags = 0;
+
+        // Whether or not we've had a parse error since creating the last AST node.  If we have 
+        // encountered an error, it will be stored on the next AST node we create.  Parse errors
+        // can be broken down into three categories:
+        //
+        // 1) An error that occurred during scanning.  For example, an unterminated literal, or a
+        //    character that was completely not understood.
+        //
+        // 2) A token was expected, but was not present.  This type of error is commonly produced
+        //    by the 'parseExpected' function.
+        //
+        // 3) A token was present that no parsing function was able to consume.  This type of error
+        //    only occurs in the 'abortParsingListOrMoveToNextToken' function when the parser 
+        //    decides to skip the token.
+        //
+        // In all of these cases, we want to mark the next node as having had an error before it.
+        // With this mark, we can know in incremental settings if this node can be reused, or if
+        // we have to reparse it.  If we don't keep this information around, we may just reuse the
+        // node.  in that event we would then not produce the same errors as we did before, causing
+        // significant confusion problems.
+        //
+        // Note: it is necessary that this value be saved/restored during speculative/lookahead 
+        // parsing.  During lookahead parsing, we will often create a node.  That node will have 
+        // this value attached, and then this value will be set back to 'false'.  If we decide to
+        // rewind, we must get back to the same value we had prior to the lookahead.
+        //
+        // Note: any errors at the end of the file that do not precede a regular node, should get
+        // attached to the EOF token.
+        var parseErrorBeforeNextFinishedNode = false;
 
         function setContextFlag(val: Boolean, flag: ParserContextFlags) {
             if (val) {
@@ -1108,36 +1171,28 @@ module ts {
             return getPositionFromLineAndCharacter(getLineStarts(), line, character);
         }
 
-        function parseErrorAtCurrentToken(message: DiagnosticMessage, arg0?: any, arg1?: any, arg2?: any): void {
+        function parseErrorAtCurrentToken(message: DiagnosticMessage, arg0?: any): void {
             var start = scanner.getTokenPos();
             var length = scanner.getTextPos() - start;
 
-            parseErrorAtPosition(start, length, message, arg0, arg1, arg2);
+            parseErrorAtPosition(start, length, message, arg0);
         }
 
-        function parseErrorAtPosition(start: number, length: number, message: DiagnosticMessage, arg0?: any, arg1?: any, arg2?: any): void {
-            var lastErrorPosition = sourceFile.parseDiagnostics.length
-                ? sourceFile.parseDiagnostics[sourceFile.parseDiagnostics.length - 1].start
-                : -1;
-
+        function parseErrorAtPosition(start: number, length: number, message: DiagnosticMessage, arg0?: any): void {
             // Don't report another error if it would just be at the same position as the last error.
-            if (start !== lastErrorPosition) {
-                var diagnostic = createFileDiagnostic(sourceFile, start, length, message, arg0, arg1, arg2);
-                sourceFile.parseDiagnostics.push(diagnostic);
+            var lastError = lastOrUndefined(sourceFile.parseDiagnostics);
+            if (!lastError || start !== lastError.start) {
+                sourceFile.parseDiagnostics.push(createFileDiagnostic(sourceFile, start, length, message, arg0));
             }
 
-            if (lookAheadMode === LookAheadMode.NoErrorYet) {
-                lookAheadMode = LookAheadMode.Error;
-            }
+            // Mark that we've encountered an error.  We'll set an appropriate bit on the next 
+            // node we finish so that it can't be reused incrementally.
+            parseErrorBeforeNextFinishedNode = true;
         }
 
         function scanError(message: DiagnosticMessage) {
             var pos = scanner.getTextPos();
             parseErrorAtPosition(pos, 0, message);
-        }
-
-        function onComment(pos: number, end: number) {
-            if (commentRanges) commentRanges.push({ pos: pos, end: end });
         }
 
         function getNodePos(): number {
@@ -1168,57 +1223,52 @@ module ts {
             return token = scanner.reScanTemplateToken();
         }
 
-        function lookAheadHelper<T>(callback: () => T, alwaysResetState: boolean): T {
+        function speculationHelper<T>(callback: () => T, isLookAhead: boolean): T {
             // Keep track of the state we'll need to rollback to if lookahead fails (or if the 
             // caller asked us to always reset our state).
             var saveToken = token;
-            var saveSyntacticErrorsLength = sourceFile.parseDiagnostics.length;
+            var saveParseDiagnosticsLength = sourceFile.parseDiagnostics.length;
+            var saveParseErrorBeforeNextFinishedNode = parseErrorBeforeNextFinishedNode;
 
-            // Keep track of the current look ahead mode (this matters if we have nested 
-            // speculative parsing).
-            var saveLookAheadMode = lookAheadMode;
+            // Note: it is not actually necessary to save/restore the context flags here.  That's
+            // because the saving/restorating of these flags happens naturally through the recursive
+            // descent nature of our parser.  However, we still store this here just so we can 
+            // assert that that invariant holds.
+            var saveContextFlags = contextFlags;
 
-            // Mark that we're in speculative parsing and then try to parse out whatever code
-            // the callback wants.
-            lookAheadMode = LookAheadMode.NoErrorYet;
-            var result = callback();
+            // If we're only looking ahead, then tell the scanner to only lookahead as well.
+            // Otherwise, if we're actually speculatively parsing, then tell the scanner to do the 
+            // same. 
+            var result = isLookAhead
+                ? scanner.lookAhead(callback)
+                : scanner.tryScan(callback);
 
-            // If we switched from 1 to -1 then a parse error occurred during the callback.
-            // If that's the case, then we want to act as if we never got any result at all.
-            Debug.assert(lookAheadMode === LookAheadMode.Error || lookAheadMode === LookAheadMode.NoErrorYet);
-            if (lookAheadMode === LookAheadMode.Error) {
-                result = undefined;
-            }
+            Debug.assert(saveContextFlags === contextFlags);
 
-            // Now restore as appropriate.
-            lookAheadMode = saveLookAheadMode;
-            if (!result || alwaysResetState) {
+            // If our callback returned something 'falsy' or we're just looking ahead,
+            // then unconditionally restore us to where we were.
+            if (!result || isLookAhead) {
                 token = saveToken;
-                sourceFile.parseDiagnostics.length = saveSyntacticErrorsLength;
+                sourceFile.parseDiagnostics.length = saveParseDiagnosticsLength;
+                parseErrorBeforeNextFinishedNode = saveParseErrorBeforeNextFinishedNode;
             }
 
             return result;
         }
 
+        // Invokes the provided callback then unconditionally restores the parser to the state it 
+        // was in immediately prior to invoking the callback.  The result of invoking the callback
+        // is returned from this function.
         function lookAhead<T>(callback: () => T): T {
-            var result: T;
-            scanner.tryScan(() => {
-                result = lookAheadHelper(callback, /*alwaysResetState:*/ true);
-
-                // Returning false here indicates to the scanner that it should always jump
-                // back to where it started.  This makes sense as 'lookahead' acts as if 
-                // neither the parser nor scanner was affected by the operation.
-                //
-                // Note: the rewinding of the parser state is already handled in lookAheadHelper
-                // (because we passed 'true' for alwaysResetState).
-                return false;
-            });
-
-            return result;
+            return speculationHelper(callback, /*isLookAhead:*/ true);
         }
-
+        
+        // Invokes the provided callback.  If the callback returns something falsy, then it restores
+        // the parser to the state it was in immediately prior to invoking the callback.  If the 
+        // callback returns something truthy, then the parser state is not rolled back.  The result
+        // of invoking the callback is returned from this function.
         function tryParse<T>(callback: () => T): T {
-            return scanner.tryScan(() => lookAheadHelper(callback, /*alwaysResetState:*/ false));
+            return speculationHelper(callback, /*isLookAhead:*/ false);
         }
 
         function isIdentifier(): boolean {
@@ -1309,6 +1359,14 @@ module ts {
                 node.parserContextFlags = contextFlags;
             }
 
+            // Keep track on the node if we encountered an error while parsing it.  If we did, then
+            // we cannot reuse the node incrementally.  Once we've marked this node, clear out the
+            // flag so that we don't mark any subsequent nodes.
+            if (parseErrorBeforeNextFinishedNode) {
+                parseErrorBeforeNextFinishedNode = false;
+                node.parserContextFlags |= ParserContextFlags.ContainsError;
+            }
+
             return node;
         }
 
@@ -1320,10 +1378,6 @@ module ts {
                 parseErrorAtCurrentToken(diagnosticMessage, arg0);
             }
 
-            return createMissingNodeWithoutError(kind);
-        }
-
-        function createMissingNodeWithoutError(kind: SyntaxKind) {
             var result = createNode(kind, scanner.getStartPos());
             (<Identifier>result).text = "";
             return finishNode(result);
@@ -1813,7 +1867,7 @@ module ts {
             var node = <TypeReferenceNode>createNode(SyntaxKind.TypeReference);
             node.typeName = parseEntityName(/*allowReservedWords*/ false, Diagnostics.Type_expected);
             if (!scanner.hasPrecedingLineBreak() && token === SyntaxKind.LessThanToken) {
-                node.typeArguments = parseTypeArguments();
+                node.typeArguments = parseBracketedList(ParsingContext.TypeArguments, parseType, SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken);
             }
             return finishNode(node);
         }
@@ -1927,10 +1981,11 @@ module ts {
         function fillSignature(
                 returnToken: SyntaxKind,
                 yieldAndGeneratorParameterContext: boolean,
+                requireCompleteParameterList: boolean,
                 signature: SignatureDeclaration): void {
             var returnTokenRequired = returnToken === SyntaxKind.EqualsGreaterThanToken;
             signature.typeParameters = parseTypeParameters();
-            signature.parameters = parseParameterList(yieldAndGeneratorParameterContext);
+            signature.parameters = parseParameterList(yieldAndGeneratorParameterContext, requireCompleteParameterList);
 
             if (returnTokenRequired) {
                 parseExpected(returnToken);
@@ -1945,7 +2000,7 @@ module ts {
         // have 'Yield' And 'GeneratorParameter' not in sync.  i.e. any production calling
         // this FormalParameters production either always sets both to true, or always sets
         // both to false.  As such we only have a single parameter to represent both.
-        function parseParameterList(yieldAndGeneratorParameterContext: boolean) {
+        function parseParameterList(yieldAndGeneratorParameterContext: boolean, requireCompleteParameterList: boolean) {
             // FormalParameters[Yield,GeneratorParameter] :
             //      ...
             //
@@ -1968,15 +2023,23 @@ module ts {
                 setGeneratorParameterContext(yieldAndGeneratorParameterContext);
 
                 var result = parseDelimitedList(ParsingContext.Parameters, parseParameter);
-                parseExpected(SyntaxKind.CloseParenToken);
 
                 setYieldContext(savedYieldContext);
                 setGeneratorParameterContext(savedGeneratorParameterContext);
 
+                if (!parseExpected(SyntaxKind.CloseParenToken) && requireCompleteParameterList) {
+                    // Caller insisted that we had to end with a )   We didn't.  So just return
+                    // undefined here.
+                    return undefined;
+                }
+
                 return result;
             }
 
-            return createMissingList<ParameterDeclaration>();
+            // We didn't even have an open paren.  If the caller requires a complete parameter list,
+            // we definitely can't provide that.  However, if they're ok with an incomplete one,
+            // then just return an empty set of parameters.
+            return requireCompleteParameterList ? undefined : createMissingList<ParameterDeclaration>();
         }
 
         function parseSignatureMember(kind: SyntaxKind): SignatureDeclaration {
@@ -1984,7 +2047,7 @@ module ts {
             if (kind === SyntaxKind.ConstructSignature) {
                 parseExpected(SyntaxKind.NewKeyword);
             }
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, node);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ false, node);
             parseSemicolon();
             return finishNode(node);
         }
@@ -2073,7 +2136,7 @@ module ts {
 
                 // Method signatues don't exist in expression contexts.  So they have neither
                 // [Yield] nor [GeneratorParameter]
-                fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, method);
+                fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ false, method);
 
                 parseSemicolon();
                 return finishNode(method);
@@ -2174,7 +2237,7 @@ module ts {
             if (kind === SyntaxKind.ConstructorType) {
                 parseExpected(SyntaxKind.NewKeyword);
             }
-            fillSignature(SyntaxKind.EqualsGreaterThanToken, /*yieldAndGeneratorParameterContext:*/ false, node);
+            fillSignature(SyntaxKind.EqualsGreaterThanToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ false, node);
             return finishNode(node);
         }
 
@@ -2671,7 +2734,18 @@ module ts {
         function parseParenthesizedArrowFunctionExpressionHead(allowAmbiguity: boolean): FunctionExpression {
             var node = <FunctionExpression>createNode(SyntaxKind.ArrowFunction);
             // Arrow functions are never generators.
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, node);
+            //
+            // If we're speculatively parsing a signature for a parenthesized arrow function, then
+            // we have to have a complete parameter list.  Otherwise we might see something like
+            // a => (b => c)
+            // And think that "(b =>" was actually a parenthesized arrow function with a missing 
+            // close paren.
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ !allowAmbiguity, node);
+
+            // If we couldn't get parameters, we definitely could not parse out an arrow function.
+            if (!node.parameters) {
+                return undefined;
+            }
 
             // Parsing a signature isn't enough.
             // Parenthesized arrow signatures often look like other valid expressions.
@@ -3042,8 +3116,11 @@ module ts {
                 expression = parseMemberExpressionRest(expression);
 
                 if (token === SyntaxKind.LessThanToken) {
-                    // Might be arithmetic, or it might be a type argument list.
-                    var typeArguments = tryParse(parseTypeArgumentsAndOpenParen);
+                    // See if this is the start of a generic invocation.  If so, consume it and
+                    // keep checking for postfix expressions.  Otherwise, it's just a '<' that's 
+                    // part of an arithmetic expression.  Break out so we consume it higher in the
+                    // stack.
+                    var typeArguments = tryParse(parseTypeArgumentsInExpression);
                     if (!typeArguments) {
                         return expression;
                     }
@@ -3051,18 +3128,14 @@ module ts {
                     var callExpr = <CallExpression>createNode(SyntaxKind.CallExpression, expression.pos);
                     callExpr.expression = expression;
                     callExpr.typeArguments = typeArguments;
-                    callExpr.arguments = parseDelimitedList(ParsingContext.ArgumentExpressions, parseArgumentExpression);
-                    parseExpected(SyntaxKind.CloseParenToken);
+                    callExpr.arguments = parseArgumentList();
                     expression = finishNode(callExpr);
                     continue;
                 }
-
-                if (token === SyntaxKind.OpenParenToken) {
+                else if (token === SyntaxKind.OpenParenToken) {
                     var callExpr = <CallExpression>createNode(SyntaxKind.CallExpression, expression.pos);
                     callExpr.expression = expression;
-                    parseExpected(SyntaxKind.OpenParenToken);
-                    callExpr.arguments = parseDelimitedList(ParsingContext.ArgumentExpressions, parseArgumentExpression);
-                    parseExpected(SyntaxKind.CloseParenToken);
+                    callExpr.arguments = parseArgumentList();
                     expression = finishNode(callExpr);
                     continue;
                 }
@@ -3071,33 +3144,64 @@ module ts {
             }
         }
 
-        function parseTypeArgumentsAndOpenParen(): NodeArray<TypeNode> {
-            var result = parseTypeArguments();
+        function parseArgumentList() {
             parseExpected(SyntaxKind.OpenParenToken);
+            var result = parseDelimitedList(ParsingContext.ArgumentExpressions, parseArgumentExpression);
+            parseExpected(SyntaxKind.CloseParenToken);
             return result;
         }
 
-        function parseTypeArguments(): NodeArray<TypeNode> {
-            // We pass parseSingleTypeArgument instead of parseType as the element parser
-            // because parseSingleTypeArgument knows how to parse a missing type argument.
-            // This is useful for signature help. parseType has the disadvantage that when
-            // it sees a missing type, it changes the LookAheadMode to Error, and the result
-            // is a broken binary expression, which breaks signature help.
-            return parseBracketedList(ParsingContext.TypeArguments, parseSingleTypeArgument, SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken);
-        }
-
-        function parseSingleTypeArgument(): TypeNode {
-            // Be resilient to something like:   Foo<,,>();
-            // We want to parse this out as a type argument list (esp. for signature help), and we
-            // don't want to rollback just because we were missing a type arg.  The grammar checker
-            // will report the actual error later on.
-            if (token === SyntaxKind.CommaToken) {
-                var result = <TypeReferenceNode>createNode(SyntaxKind.TypeReference);
-                result.typeName = <Identifier>createMissingNodeWithoutError(SyntaxKind.Identifier);
-                return finishNode(result);
+        function parseTypeArgumentsInExpression() {
+            if (!parseOptional(SyntaxKind.LessThanToken)) {
+                return undefined;
             }
 
-            return parseType();
+            var typeArguments = parseDelimitedList(ParsingContext.TypeArguments, parseType);
+            if (!parseExpected(SyntaxKind.GreaterThanToken)) {
+                // If it doesn't have the closing >  then it's definitely not an type argument list.
+                return undefined;
+            }
+
+            // If we have a '<', then only parse this as a arugment list if the type arguments
+            // are complete and we have an open paren.  if we don't, rewind and return nothing.
+            return typeArguments && canFollowTypeArgumentsInExpression()
+                ? typeArguments
+                : undefined;
+        }
+        
+        function canFollowTypeArgumentsInExpression(): boolean {
+            switch (token) {
+                case SyntaxKind.OpenParenToken:                 // foo<x>(   
+                // this case are the only case where this token can legally follow a type argument 
+                // list.  So we definitely want to treat this as a type arg list.
+
+                case SyntaxKind.DotToken:                       // foo<x>.
+                case SyntaxKind.CloseParenToken:                // foo<x>)
+                case SyntaxKind.CloseBracketToken:              // foo<x>]
+                case SyntaxKind.ColonToken:                     // foo<x>:
+                case SyntaxKind.SemicolonToken:                 // foo<x>;
+                case SyntaxKind.CommaToken:                     // foo<x>,
+                case SyntaxKind.QuestionToken:                  // foo<x>?
+                case SyntaxKind.EqualsEqualsToken:              // foo<x> ==
+                case SyntaxKind.EqualsEqualsEqualsToken:        // foo<x> ===
+                case SyntaxKind.ExclamationEqualsToken:         // foo<x> !=
+                case SyntaxKind.ExclamationEqualsEqualsToken:   // foo<x> !==
+                case SyntaxKind.AmpersandAmpersandToken:        // foo<x> &&
+                case SyntaxKind.BarBarToken:                    // foo<x> ||
+                case SyntaxKind.CaretToken:                     // foo<x> ^
+                case SyntaxKind.AmpersandToken:                 // foo<x> &
+                case SyntaxKind.BarToken:                       // foo<x> |
+                case SyntaxKind.CloseBraceToken:                // foo<x> }
+                case SyntaxKind.EndOfFileToken:                 // foo<x>
+                    // these cases can't legally follow a type arg list.  However, they're not legal 
+                    // expressions either.  The user is probably in the middle of a generic type. So
+                    // treat it as such.
+                    return true;
+
+                default:
+                    // Anything else treat as an expression.
+                    return false;
+            }
         }
 
         function parsePrimaryExpression(): PrimaryExpression {
@@ -3224,7 +3328,7 @@ module ts {
             parseExpected(SyntaxKind.FunctionKeyword);
             node.asteriskToken = parseOptionalToken(SyntaxKind.AsteriskToken);
             node.name = node.asteriskToken ? doInYieldContext(parseOptionalIdentifier) : parseOptionalIdentifier();
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!node.asteriskToken, node);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!node.asteriskToken, /*requireCompleteParameterList:*/ false, node);
             node.body = parseFunctionBlock(/*allowYield:*/ !!node.asteriskToken, /* ignoreMissingOpenBrace */ false);
             return finishNode(node);
         }
@@ -3237,14 +3341,11 @@ module ts {
             var node = <NewExpression>createNode(SyntaxKind.NewExpression);
             parseExpected(SyntaxKind.NewKeyword);
             node.expression = parseMemberExpressionOrHigher();
-            if (token === SyntaxKind.LessThanToken) {
-                node.typeArguments = tryParse(parseTypeArgumentsAndOpenParen);
+            node.typeArguments = tryParse(parseTypeArgumentsInExpression);
+            if (node.typeArguments || token === SyntaxKind.OpenParenToken) {
+                node.arguments = parseArgumentList();
             }
 
-            if (node.typeArguments || parseOptional(SyntaxKind.OpenParenToken)) {
-                node.arguments = parseDelimitedList(ParsingContext.ArgumentExpressions, parseArgumentExpression);
-                parseExpected(SyntaxKind.CloseParenToken);
-            }
             return finishNode(node);
         }
 
@@ -3699,7 +3800,7 @@ module ts {
             parseExpected(SyntaxKind.FunctionKeyword);
             node.asteriskToken = parseOptionalToken(SyntaxKind.AsteriskToken);
             node.name = parseIdentifier();
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!node.asteriskToken, node);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!node.asteriskToken, /*requireCompleteParameterList:*/ false, node);
             node.body = parseFunctionBlockOrSemicolon(!!node.asteriskToken);
             return finishNode(node);
         }
@@ -3708,7 +3809,7 @@ module ts {
             var node = <ConstructorDeclaration>createNode(SyntaxKind.Constructor, pos);
             setModifiers(node, modifiers);
             parseExpected(SyntaxKind.ConstructorKeyword);
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, node);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ false, node);
             node.body = parseFunctionBlockOrSemicolon(/*isGenerator:*/ false);
             return finishNode(node);
         }
@@ -3719,7 +3820,7 @@ module ts {
             method.asteriskToken = asteriskToken;
             method.name = name;
             method.questionToken = questionToken;
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!asteriskToken, method);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ !!asteriskToken, /*requireCompleteParameterList:*/ false, method);
             method.body = requireBlock ? parseFunctionBlock(!!asteriskToken, /*ignoreMissingOpenBrace:*/ false) : parseFunctionBlockOrSemicolon(!!asteriskToken);
             return finishNode(method);
         }
@@ -3754,7 +3855,7 @@ module ts {
             var node = <AccessorDeclaration>createNode(kind, fullStart);
             setModifiers(node, modifiers);
             node.name = parsePropertyName();
-            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, node);
+            fillSignature(SyntaxKind.ColonToken, /*yieldAndGeneratorParameterContext:*/ false, /*requireCompleteParameterList:*/ false, node);
             node.body = parseFunctionBlockOrSemicolon(/*isGenerator:*/ false);
             return finishNode(node);
         }
@@ -4173,14 +4274,25 @@ module ts {
         }
 
         function processReferenceComments(): ReferenceComments {
+            var triviaScanner = createScanner(languageVersion, /*skipTrivia*/false, sourceText);
             var referencedFiles: FileReference[] = [];
             var amdDependencies: string[] = [];
             var amdModuleName: string;
-            commentRanges = [];
-            token = scanner.scan();
 
-            for (var i = 0; i < commentRanges.length; i++) {
-                var range = commentRanges[i];
+            // Keep scanning all the leading trivia in the file until we get to something that 
+            // isn't trivia.  Any single line comment will be analyzed to see if it is a 
+            // reference comment.
+            while (true) {
+                var kind = triviaScanner.scan();
+                if (kind === SyntaxKind.WhitespaceTrivia || kind === SyntaxKind.NewLineTrivia || kind === SyntaxKind.MultiLineCommentTrivia) {
+                    continue;
+                }
+                if (kind !== SyntaxKind.SingleLineCommentTrivia) {
+                    break;
+                }
+
+                var range = { pos: triviaScanner.getTokenPos(), end: triviaScanner.getTextPos() };
+
                 var comment = sourceText.substring(range.pos, range.end);
                 var referencePathMatchResult = getFileReferenceFromReferencePath(comment, range);
                 if (referencePathMatchResult) {
@@ -4211,7 +4323,7 @@ module ts {
                     }
                 }
             }
-            commentRanges = undefined;
+
             return {
                 referencedFiles,
                 amdDependencies,
@@ -4247,7 +4359,6 @@ module ts {
             return syntacticDiagnostics;
         }
 
-        scanner = createScanner(languageVersion, /*skipTrivia*/ true, sourceText, scanError, onComment);
         var rootNodeFlags: NodeFlags = 0;
         if (fileExtensionIs(filename, ".d.ts")) {
             rootNodeFlags = NodeFlags.DeclarationFile;
@@ -4272,6 +4383,10 @@ module ts {
         sourceFile.referencedFiles = referenceComments.referencedFiles;
         sourceFile.amdDependencies = referenceComments.amdDependencies;
         sourceFile.amdModuleName = referenceComments.amdModuleName;
+
+        // Create and prime the scanner before parsing the source elements.
+        var scanner = createScanner(languageVersion, /*skipTrivia*/ true, sourceText, scanError);
+        nextToken();
 
         sourceFile.statements = parseList(ParsingContext.SourceElements, /*checkForStrictMode*/ true, parseSourceElement);
         Debug.assert(token === SyntaxKind.EndOfFileToken);
@@ -4612,8 +4727,7 @@ module ts {
 
         function checkTypeArguments(typeArguments: NodeArray<TypeNode>) {
             return checkForDisallowedTrailingComma(typeArguments) ||
-                checkForAtLeastOneTypeArgument(typeArguments) ||
-                checkForMissingTypeArgument(typeArguments);
+                checkForAtLeastOneTypeArgument(typeArguments);
         }
 
         function checkForOmittedArgument(arguments: NodeArray<Expression>) {
@@ -4622,17 +4736,6 @@ module ts {
                     var arg = arguments[i];
                     if (arg.kind === SyntaxKind.OmittedExpression) {
                         return grammarErrorAtPos(arg.pos, 0, Diagnostics.Argument_expression_expected);
-                    }
-                }
-            }
-        }
-
-        function checkForMissingTypeArgument(typeArguments: NodeArray<TypeNode>) {
-            if (typeArguments) {
-                for (var i = 0, n = typeArguments.length; i < n; i++) {
-                    var arg = typeArguments[i];
-                    if (arg.kind === SyntaxKind.TypeReference && getFullWidth((<TypeReferenceNode>arg).typeName) === 0) {
-                        return grammarErrorAtPos(arg.pos, 0, Diagnostics.Type_expected);
                     }
                 }
             }
