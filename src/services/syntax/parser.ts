@@ -3433,7 +3433,7 @@ module TypeScript.Parser {
                 parseArrowFunctionBody(/*asyncContext:*/ !!asyncKeyword));
         }
 
-        function isFunctionBlock(): boolean {
+        function isStartOfFunctionBlock(): boolean {
             var currentTokenKind = currentToken().kind;
             return currentTokenKind === SyntaxKind.OpenBraceToken || currentTokenKind === SyntaxKind.EqualsGreaterThanToken;
         }
