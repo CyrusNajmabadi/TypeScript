@@ -281,14 +281,14 @@ class Program {
             TypeScript.Environment.standardOut.WriteLine("");
         }
 
+        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
+        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
+            fileName => this.runIncremental(fileName, ts.ScriptTarget.ES5));
+
         if (specificFile === undefined) {
             TypeScript.Environment.standardOut.WriteLine("Testing Incremental 2.");
             TypeScript.IncrementalParserTests.runAllTests();
         }
-
-        TypeScript.Environment.standardOut.Write("Testing Incremental 1:");
-        this.runTests(TypeScript.Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
-            fileName => this.runIncremental(fileName, ts.ScriptTarget.ES5));
 
         if (specificFile === undefined) {
             this.testIncrementalSpeed(TypeScript.Environment.currentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts");
