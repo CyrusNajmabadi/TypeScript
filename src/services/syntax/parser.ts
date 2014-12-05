@@ -59,8 +59,13 @@ module TypeScript.Parser {
 
         // The current token reinterpretted contextually based on where the parser is.  If the
         // source is on a / or /= token, then it can be reinterpretted as a regex token.  If the
-        // source is on a > token, it may be reinterpretted to: >>  >>>  >=  >>=  >>>=
+        // source is on a > token, it may be reinterpretted to: >>  >>>  >=  >>=  >>>=.  If the
+        // source is on a }, it will be reinterpretted as a template middle/end token.
         currentContextualToken(): ISyntaxToken;
+
+        // Called to move the source to the next node or token once the parser has consumed the 
+        // current one.
+        consumeNodeOrToken(node: ISyntaxNodeOrToken): void;
 
         // Peek any number of tokens ahead from the current location in source.  peekToken(0) is
         // equivalent to 'currentToken', peekToken(1) is the next token, peekToken(2) the token
@@ -68,15 +73,16 @@ module TypeScript.Parser {
         // will be returned.
         peekToken(n: number): ISyntaxToken;
 
-        // Called to move the source to the next node or token once the parser has consumed the 
-        // current one.
-        consumeNodeOrToken(node: ISyntaxNodeOrToken): void;
-
+        // Used by the parser to tell the source that it is currently speculatively parsing.  The
+        // source will save its current state and then invoke the passed in callback.  If the call
+        // back returned 'undefined', then the source will rollback to the exact state it was in
+        // prior to calling the callback.  If the callback returns an actual node then the source
+        // will stay in its current state and then return that node back out of this function.
         tryParse<T extends ISyntaxNode>(callback: () => T): T;
 
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
-        tokenDiagnostics(): Diagnostic[];
+        diagnostics(): Diagnostic[];
     }
 
     // Contains the actual logic to parse typescript/javascript.  This is the code that generally
@@ -293,7 +299,7 @@ module TypeScript.Parser {
         function parseSyntaxTreeWorker(isDeclaration: boolean): SyntaxTree {
             var sourceUnit = parseSourceUnit();
 
-            var allDiagnostics = source.tokenDiagnostics().concat(diagnostics);
+            var allDiagnostics = source.diagnostics().concat(diagnostics);
             allDiagnostics.sort((a: Diagnostic, b: Diagnostic) => a.start() - b.start());
 
             return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, source.fileName, source.text, source.languageVersion);
