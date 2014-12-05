@@ -1104,19 +1104,19 @@ function generateConstructorFunction(definition: ITypeDefinition) {
     result += ") {\r\n";
 
     result += "        if (data) { this.__data = data; }\r\n";
-    result += "        this.parent = undefined";
+    //result += "        this.parent = undefined";
     if (definition.children.length) {
         for (var i = 0; i < definition.children.length; i++) {
-            //if (i) {
+            if (i) {
                 result += ",\r\n";
-            //}
+            }
 
             var child = definition.children[i];
             result += "        this." + child.name + " = " + getSafeName(child);
         }
+        result += ";\r\n";
     }
 
-    result += ";\r\n";
 
     result += "    };\r\n";
     result += "    " + definition.name + ".prototype.kind = SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
