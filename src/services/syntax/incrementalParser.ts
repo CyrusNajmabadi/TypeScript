@@ -69,6 +69,7 @@ module TypeScript.IncrementalParser {
         }
 
         var delta = changeRange.newSpan().length() - changeRange.span().length();
+
         // If we added or removed characters during the edit, then we need to go and adjust all
         // the nodes after the edit.  Those nodes may move forward down (if we inserted chars)
         // or they may move backward (if we deleted chars).
