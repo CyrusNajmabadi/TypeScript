@@ -1086,7 +1086,7 @@ module TypeScript.Parser {
                 break;
             }
 
-            return Syntax.list(tokens);
+            return tokens;
         }
 
         function parseHeritageClauses(isClassHeritageClause: boolean): HeritageClauseSyntax[] {
@@ -3197,7 +3197,7 @@ module TypeScript.Parser {
             }
             while (templateClauses[templateClauses.length - 1].templateMiddleOrEndToken.kind === SyntaxKind.TemplateMiddleToken);
             
-            return new TemplateExpressionSyntax(contextFlags, startToken, Syntax.list(templateClauses));
+            return new TemplateExpressionSyntax(contextFlags, startToken, templateClauses);
         }
 
         function parseTemplateClause(): TemplateClauseSyntax {
@@ -4199,7 +4199,7 @@ module TypeScript.Parser {
                 //
                 // then treat it like modifier, and continue parsing the parameter.
                 if (isModifierKind(_currentToken.kind)) {
-                    modifiers = Syntax.list([consumeToken(_currentToken)]);
+                    modifiers = [consumeToken(_currentToken)];
                 }
                 else {
                     return undefined;
@@ -4329,7 +4329,7 @@ module TypeScript.Parser {
                 // and didn't want to abort. Continue parsing elements.
             }
 
-            return Syntax.list<T>(items);
+            return items;
         }
 
         function parseSeparatedSyntaxListWorker<T extends ISyntaxNodeOrToken>(currentListType: ListParsingState): ISeparatedSyntaxList<T> {
@@ -4411,7 +4411,7 @@ module TypeScript.Parser {
                 inErrorRecovery = true;
             }
 
-            return Syntax.separatedList<T>(nodesAndSeparators);
+            return <ISeparatedSyntaxList<T>>nodesAndSeparators;
         }
 
         function reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
