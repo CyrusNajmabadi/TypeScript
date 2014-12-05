@@ -1467,7 +1467,7 @@ module TypeScript.Scanner {
             return _absolutePosition;
         }
 
-        function tokenDiagnostics(): Diagnostic[] {
+        function diagnostics(): Diagnostic[] {
             return _tokenDiagnostics;
         }
 
@@ -1598,7 +1598,7 @@ module TypeScript.Scanner {
             peekToken: peekToken,
             consumeNodeOrToken: consumeNodeOrToken,
             tryParse: tryParse,
-            diagnostics: tokenDiagnostics,
+            diagnostics: diagnostics,
             absolutePosition: absolutePosition
         };
     }
