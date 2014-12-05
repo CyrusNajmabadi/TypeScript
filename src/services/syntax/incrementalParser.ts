@@ -103,10 +103,6 @@ module TypeScript.IncrementalParser {
             return scannerParserSource.absolutePosition();
         }
 
-        function diagnostics(): Diagnostic[] {
-            return scannerParserSource.diagnostics();
-        }
-
         function tryParse<T extends ISyntaxNode>(callback: () => T): T {
             // Clone our cursor.  That way we can restore to that point if the parser needs to rewind.
             var savedOldSourceUnitCursor = cloneSyntaxCursor(oldSourceUnitCursor);
@@ -218,11 +214,6 @@ module TypeScript.IncrementalParser {
             return scannerParserSource.currentToken();
         }
 
-        function currentContextualToken(): ISyntaxToken {
-            // Just delegate to the underlying source to handle 
-            return scannerParserSource.currentContextualToken();
-        }
-
         function tryGetNodeFromOldSourceUnit(): ISyntaxNode {
             // Keep moving the cursor down to the first node that is safe to return.  A node is 
             // safe to return if:
@@ -326,23 +317,26 @@ module TypeScript.IncrementalParser {
             return canReuseTokenFromOldSourceUnit(token) ? token : undefined;
         }
 
-        function consumeNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {
-            scannerParserSource.consumeNodeOrToken(nodeOrToken);
-        }
+        // Just delegate to the underlying source to handle these.  We cannot return contextual
+        // tokens from the old tree.  That's because, clearly, in the old tree we had the 'normal'
+        // non-contextual token.  So there's no way to return the contextual token that the 
+        // parser wants.  That can only be figured out by looking at the source code.  Ergo, the
+        // scanner needs to do it.
+        var currentContextualToken = scannerParserSource.currentContextualToken;
 
-        return {
-            text: text,
-            fileName: oldSyntaxTree.fileName(),
-            languageVersion: oldSyntaxTree.languageVersion(),
-            absolutePosition: absolutePosition,
-            currentNode: currentNode,
-            currentToken: currentToken,
-            currentContextualToken: currentContextualToken,
-            peekToken: peekToken,
-            consumeNodeOrToken: consumeNodeOrToken,
-            tryParse: tryParse,
-            diagnostics: diagnostics
-        };
+        // Just let the scanner know we consumed a node or token so it can move to the right 
+        // position.  Next time the parser asks us for a node or token, we'll attempt to resync
+        // with where the scanner is.
+        var consumeNodeOrToken = scannerParserSource.consumeNodeOrToken;
+
+        // We never produce diagnostics ourselves.  But our underlying scanner might have.  
+        // Defer to it to answer this question.
+        var diagnostics = scannerParserSource.diagnostics;
+
+        var fileName = oldSyntaxTree.fileName();
+        var languageVersion = oldSyntaxTree.languageVersion();
+
+        return { fileName, languageVersion, text, absolutePosition, currentNode, currentToken, peekToken, tryParse, currentContextualToken, consumeNodeOrToken, diagnostics }
     }
 
     function updateTokenPositionsAndMarkElements(element: ISyntaxElement, changeStart: number, changeRangeOldEnd: number, delta: number, fullStart: number): void {
