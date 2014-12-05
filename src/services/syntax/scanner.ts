@@ -1599,7 +1599,7 @@ module TypeScript.Scanner {
             consumeNodeOrToken: consumeNodeOrToken,
             tryParse: tryParse,
             diagnostics: tokenDiagnostics,
-            absolutePosition: absolutePosition,
+            absolutePosition: absolutePosition
         };
     }
 
