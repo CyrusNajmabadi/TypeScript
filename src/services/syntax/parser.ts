@@ -80,10 +80,6 @@ module TypeScript.Parser {
         // will stay in its current state and then return that node back out of this function.
         tryParse<T extends ISyntaxNode>(callback: () => T): T;
 
-        // Called to move the source to the next node or token once the parser has consumed the 
-        // current one.
-        consumeNodeOrToken(node: ISyntaxNodeOrToken): void;
-
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
         diagnostics(): Diagnostic[];
