@@ -4672,8 +4672,6 @@ module TypeScript.Parser {
                     return canReuseVariableDeclaratorNode(node);
 
                 case ListParsingState.ParameterList_Parameters:
-                    return node.kind === SyntaxKind.Parameter;
-
                 case ListParsingState.IndexSignature_Parameters:
                     return node.kind === SyntaxKind.Parameter;
 
