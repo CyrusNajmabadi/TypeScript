@@ -4723,7 +4723,7 @@ module TypeScript.Parser {
         }
         
         function canReuseVariableDeclaratorNode(node: ISyntaxNode) {
-            if (!node || node.kind !== SyntaxKind.VariableDeclarator) {
+            if (node.kind !== SyntaxKind.VariableDeclarator) {
                 return false;
             }
 
