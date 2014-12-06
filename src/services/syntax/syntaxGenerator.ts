@@ -41,7 +41,7 @@ var interfaces: any = {
     IPrimaryExpressionSyntax: 'IMemberExpressionSyntax',
 };
 
-var definitions:ITypeDefinition[] = [
+var definitions: ITypeDefinition[] = [
     <any>{
         name: 'SourceUnitSyntax',
         baseType: 'ISyntaxNode',
@@ -55,7 +55,11 @@ var definitions:ITypeDefinition[] = [
         baseType: 'ISyntaxNode',
         interfaces: ['IModuleReferenceSyntax'],
         children: [
+<<<<<<< HEAD
             <any>{ name: 'requireKeyword', isToken: true }, 
+=======
+            <any>{ name: 'requireKeyword', isToken: true },
+>>>>>>> ts_official/master
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }
@@ -665,7 +669,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'constructorKeyword', isToken: true },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
-            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true  }
+            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true }
         ],
         isTypeScriptSpecific: true
     },
@@ -678,20 +682,20 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'asterixToken', isToken: true, isOptional: true },
             <any>{ name: 'propertyName', type: 'IPropertyNameSyntax' },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
-            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true  }
+            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true }
         ],
         isTypeScriptSpecific: true
     },
     <any>{
         name: 'GetAccessorSyntax',
         baseType: 'ISyntaxNode',
-        interfaces: ['IAccessorSyntax' ],
+        interfaces: ['IAccessorSyntax'],
         children: [
             <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken', isTypeScriptSpecific: true },
             <any>{ name: 'getKeyword', isToken: true, excludeFromAST: true },
             <any>{ name: 'propertyName', type: 'IPropertyNameSyntax' },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
-            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true  }
+            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true }
         ]
     },
     <any>{
@@ -703,7 +707,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'setKeyword', isToken: true, excludeFromAST: true },
             <any>{ name: 'propertyName', type: 'IPropertyNameSyntax' },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
-            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true  }
+            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true }
         ],
         isTypeScriptSpecific: true
     },
@@ -769,7 +773,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'caseKeyword', isToken: true, excludeFromAST: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
-            <any>{ name: 'colonToken', isToken: true, excludeFromAST: true},
+            <any>{ name: 'colonToken', isToken: true, excludeFromAST: true },
             <any>{ name: 'statements', isList: true, elementType: 'IStatementSyntax' }
         ]
     },
@@ -931,7 +935,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'asterixToken', isToken: true, isOptional: true },
             <any>{ name: 'identifier', isToken: true, isOptional: true },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
-            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true  }]
+            <any>{ name: 'body', type: 'BlockSyntax | ExpressionBody | ISyntaxToken', isOptional: true }]
     },
     <any>{
         name: 'EmptyStatementSyntax',
@@ -1104,19 +1108,34 @@ function generateConstructorFunction(definition: ITypeDefinition) {
     result += ") {\r\n";
 
     result += "        if (data) { this.__data = data; }\r\n";
+<<<<<<< HEAD
     //result += "        this.parent = undefined";
     if (definition.children.length) {
         for (var i = 0; i < definition.children.length; i++) {
             if (i) {
                 result += ",\r\n";
             }
+=======
+    result += "        this.parent = undefined";
+    if (definition.children.length) {
+        for (var i = 0; i < definition.children.length; i++) {
+            //if (i) {
+            result += ",\r\n";
+            //}
+>>>>>>> ts_official/master
 
             var child = definition.children[i];
             result += "        this." + child.name + " = " + getSafeName(child);
         }
+<<<<<<< HEAD
         result += ";\r\n";
     }
 
+=======
+    }
+
+    result += ";\r\n";
+>>>>>>> ts_official/master
 
     result += "    };\r\n";
     result += "    " + definition.name + ".prototype.kind = SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
@@ -1180,7 +1199,7 @@ function generateSyntaxInterface(definition: ITypeDefinition): string {
     result += "    }\r\n";
     result += "    export interface " + getNameWithoutSuffix(definition) + "Constructor {";
     result += " new (data: number";
-    
+
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         result += ", ";
@@ -1316,7 +1335,7 @@ function generateKeywordCondition(keywords: { text: string; kind: TypeScript.Syn
 
     if (keywords.length === 1) {
         var keyword = keywords[0];
-        
+
         if (currentCharacter === length) {
             return " return SyntaxKind." + firstEnumName(getSyntaxKindEnum(), keyword.kind) + ";\r\n";
         }

@@ -340,8 +340,8 @@ module TypeScript.IncrementalParser {
     }
 
     function updateTokenPositionsAndMarkElements(element: ISyntaxElement, changeStart: number, changeRangeOldEnd: number, delta: number, fullStart: number): void {
-            // First, try to skip past any elements that we dont' need to move.  We don't need to 
-            // move any elements that don't start after the end of the change range.  
+        // First, try to skip past any elements that we dont' need to move.  We don't need to 
+        // move any elements that don't start after the end of the change range.  
         if (fullStart > changeRangeOldEnd) {
             // Note, we only move elements that are truly after the end of the change range.
             // We consider elements that are touching the end of the change range to be unusable.
@@ -405,8 +405,7 @@ module TypeScript.IncrementalParser {
             forceUpdateTokenPosition(<ISyntaxToken>nodeOrToken, delta);
         }
         else {
-            var node = <ISyntaxNode>nodeOrToken;
-            var tokens = getTokens(node);
+            var tokens = getTokens(<ISyntaxNode>nodeOrToken);
             for (var i = 0, n = tokens.length; i < n; i++) {
                 forceUpdateTokenPosition(tokens[i], delta);
             }

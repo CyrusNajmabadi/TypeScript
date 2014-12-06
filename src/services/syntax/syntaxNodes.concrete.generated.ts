@@ -1,21 +1,21 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-    export var SourceUnitSyntax: SourceUnitConstructor = <any>function(data: number, moduleElements: IModuleElementSyntax[], endOfFileToken: ISyntaxToken) {
+    export var SourceUnitSyntax: SourceUnitConstructor = <any>function (data: number, moduleElements: IModuleElementSyntax[], endOfFileToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.moduleElements = moduleElements,
         this.endOfFileToken = endOfFileToken;
     };
     SourceUnitSyntax.prototype.kind = SyntaxKind.SourceUnit;
     SourceUnitSyntax.prototype.childCount = 2;
-    SourceUnitSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    SourceUnitSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.moduleElements;
             case 1: return this.endOfFileToken;
         }
     }
 
-    export var QualifiedNameSyntax: QualifiedNameConstructor = <any>function(data: number, left: INameSyntax, dotToken: ISyntaxToken, right: ISyntaxToken) {
+    export var QualifiedNameSyntax: QualifiedNameConstructor = <any>function (data: number, left: INameSyntax, dotToken: ISyntaxToken, right: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.left = left,
         this.dotToken = dotToken,
@@ -23,7 +23,7 @@ module TypeScript {
     };
     QualifiedNameSyntax.prototype.kind = SyntaxKind.QualifiedName;
     QualifiedNameSyntax.prototype.childCount = 3;
-    QualifiedNameSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    QualifiedNameSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.left;
             case 1: return this.dotToken;
@@ -31,7 +31,7 @@ module TypeScript {
         }
     }
 
-    export var ObjectTypeSyntax: ObjectTypeConstructor = <any>function(data: number, openBraceToken: ISyntaxToken, typeMembers: ITypeMemberSyntax[], closeBraceToken: ISyntaxToken) {
+    export var ObjectTypeSyntax: ObjectTypeConstructor = <any>function (data: number, openBraceToken: ISyntaxToken, typeMembers: ITypeMemberSyntax[], closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openBraceToken = openBraceToken,
         this.typeMembers = typeMembers,
@@ -39,7 +39,7 @@ module TypeScript {
     };
     ObjectTypeSyntax.prototype.kind = SyntaxKind.ObjectType;
     ObjectTypeSyntax.prototype.childCount = 3;
-    ObjectTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ObjectTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openBraceToken;
             case 1: return this.typeMembers;
@@ -47,7 +47,7 @@ module TypeScript {
         }
     }
 
-    export var FunctionTypeSyntax: FunctionTypeConstructor = <any>function(data: number, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax) {
+    export var FunctionTypeSyntax: FunctionTypeConstructor = <any>function (data: number, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax) {
         if (data) { this.__data = data; }
         this.typeParameterList = typeParameterList,
         this.parameterList = parameterList,
@@ -56,7 +56,7 @@ module TypeScript {
     };
     FunctionTypeSyntax.prototype.kind = SyntaxKind.FunctionType;
     FunctionTypeSyntax.prototype.childCount = 4;
-    FunctionTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    FunctionTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -65,7 +65,7 @@ module TypeScript {
         }
     }
 
-    export var ArrayTypeSyntax: ArrayTypeConstructor = <any>function(data: number, type: ITypeSyntax, openBracketToken: ISyntaxToken, closeBracketToken: ISyntaxToken) {
+    export var ArrayTypeSyntax: ArrayTypeConstructor = <any>function (data: number, type: ITypeSyntax, openBracketToken: ISyntaxToken, closeBracketToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.type = type,
         this.openBracketToken = openBracketToken,
@@ -73,7 +73,7 @@ module TypeScript {
     };
     ArrayTypeSyntax.prototype.kind = SyntaxKind.ArrayType;
     ArrayTypeSyntax.prototype.childCount = 3;
-    ArrayTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ArrayTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.type;
             case 1: return this.openBracketToken;
@@ -81,7 +81,7 @@ module TypeScript {
         }
     }
 
-    export var ConstructorTypeSyntax: ConstructorTypeConstructor = <any>function(data: number, newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax) {
+    export var ConstructorTypeSyntax: ConstructorTypeConstructor = <any>function (data: number, newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax) {
         if (data) { this.__data = data; }
         this.newKeyword = newKeyword,
         this.typeParameterList = typeParameterList,
@@ -91,7 +91,7 @@ module TypeScript {
     };
     ConstructorTypeSyntax.prototype.kind = SyntaxKind.ConstructorType;
     ConstructorTypeSyntax.prototype.childCount = 5;
-    ConstructorTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ConstructorTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.newKeyword;
             case 1: return this.typeParameterList;
@@ -101,35 +101,35 @@ module TypeScript {
         }
     }
 
-    export var GenericTypeSyntax: GenericTypeConstructor = <any>function(data: number, name: INameSyntax, typeArgumentList: TypeArgumentListSyntax) {
+    export var GenericTypeSyntax: GenericTypeConstructor = <any>function (data: number, name: INameSyntax, typeArgumentList: TypeArgumentListSyntax) {
         if (data) { this.__data = data; }
         this.name = name,
         this.typeArgumentList = typeArgumentList;
     };
     GenericTypeSyntax.prototype.kind = SyntaxKind.GenericType;
     GenericTypeSyntax.prototype.childCount = 2;
-    GenericTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    GenericTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.name;
             case 1: return this.typeArgumentList;
         }
     }
 
-    export var TypeQuerySyntax: TypeQueryConstructor = <any>function(data: number, typeOfKeyword: ISyntaxToken, name: INameSyntax) {
+    export var TypeQuerySyntax: TypeQueryConstructor = <any>function (data: number, typeOfKeyword: ISyntaxToken, name: INameSyntax) {
         if (data) { this.__data = data; }
         this.typeOfKeyword = typeOfKeyword,
         this.name = name;
     };
     TypeQuerySyntax.prototype.kind = SyntaxKind.TypeQuery;
     TypeQuerySyntax.prototype.childCount = 2;
-    TypeQuerySyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeQuerySyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.typeOfKeyword;
             case 1: return this.name;
         }
     }
 
-    export var TupleTypeSyntax: TupleTypeConstructor = <any>function(data: number, openBracketToken: ISyntaxToken, types: ISeparatedSyntaxList<ITypeSyntax>, closeBracketToken: ISyntaxToken) {
+    export var TupleTypeSyntax: TupleTypeConstructor = <any>function (data: number, openBracketToken: ISyntaxToken, types: ISeparatedSyntaxList<ITypeSyntax>, closeBracketToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openBracketToken = openBracketToken,
         this.types = types,
@@ -137,7 +137,7 @@ module TypeScript {
     };
     TupleTypeSyntax.prototype.kind = SyntaxKind.TupleType;
     TupleTypeSyntax.prototype.childCount = 3;
-    TupleTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TupleTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openBracketToken;
             case 1: return this.types;
@@ -145,7 +145,7 @@ module TypeScript {
         }
     }
 
-    export var UnionTypeSyntax: UnionTypeConstructor = <any>function(data: number, left: ITypeSyntax, barToken: ISyntaxToken, right: ITypeSyntax) {
+    export var UnionTypeSyntax: UnionTypeConstructor = <any>function (data: number, left: ITypeSyntax, barToken: ISyntaxToken, right: ITypeSyntax) {
         if (data) { this.__data = data; }
         this.left = left,
         this.barToken = barToken,
@@ -153,7 +153,7 @@ module TypeScript {
     };
     UnionTypeSyntax.prototype.kind = SyntaxKind.UnionType;
     UnionTypeSyntax.prototype.childCount = 3;
-    UnionTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    UnionTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.left;
             case 1: return this.barToken;
@@ -161,7 +161,7 @@ module TypeScript {
         }
     }
 
-    export var ParenthesizedTypeSyntax: ParenthesizedTypeConstructor = <any>function(data: number, openParenToken: ISyntaxToken, type: ITypeSyntax, closeParenToken: ISyntaxToken) {
+    export var ParenthesizedTypeSyntax: ParenthesizedTypeConstructor = <any>function (data: number, openParenToken: ISyntaxToken, type: ITypeSyntax, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openParenToken = openParenToken,
         this.type = type,
@@ -169,7 +169,7 @@ module TypeScript {
     };
     ParenthesizedTypeSyntax.prototype.kind = SyntaxKind.ParenthesizedType;
     ParenthesizedTypeSyntax.prototype.childCount = 3;
-    ParenthesizedTypeSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ParenthesizedTypeSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openParenToken;
             case 1: return this.type;
@@ -177,7 +177,7 @@ module TypeScript {
         }
     }
 
-    export var InterfaceDeclarationSyntax: InterfaceDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], interfaceKeyword: ISyntaxToken, identifier: ISyntaxToken, typeParameterList: TypeParameterListSyntax, heritageClauses: HeritageClauseSyntax[], body: ObjectTypeSyntax) {
+    export var InterfaceDeclarationSyntax: InterfaceDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], interfaceKeyword: ISyntaxToken, identifier: ISyntaxToken, typeParameterList: TypeParameterListSyntax, heritageClauses: HeritageClauseSyntax[], body: ObjectTypeSyntax) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.interfaceKeyword = interfaceKeyword,
@@ -188,7 +188,7 @@ module TypeScript {
     };
     InterfaceDeclarationSyntax.prototype.kind = SyntaxKind.InterfaceDeclaration;
     InterfaceDeclarationSyntax.prototype.childCount = 6;
-    InterfaceDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    InterfaceDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.interfaceKeyword;
@@ -199,7 +199,7 @@ module TypeScript {
         }
     }
 
-    export var FunctionDeclarationSyntax: FunctionDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], functionKeyword: ISyntaxToken, asterixToken: ISyntaxToken, identifier: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var FunctionDeclarationSyntax: FunctionDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], functionKeyword: ISyntaxToken, asterixToken: ISyntaxToken, identifier: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.functionKeyword = functionKeyword,
@@ -210,7 +210,7 @@ module TypeScript {
     };
     FunctionDeclarationSyntax.prototype.kind = SyntaxKind.FunctionDeclaration;
     FunctionDeclarationSyntax.prototype.childCount = 6;
-    FunctionDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    FunctionDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.functionKeyword;
@@ -221,7 +221,7 @@ module TypeScript {
         }
     }
 
-    export var ModuleDeclarationSyntax: ModuleDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], moduleKeyword: ISyntaxToken, name: INameSyntax, openBraceToken: ISyntaxToken, moduleElements: IModuleElementSyntax[], closeBraceToken: ISyntaxToken) {
+    export var ModuleDeclarationSyntax: ModuleDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], moduleKeyword: ISyntaxToken, name: INameSyntax, openBraceToken: ISyntaxToken, moduleElements: IModuleElementSyntax[], closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.moduleKeyword = moduleKeyword,
@@ -232,7 +232,7 @@ module TypeScript {
     };
     ModuleDeclarationSyntax.prototype.kind = SyntaxKind.ModuleDeclaration;
     ModuleDeclarationSyntax.prototype.childCount = 6;
-    ModuleDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ModuleDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.moduleKeyword;
@@ -243,7 +243,7 @@ module TypeScript {
         }
     }
 
-    export var ClassDeclarationSyntax: ClassDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], classKeyword: ISyntaxToken, identifier: ISyntaxToken, typeParameterList: TypeParameterListSyntax, heritageClauses: HeritageClauseSyntax[], openBraceToken: ISyntaxToken, classElements: IClassElementSyntax[], closeBraceToken: ISyntaxToken) {
+    export var ClassDeclarationSyntax: ClassDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], classKeyword: ISyntaxToken, identifier: ISyntaxToken, typeParameterList: TypeParameterListSyntax, heritageClauses: HeritageClauseSyntax[], openBraceToken: ISyntaxToken, classElements: IClassElementSyntax[], closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.classKeyword = classKeyword,
@@ -256,7 +256,7 @@ module TypeScript {
     };
     ClassDeclarationSyntax.prototype.kind = SyntaxKind.ClassDeclaration;
     ClassDeclarationSyntax.prototype.childCount = 8;
-    ClassDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ClassDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.classKeyword;
@@ -269,7 +269,7 @@ module TypeScript {
         }
     }
 
-    export var EnumDeclarationSyntax: EnumDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], enumKeyword: ISyntaxToken, identifier: ISyntaxToken, openBraceToken: ISyntaxToken, enumElements: ISeparatedSyntaxList<EnumElementSyntax>, closeBraceToken: ISyntaxToken) {
+    export var EnumDeclarationSyntax: EnumDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], enumKeyword: ISyntaxToken, identifier: ISyntaxToken, openBraceToken: ISyntaxToken, enumElements: ISeparatedSyntaxList<EnumElementSyntax>, closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.enumKeyword = enumKeyword,
@@ -280,7 +280,7 @@ module TypeScript {
     };
     EnumDeclarationSyntax.prototype.kind = SyntaxKind.EnumDeclaration;
     EnumDeclarationSyntax.prototype.childCount = 6;
-    EnumDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    EnumDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.enumKeyword;
@@ -291,7 +291,7 @@ module TypeScript {
         }
     }
 
-    export var ImportDeclarationSyntax: ImportDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], importKeyword: ISyntaxToken, identifier: ISyntaxToken, equalsToken: ISyntaxToken, moduleReference: IModuleReferenceSyntax, semicolonToken: ISyntaxToken) {
+    export var ImportDeclarationSyntax: ImportDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], importKeyword: ISyntaxToken, identifier: ISyntaxToken, equalsToken: ISyntaxToken, moduleReference: IModuleReferenceSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.importKeyword = importKeyword,
@@ -302,7 +302,7 @@ module TypeScript {
     };
     ImportDeclarationSyntax.prototype.kind = SyntaxKind.ImportDeclaration;
     ImportDeclarationSyntax.prototype.childCount = 6;
-    ImportDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ImportDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.importKeyword;
@@ -313,7 +313,7 @@ module TypeScript {
         }
     }
 
-    export var ExportAssignmentSyntax: ExportAssignmentConstructor = <any>function(data: number, modifiers: ISyntaxToken[], exportKeyword: ISyntaxToken, equalsToken: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
+    export var ExportAssignmentSyntax: ExportAssignmentConstructor = <any>function (data: number, modifiers: ISyntaxToken[], exportKeyword: ISyntaxToken, equalsToken: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.exportKeyword = exportKeyword,
@@ -323,7 +323,7 @@ module TypeScript {
     };
     ExportAssignmentSyntax.prototype.kind = SyntaxKind.ExportAssignment;
     ExportAssignmentSyntax.prototype.childCount = 5;
-    ExportAssignmentSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ExportAssignmentSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.exportKeyword;
@@ -333,7 +333,7 @@ module TypeScript {
         }
     }
 
-    export var MethodDeclarationSyntax: MethodDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], asterixToken: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var MethodDeclarationSyntax: MethodDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], asterixToken: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.asterixToken = asterixToken,
@@ -343,7 +343,7 @@ module TypeScript {
     };
     MethodDeclarationSyntax.prototype.kind = SyntaxKind.MethodDeclaration;
     MethodDeclarationSyntax.prototype.childCount = 5;
-    MethodDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    MethodDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.asterixToken;
@@ -353,7 +353,7 @@ module TypeScript {
         }
     }
 
-    export var PropertyDeclarationSyntax: PropertyDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], variableDeclarator: VariableDeclaratorSyntax, semicolonToken: ISyntaxToken) {
+    export var PropertyDeclarationSyntax: PropertyDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], variableDeclarator: VariableDeclaratorSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.variableDeclarator = variableDeclarator,
@@ -361,7 +361,7 @@ module TypeScript {
     };
     PropertyDeclarationSyntax.prototype.kind = SyntaxKind.PropertyDeclaration;
     PropertyDeclarationSyntax.prototype.childCount = 3;
-    PropertyDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PropertyDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.variableDeclarator;
@@ -369,7 +369,7 @@ module TypeScript {
         }
     }
 
-    export var ConstructorDeclarationSyntax: ConstructorDeclarationConstructor = <any>function(data: number, modifiers: ISyntaxToken[], constructorKeyword: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var ConstructorDeclarationSyntax: ConstructorDeclarationConstructor = <any>function (data: number, modifiers: ISyntaxToken[], constructorKeyword: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.constructorKeyword = constructorKeyword,
@@ -378,7 +378,7 @@ module TypeScript {
     };
     ConstructorDeclarationSyntax.prototype.kind = SyntaxKind.ConstructorDeclaration;
     ConstructorDeclarationSyntax.prototype.childCount = 4;
-    ConstructorDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ConstructorDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.constructorKeyword;
@@ -387,7 +387,7 @@ module TypeScript {
         }
     }
 
-    export var GetAccessorSyntax: GetAccessorConstructor = <any>function(data: number, modifiers: ISyntaxToken[], getKeyword: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var GetAccessorSyntax: GetAccessorConstructor = <any>function (data: number, modifiers: ISyntaxToken[], getKeyword: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.getKeyword = getKeyword,
@@ -397,7 +397,7 @@ module TypeScript {
     };
     GetAccessorSyntax.prototype.kind = SyntaxKind.GetAccessor;
     GetAccessorSyntax.prototype.childCount = 5;
-    GetAccessorSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    GetAccessorSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.getKeyword;
@@ -407,7 +407,7 @@ module TypeScript {
         }
     }
 
-    export var SetAccessorSyntax: SetAccessorConstructor = <any>function(data: number, modifiers: ISyntaxToken[], setKeyword: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var SetAccessorSyntax: SetAccessorConstructor = <any>function (data: number, modifiers: ISyntaxToken[], setKeyword: ISyntaxToken, propertyName: IPropertyNameSyntax, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.setKeyword = setKeyword,
@@ -417,7 +417,7 @@ module TypeScript {
     };
     SetAccessorSyntax.prototype.kind = SyntaxKind.SetAccessor;
     SetAccessorSyntax.prototype.childCount = 5;
-    SetAccessorSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    SetAccessorSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.setKeyword;
@@ -427,7 +427,7 @@ module TypeScript {
         }
     }
 
-    export var PropertySignatureSyntax: PropertySignatureConstructor = <any>function(data: number, propertyName: IPropertyNameSyntax, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
+    export var PropertySignatureSyntax: PropertySignatureConstructor = <any>function (data: number, propertyName: IPropertyNameSyntax, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.propertyName = propertyName,
         this.questionToken = questionToken,
@@ -436,7 +436,7 @@ module TypeScript {
     };
     PropertySignatureSyntax.prototype.kind = SyntaxKind.PropertySignature;
     PropertySignatureSyntax.prototype.childCount = 4;
-    PropertySignatureSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PropertySignatureSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.questionToken;
@@ -445,7 +445,7 @@ module TypeScript {
         }
     }
 
-    export var CallSignatureSyntax: CallSignatureConstructor = <any>function(data: number, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
+    export var CallSignatureSyntax: CallSignatureConstructor = <any>function (data: number, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.typeParameterList = typeParameterList,
         this.parameterList = parameterList,
@@ -454,7 +454,7 @@ module TypeScript {
     };
     CallSignatureSyntax.prototype.kind = SyntaxKind.CallSignature;
     CallSignatureSyntax.prototype.childCount = 4;
-    CallSignatureSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    CallSignatureSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -463,21 +463,21 @@ module TypeScript {
         }
     }
 
-    export var ConstructSignatureSyntax: ConstructSignatureConstructor = <any>function(data: number, newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax) {
+    export var ConstructSignatureSyntax: ConstructSignatureConstructor = <any>function (data: number, newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax) {
         if (data) { this.__data = data; }
         this.newKeyword = newKeyword,
         this.callSignature = callSignature;
     };
     ConstructSignatureSyntax.prototype.kind = SyntaxKind.ConstructSignature;
     ConstructSignatureSyntax.prototype.childCount = 2;
-    ConstructSignatureSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ConstructSignatureSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.newKeyword;
             case 1: return this.callSignature;
         }
     }
 
-    export var IndexSignatureSyntax: IndexSignatureConstructor = <any>function(data: number, modifiers: ISyntaxToken[], openBracketToken: ISyntaxToken, parameters: ISeparatedSyntaxList<ParameterSyntax>, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
+    export var IndexSignatureSyntax: IndexSignatureConstructor = <any>function (data: number, modifiers: ISyntaxToken[], openBracketToken: ISyntaxToken, parameters: ISeparatedSyntaxList<ParameterSyntax>, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, semicolonOrCommaToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.openBracketToken = openBracketToken,
@@ -488,7 +488,7 @@ module TypeScript {
     };
     IndexSignatureSyntax.prototype.kind = SyntaxKind.IndexSignature;
     IndexSignatureSyntax.prototype.childCount = 6;
-    IndexSignatureSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    IndexSignatureSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.openBracketToken;
@@ -499,7 +499,7 @@ module TypeScript {
         }
     }
 
-    export var MethodSignatureSyntax: MethodSignatureConstructor = <any>function(data: number, propertyName: IPropertyNameSyntax, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax) {
+    export var MethodSignatureSyntax: MethodSignatureConstructor = <any>function (data: number, propertyName: IPropertyNameSyntax, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax) {
         if (data) { this.__data = data; }
         this.propertyName = propertyName,
         this.questionToken = questionToken,
@@ -507,7 +507,7 @@ module TypeScript {
     };
     MethodSignatureSyntax.prototype.kind = SyntaxKind.MethodSignature;
     MethodSignatureSyntax.prototype.childCount = 3;
-    MethodSignatureSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    MethodSignatureSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.questionToken;
@@ -515,7 +515,7 @@ module TypeScript {
         }
     }
 
-    export var BlockSyntax: BlockConstructor = <any>function(data: number, equalsGreaterThanToken: ISyntaxToken, openBraceToken: ISyntaxToken, statements: IStatementSyntax[], closeBraceToken: ISyntaxToken) {
+    export var BlockSyntax: BlockConstructor = <any>function (data: number, equalsGreaterThanToken: ISyntaxToken, openBraceToken: ISyntaxToken, statements: IStatementSyntax[], closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.equalsGreaterThanToken = equalsGreaterThanToken,
         this.openBraceToken = openBraceToken,
@@ -524,7 +524,7 @@ module TypeScript {
     };
     BlockSyntax.prototype.kind = SyntaxKind.Block;
     BlockSyntax.prototype.childCount = 4;
-    BlockSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    BlockSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.equalsGreaterThanToken;
             case 1: return this.openBraceToken;
@@ -533,7 +533,7 @@ module TypeScript {
         }
     }
 
-    export var IfStatementSyntax: IfStatementConstructor = <any>function(data: number, ifKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax, elseClause: ElseClauseSyntax) {
+    export var IfStatementSyntax: IfStatementConstructor = <any>function (data: number, ifKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax, elseClause: ElseClauseSyntax) {
         if (data) { this.__data = data; }
         this.ifKeyword = ifKeyword,
         this.openParenToken = openParenToken,
@@ -544,7 +544,7 @@ module TypeScript {
     };
     IfStatementSyntax.prototype.kind = SyntaxKind.IfStatement;
     IfStatementSyntax.prototype.childCount = 6;
-    IfStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    IfStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.ifKeyword;
             case 1: return this.openParenToken;
@@ -555,7 +555,7 @@ module TypeScript {
         }
     }
 
-    export var VariableStatementSyntax: VariableStatementConstructor = <any>function(data: number, modifiers: ISyntaxToken[], variableDeclaration: VariableDeclarationSyntax, semicolonToken: ISyntaxToken) {
+    export var VariableStatementSyntax: VariableStatementConstructor = <any>function (data: number, modifiers: ISyntaxToken[], variableDeclaration: VariableDeclarationSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.variableDeclaration = variableDeclaration,
@@ -563,7 +563,7 @@ module TypeScript {
     };
     VariableStatementSyntax.prototype.kind = SyntaxKind.VariableStatement;
     VariableStatementSyntax.prototype.childCount = 3;
-    VariableStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    VariableStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.variableDeclaration;
@@ -571,21 +571,21 @@ module TypeScript {
         }
     }
 
-    export var ExpressionStatementSyntax: ExpressionStatementConstructor = <any>function(data: number, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
+    export var ExpressionStatementSyntax: ExpressionStatementConstructor = <any>function (data: number, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.semicolonToken = semicolonToken;
     };
     ExpressionStatementSyntax.prototype.kind = SyntaxKind.ExpressionStatement;
     ExpressionStatementSyntax.prototype.childCount = 2;
-    ExpressionStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ExpressionStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.semicolonToken;
         }
     }
 
-    export var ReturnStatementSyntax: ReturnStatementConstructor = <any>function(data: number, returnKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
+    export var ReturnStatementSyntax: ReturnStatementConstructor = <any>function (data: number, returnKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.returnKeyword = returnKeyword,
         this.expression = expression,
@@ -593,7 +593,7 @@ module TypeScript {
     };
     ReturnStatementSyntax.prototype.kind = SyntaxKind.ReturnStatement;
     ReturnStatementSyntax.prototype.childCount = 3;
-    ReturnStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ReturnStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.returnKeyword;
             case 1: return this.expression;
@@ -601,7 +601,7 @@ module TypeScript {
         }
     }
 
-    export var SwitchStatementSyntax: SwitchStatementConstructor = <any>function(data: number, switchKeyword: ISyntaxToken, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken, openBraceToken: ISyntaxToken, switchClauses: ISwitchClauseSyntax[], closeBraceToken: ISyntaxToken) {
+    export var SwitchStatementSyntax: SwitchStatementConstructor = <any>function (data: number, switchKeyword: ISyntaxToken, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken, openBraceToken: ISyntaxToken, switchClauses: ISwitchClauseSyntax[], closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.switchKeyword = switchKeyword,
         this.openParenToken = openParenToken,
@@ -613,7 +613,7 @@ module TypeScript {
     };
     SwitchStatementSyntax.prototype.kind = SyntaxKind.SwitchStatement;
     SwitchStatementSyntax.prototype.childCount = 7;
-    SwitchStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    SwitchStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.switchKeyword;
             case 1: return this.openParenToken;
@@ -625,7 +625,7 @@ module TypeScript {
         }
     }
 
-    export var BreakStatementSyntax: BreakStatementConstructor = <any>function(data: number, breakKeyword: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
+    export var BreakStatementSyntax: BreakStatementConstructor = <any>function (data: number, breakKeyword: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.breakKeyword = breakKeyword,
         this.identifier = identifier,
@@ -633,7 +633,7 @@ module TypeScript {
     };
     BreakStatementSyntax.prototype.kind = SyntaxKind.BreakStatement;
     BreakStatementSyntax.prototype.childCount = 3;
-    BreakStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    BreakStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.breakKeyword;
             case 1: return this.identifier;
@@ -641,7 +641,7 @@ module TypeScript {
         }
     }
 
-    export var ContinueStatementSyntax: ContinueStatementConstructor = <any>function(data: number, continueKeyword: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
+    export var ContinueStatementSyntax: ContinueStatementConstructor = <any>function (data: number, continueKeyword: ISyntaxToken, identifier: ISyntaxToken, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.continueKeyword = continueKeyword,
         this.identifier = identifier,
@@ -649,7 +649,7 @@ module TypeScript {
     };
     ContinueStatementSyntax.prototype.kind = SyntaxKind.ContinueStatement;
     ContinueStatementSyntax.prototype.childCount = 3;
-    ContinueStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ContinueStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.continueKeyword;
             case 1: return this.identifier;
@@ -657,7 +657,7 @@ module TypeScript {
         }
     }
 
-    export var ForStatementSyntax: ForStatementConstructor = <any>function(data: number, forKeyword: ISyntaxToken, openParenToken: ISyntaxToken, initializer: VariableDeclarationSyntax | IExpressionSyntax, firstSemicolonToken: ISyntaxToken, condition: IExpressionSyntax, secondSemicolonToken: ISyntaxToken, incrementor: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
+    export var ForStatementSyntax: ForStatementConstructor = <any>function (data: number, forKeyword: ISyntaxToken, openParenToken: ISyntaxToken, initializer: VariableDeclarationSyntax | IExpressionSyntax, firstSemicolonToken: ISyntaxToken, condition: IExpressionSyntax, secondSemicolonToken: ISyntaxToken, incrementor: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.forKeyword = forKeyword,
         this.openParenToken = openParenToken,
@@ -671,7 +671,7 @@ module TypeScript {
     };
     ForStatementSyntax.prototype.kind = SyntaxKind.ForStatement;
     ForStatementSyntax.prototype.childCount = 9;
-    ForStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ForStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -685,7 +685,7 @@ module TypeScript {
         }
     }
 
-    export var ForInStatementSyntax: ForInStatementConstructor = <any>function(data: number, forKeyword: ISyntaxToken, openParenToken: ISyntaxToken, left: VariableDeclarationSyntax | IExpressionSyntax, inKeyword: ISyntaxToken, right: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
+    export var ForInStatementSyntax: ForInStatementConstructor = <any>function (data: number, forKeyword: ISyntaxToken, openParenToken: ISyntaxToken, left: VariableDeclarationSyntax | IExpressionSyntax, inKeyword: ISyntaxToken, right: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.forKeyword = forKeyword,
         this.openParenToken = openParenToken,
@@ -697,7 +697,7 @@ module TypeScript {
     };
     ForInStatementSyntax.prototype.kind = SyntaxKind.ForInStatement;
     ForInStatementSyntax.prototype.childCount = 7;
-    ForInStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ForInStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -709,19 +709,19 @@ module TypeScript {
         }
     }
 
-    export var EmptyStatementSyntax: EmptyStatementConstructor = <any>function(data: number, semicolonToken: ISyntaxToken) {
+    export var EmptyStatementSyntax: EmptyStatementConstructor = <any>function (data: number, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.semicolonToken = semicolonToken;
     };
     EmptyStatementSyntax.prototype.kind = SyntaxKind.EmptyStatement;
     EmptyStatementSyntax.prototype.childCount = 1;
-    EmptyStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    EmptyStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.semicolonToken;
         }
     }
 
-    export var ThrowStatementSyntax: ThrowStatementConstructor = <any>function(data: number, throwKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
+    export var ThrowStatementSyntax: ThrowStatementConstructor = <any>function (data: number, throwKeyword: ISyntaxToken, expression: IExpressionSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.throwKeyword = throwKeyword,
         this.expression = expression,
@@ -729,7 +729,7 @@ module TypeScript {
     };
     ThrowStatementSyntax.prototype.kind = SyntaxKind.ThrowStatement;
     ThrowStatementSyntax.prototype.childCount = 3;
-    ThrowStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ThrowStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.throwKeyword;
             case 1: return this.expression;
@@ -737,7 +737,7 @@ module TypeScript {
         }
     }
 
-    export var WhileStatementSyntax: WhileStatementConstructor = <any>function(data: number, whileKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
+    export var WhileStatementSyntax: WhileStatementConstructor = <any>function (data: number, whileKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.whileKeyword = whileKeyword,
         this.openParenToken = openParenToken,
@@ -747,7 +747,7 @@ module TypeScript {
     };
     WhileStatementSyntax.prototype.kind = SyntaxKind.WhileStatement;
     WhileStatementSyntax.prototype.childCount = 5;
-    WhileStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    WhileStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.whileKeyword;
             case 1: return this.openParenToken;
@@ -757,7 +757,7 @@ module TypeScript {
         }
     }
 
-    export var TryStatementSyntax: TryStatementConstructor = <any>function(data: number, tryKeyword: ISyntaxToken, block: BlockSyntax, catchClause: CatchClauseSyntax, finallyClause: FinallyClauseSyntax) {
+    export var TryStatementSyntax: TryStatementConstructor = <any>function (data: number, tryKeyword: ISyntaxToken, block: BlockSyntax, catchClause: CatchClauseSyntax, finallyClause: FinallyClauseSyntax) {
         if (data) { this.__data = data; }
         this.tryKeyword = tryKeyword,
         this.block = block,
@@ -766,7 +766,7 @@ module TypeScript {
     };
     TryStatementSyntax.prototype.kind = SyntaxKind.TryStatement;
     TryStatementSyntax.prototype.childCount = 4;
-    TryStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TryStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.tryKeyword;
             case 1: return this.block;
@@ -775,7 +775,7 @@ module TypeScript {
         }
     }
 
-    export var LabeledStatementSyntax: LabeledStatementConstructor = <any>function(data: number, identifier: ISyntaxToken, colonToken: ISyntaxToken, statement: IStatementSyntax) {
+    export var LabeledStatementSyntax: LabeledStatementConstructor = <any>function (data: number, identifier: ISyntaxToken, colonToken: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.identifier = identifier,
         this.colonToken = colonToken,
@@ -783,7 +783,7 @@ module TypeScript {
     };
     LabeledStatementSyntax.prototype.kind = SyntaxKind.LabeledStatement;
     LabeledStatementSyntax.prototype.childCount = 3;
-    LabeledStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    LabeledStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.identifier;
             case 1: return this.colonToken;
@@ -791,7 +791,7 @@ module TypeScript {
         }
     }
 
-    export var DoStatementSyntax: DoStatementConstructor = <any>function(data: number, doKeyword: ISyntaxToken, statement: IStatementSyntax, whileKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, semicolonToken: ISyntaxToken) {
+    export var DoStatementSyntax: DoStatementConstructor = <any>function (data: number, doKeyword: ISyntaxToken, statement: IStatementSyntax, whileKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.doKeyword = doKeyword,
         this.statement = statement,
@@ -803,7 +803,7 @@ module TypeScript {
     };
     DoStatementSyntax.prototype.kind = SyntaxKind.DoStatement;
     DoStatementSyntax.prototype.childCount = 7;
-    DoStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    DoStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.doKeyword;
             case 1: return this.statement;
@@ -815,21 +815,21 @@ module TypeScript {
         }
     }
 
-    export var DebuggerStatementSyntax: DebuggerStatementConstructor = <any>function(data: number, debuggerKeyword: ISyntaxToken, semicolonToken: ISyntaxToken) {
+    export var DebuggerStatementSyntax: DebuggerStatementConstructor = <any>function (data: number, debuggerKeyword: ISyntaxToken, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.debuggerKeyword = debuggerKeyword,
         this.semicolonToken = semicolonToken;
     };
     DebuggerStatementSyntax.prototype.kind = SyntaxKind.DebuggerStatement;
     DebuggerStatementSyntax.prototype.childCount = 2;
-    DebuggerStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    DebuggerStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.debuggerKeyword;
             case 1: return this.semicolonToken;
         }
     }
 
-    export var WithStatementSyntax: WithStatementConstructor = <any>function(data: number, withKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
+    export var WithStatementSyntax: WithStatementConstructor = <any>function (data: number, withKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.withKeyword = withKeyword,
         this.openParenToken = openParenToken,
@@ -839,7 +839,7 @@ module TypeScript {
     };
     WithStatementSyntax.prototype.kind = SyntaxKind.WithStatement;
     WithStatementSyntax.prototype.childCount = 5;
-    WithStatementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    WithStatementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.withKeyword;
             case 1: return this.openParenToken;
@@ -849,63 +849,63 @@ module TypeScript {
         }
     }
 
-    export var PrefixUnaryExpressionSyntax: PrefixUnaryExpressionConstructor = <any>function(data: number, operatorToken: ISyntaxToken, operand: IUnaryExpressionSyntax) {
+    export var PrefixUnaryExpressionSyntax: PrefixUnaryExpressionConstructor = <any>function (data: number, operatorToken: ISyntaxToken, operand: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.operatorToken = operatorToken,
         this.operand = operand;
     };
     PrefixUnaryExpressionSyntax.prototype.kind = SyntaxKind.PrefixUnaryExpression;
     PrefixUnaryExpressionSyntax.prototype.childCount = 2;
-    PrefixUnaryExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PrefixUnaryExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.operatorToken;
             case 1: return this.operand;
         }
     }
 
-    export var DeleteExpressionSyntax: DeleteExpressionConstructor = <any>function(data: number, deleteKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
+    export var DeleteExpressionSyntax: DeleteExpressionConstructor = <any>function (data: number, deleteKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.deleteKeyword = deleteKeyword,
         this.expression = expression;
     };
     DeleteExpressionSyntax.prototype.kind = SyntaxKind.DeleteExpression;
     DeleteExpressionSyntax.prototype.childCount = 2;
-    DeleteExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    DeleteExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.deleteKeyword;
             case 1: return this.expression;
         }
     }
 
-    export var TypeOfExpressionSyntax: TypeOfExpressionConstructor = <any>function(data: number, typeOfKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
+    export var TypeOfExpressionSyntax: TypeOfExpressionConstructor = <any>function (data: number, typeOfKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.typeOfKeyword = typeOfKeyword,
         this.expression = expression;
     };
     TypeOfExpressionSyntax.prototype.kind = SyntaxKind.TypeOfExpression;
     TypeOfExpressionSyntax.prototype.childCount = 2;
-    TypeOfExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeOfExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.typeOfKeyword;
             case 1: return this.expression;
         }
     }
 
-    export var VoidExpressionSyntax: VoidExpressionConstructor = <any>function(data: number, voidKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
+    export var VoidExpressionSyntax: VoidExpressionConstructor = <any>function (data: number, voidKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.voidKeyword = voidKeyword,
         this.expression = expression;
     };
     VoidExpressionSyntax.prototype.kind = SyntaxKind.VoidExpression;
     VoidExpressionSyntax.prototype.childCount = 2;
-    VoidExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    VoidExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.voidKeyword;
             case 1: return this.expression;
         }
     }
 
-    export var ConditionalExpressionSyntax: ConditionalExpressionConstructor = <any>function(data: number, condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax) {
+    export var ConditionalExpressionSyntax: ConditionalExpressionConstructor = <any>function (data: number, condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.condition = condition,
         this.questionToken = questionToken,
@@ -915,7 +915,7 @@ module TypeScript {
     };
     ConditionalExpressionSyntax.prototype.kind = SyntaxKind.ConditionalExpression;
     ConditionalExpressionSyntax.prototype.childCount = 5;
-    ConditionalExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ConditionalExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.condition;
             case 1: return this.questionToken;
@@ -925,7 +925,7 @@ module TypeScript {
         }
     }
 
-    export var BinaryExpressionSyntax: BinaryExpressionConstructor = <any>function(data: number, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax) {
+    export var BinaryExpressionSyntax: BinaryExpressionConstructor = <any>function (data: number, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.left = left,
         this.operatorToken = operatorToken,
@@ -933,7 +933,7 @@ module TypeScript {
     };
     BinaryExpressionSyntax.prototype.kind = SyntaxKind.BinaryExpression;
     BinaryExpressionSyntax.prototype.childCount = 3;
-    BinaryExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    BinaryExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.left;
             case 1: return this.operatorToken;
@@ -941,21 +941,21 @@ module TypeScript {
         }
     }
 
-    export var PostfixUnaryExpressionSyntax: PostfixUnaryExpressionConstructor = <any>function(data: number, operand: ILeftHandSideExpressionSyntax, operatorToken: ISyntaxToken) {
+    export var PostfixUnaryExpressionSyntax: PostfixUnaryExpressionConstructor = <any>function (data: number, operand: ILeftHandSideExpressionSyntax, operatorToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.operand = operand,
         this.operatorToken = operatorToken;
     };
     PostfixUnaryExpressionSyntax.prototype.kind = SyntaxKind.PostfixUnaryExpression;
     PostfixUnaryExpressionSyntax.prototype.childCount = 2;
-    PostfixUnaryExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PostfixUnaryExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.operand;
             case 1: return this.operatorToken;
         }
     }
 
-    export var PropertyAccessExpressionSyntax: PropertyAccessExpressionConstructor = <any>function(data: number, expression: ILeftHandSideExpressionSyntax, dotToken: ISyntaxToken, name: ISyntaxToken) {
+    export var PropertyAccessExpressionSyntax: PropertyAccessExpressionConstructor = <any>function (data: number, expression: ILeftHandSideExpressionSyntax, dotToken: ISyntaxToken, name: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.dotToken = dotToken,
@@ -963,7 +963,7 @@ module TypeScript {
     };
     PropertyAccessExpressionSyntax.prototype.kind = SyntaxKind.PropertyAccessExpression;
     PropertyAccessExpressionSyntax.prototype.childCount = 3;
-    PropertyAccessExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PropertyAccessExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.dotToken;
@@ -971,21 +971,21 @@ module TypeScript {
         }
     }
 
-    export var InvocationExpressionSyntax: InvocationExpressionConstructor = <any>function(data: number, expression: ILeftHandSideExpressionSyntax, argumentList: ArgumentListSyntax) {
+    export var InvocationExpressionSyntax: InvocationExpressionConstructor = <any>function (data: number, expression: ILeftHandSideExpressionSyntax, argumentList: ArgumentListSyntax) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.argumentList = argumentList;
     };
     InvocationExpressionSyntax.prototype.kind = SyntaxKind.InvocationExpression;
     InvocationExpressionSyntax.prototype.childCount = 2;
-    InvocationExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    InvocationExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.argumentList;
         }
     }
 
-    export var ArrayLiteralExpressionSyntax: ArrayLiteralExpressionConstructor = <any>function(data: number, openBracketToken: ISyntaxToken, expressions: ISeparatedSyntaxList<IExpressionSyntax>, closeBracketToken: ISyntaxToken) {
+    export var ArrayLiteralExpressionSyntax: ArrayLiteralExpressionConstructor = <any>function (data: number, openBracketToken: ISyntaxToken, expressions: ISeparatedSyntaxList<IExpressionSyntax>, closeBracketToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openBracketToken = openBracketToken,
         this.expressions = expressions,
@@ -993,7 +993,7 @@ module TypeScript {
     };
     ArrayLiteralExpressionSyntax.prototype.kind = SyntaxKind.ArrayLiteralExpression;
     ArrayLiteralExpressionSyntax.prototype.childCount = 3;
-    ArrayLiteralExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ArrayLiteralExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openBracketToken;
             case 1: return this.expressions;
@@ -1001,7 +1001,7 @@ module TypeScript {
         }
     }
 
-    export var ObjectLiteralExpressionSyntax: ObjectLiteralExpressionConstructor = <any>function(data: number, openBraceToken: ISyntaxToken, propertyAssignments: ISeparatedSyntaxList<IPropertyAssignmentSyntax>, closeBraceToken: ISyntaxToken) {
+    export var ObjectLiteralExpressionSyntax: ObjectLiteralExpressionConstructor = <any>function (data: number, openBraceToken: ISyntaxToken, propertyAssignments: ISeparatedSyntaxList<IPropertyAssignmentSyntax>, closeBraceToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openBraceToken = openBraceToken,
         this.propertyAssignments = propertyAssignments,
@@ -1009,7 +1009,7 @@ module TypeScript {
     };
     ObjectLiteralExpressionSyntax.prototype.kind = SyntaxKind.ObjectLiteralExpression;
     ObjectLiteralExpressionSyntax.prototype.childCount = 3;
-    ObjectLiteralExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ObjectLiteralExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openBraceToken;
             case 1: return this.propertyAssignments;
@@ -1017,7 +1017,7 @@ module TypeScript {
         }
     }
 
-    export var ObjectCreationExpressionSyntax: ObjectCreationExpressionConstructor = <any>function(data: number, newKeyword: ISyntaxToken, expression: IMemberExpressionSyntax, argumentList: ArgumentListSyntax) {
+    export var ObjectCreationExpressionSyntax: ObjectCreationExpressionConstructor = <any>function (data: number, newKeyword: ISyntaxToken, expression: IMemberExpressionSyntax, argumentList: ArgumentListSyntax) {
         if (data) { this.__data = data; }
         this.newKeyword = newKeyword,
         this.expression = expression,
@@ -1025,7 +1025,7 @@ module TypeScript {
     };
     ObjectCreationExpressionSyntax.prototype.kind = SyntaxKind.ObjectCreationExpression;
     ObjectCreationExpressionSyntax.prototype.childCount = 3;
-    ObjectCreationExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ObjectCreationExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.newKeyword;
             case 1: return this.expression;
@@ -1033,7 +1033,7 @@ module TypeScript {
         }
     }
 
-    export var ParenthesizedExpressionSyntax: ParenthesizedExpressionConstructor = <any>function(data: number, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken) {
+    export var ParenthesizedExpressionSyntax: ParenthesizedExpressionConstructor = <any>function (data: number, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openParenToken = openParenToken,
         this.expression = expression,
@@ -1041,7 +1041,7 @@ module TypeScript {
     };
     ParenthesizedExpressionSyntax.prototype.kind = SyntaxKind.ParenthesizedExpression;
     ParenthesizedExpressionSyntax.prototype.childCount = 3;
-    ParenthesizedExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ParenthesizedExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openParenToken;
             case 1: return this.expression;
@@ -1049,7 +1049,7 @@ module TypeScript {
         }
     }
 
-    export var ParenthesizedArrowFunctionExpressionSyntax: ParenthesizedArrowFunctionExpressionConstructor = <any>function(data: number, asyncKeyword: ISyntaxToken, callSignature: CallSignatureSyntax, equalsGreaterThanToken: ISyntaxToken, body: BlockSyntax | IExpressionSyntax) {
+    export var ParenthesizedArrowFunctionExpressionSyntax: ParenthesizedArrowFunctionExpressionConstructor = <any>function (data: number, asyncKeyword: ISyntaxToken, callSignature: CallSignatureSyntax, equalsGreaterThanToken: ISyntaxToken, body: BlockSyntax | IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.asyncKeyword = asyncKeyword,
         this.callSignature = callSignature,
@@ -1058,7 +1058,7 @@ module TypeScript {
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = SyntaxKind.ParenthesizedArrowFunctionExpression;
     ParenthesizedArrowFunctionExpressionSyntax.prototype.childCount = 4;
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.asyncKeyword;
             case 1: return this.callSignature;
@@ -1067,7 +1067,7 @@ module TypeScript {
         }
     }
 
-    export var SimpleArrowFunctionExpressionSyntax: SimpleArrowFunctionExpressionConstructor = <any>function(data: number, asyncKeyword: ISyntaxToken, parameter: ParameterSyntax, equalsGreaterThanToken: ISyntaxToken, body: BlockSyntax | IExpressionSyntax) {
+    export var SimpleArrowFunctionExpressionSyntax: SimpleArrowFunctionExpressionConstructor = <any>function (data: number, asyncKeyword: ISyntaxToken, parameter: ParameterSyntax, equalsGreaterThanToken: ISyntaxToken, body: BlockSyntax | IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.asyncKeyword = asyncKeyword,
         this.parameter = parameter,
@@ -1076,7 +1076,7 @@ module TypeScript {
     };
     SimpleArrowFunctionExpressionSyntax.prototype.kind = SyntaxKind.SimpleArrowFunctionExpression;
     SimpleArrowFunctionExpressionSyntax.prototype.childCount = 4;
-    SimpleArrowFunctionExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    SimpleArrowFunctionExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.asyncKeyword;
             case 1: return this.parameter;
@@ -1085,7 +1085,7 @@ module TypeScript {
         }
     }
 
-    export var TypeAssertionExpressionSyntax: TypeAssertionExpressionConstructor = <any>function(data: number, lessThanToken: ISyntaxToken, type: ITypeSyntax, greaterThanToken: ISyntaxToken, expression: IUnaryExpressionSyntax) {
+    export var TypeAssertionExpressionSyntax: TypeAssertionExpressionConstructor = <any>function (data: number, lessThanToken: ISyntaxToken, type: ITypeSyntax, greaterThanToken: ISyntaxToken, expression: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.lessThanToken = lessThanToken,
         this.type = type,
@@ -1094,7 +1094,7 @@ module TypeScript {
     };
     TypeAssertionExpressionSyntax.prototype.kind = SyntaxKind.TypeAssertionExpression;
     TypeAssertionExpressionSyntax.prototype.childCount = 4;
-    TypeAssertionExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeAssertionExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.lessThanToken;
             case 1: return this.type;
@@ -1103,7 +1103,7 @@ module TypeScript {
         }
     }
 
-    export var ElementAccessExpressionSyntax: ElementAccessExpressionConstructor = <any>function(data: number, expression: ILeftHandSideExpressionSyntax, openBracketToken: ISyntaxToken, argumentExpression: IExpressionSyntax, closeBracketToken: ISyntaxToken) {
+    export var ElementAccessExpressionSyntax: ElementAccessExpressionConstructor = <any>function (data: number, expression: ILeftHandSideExpressionSyntax, openBracketToken: ISyntaxToken, argumentExpression: IExpressionSyntax, closeBracketToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.openBracketToken = openBracketToken,
@@ -1112,7 +1112,7 @@ module TypeScript {
     };
     ElementAccessExpressionSyntax.prototype.kind = SyntaxKind.ElementAccessExpression;
     ElementAccessExpressionSyntax.prototype.childCount = 4;
-    ElementAccessExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ElementAccessExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.openBracketToken;
@@ -1121,7 +1121,7 @@ module TypeScript {
         }
     }
 
-    export var FunctionExpressionSyntax: FunctionExpressionConstructor = <any>function(data: number, asyncKeyword: ISyntaxToken, functionKeyword: ISyntaxToken, asterixToken: ISyntaxToken, identifier: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
+    export var FunctionExpressionSyntax: FunctionExpressionConstructor = <any>function (data: number, asyncKeyword: ISyntaxToken, functionKeyword: ISyntaxToken, asterixToken: ISyntaxToken, identifier: ISyntaxToken, callSignature: CallSignatureSyntax, body: BlockSyntax | ExpressionBody | ISyntaxToken) {
         if (data) { this.__data = data; }
         this.asyncKeyword = asyncKeyword,
         this.functionKeyword = functionKeyword,
@@ -1132,7 +1132,7 @@ module TypeScript {
     };
     FunctionExpressionSyntax.prototype.kind = SyntaxKind.FunctionExpression;
     FunctionExpressionSyntax.prototype.childCount = 6;
-    FunctionExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    FunctionExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.asyncKeyword;
             case 1: return this.functionKeyword;
@@ -1143,44 +1143,44 @@ module TypeScript {
         }
     }
 
-    export var OmittedExpressionSyntax: OmittedExpressionConstructor = <any>function(data: number) {
+    export var OmittedExpressionSyntax: OmittedExpressionConstructor = <any>function (data: number) {
         if (data) { this.__data = data; }
     };
     OmittedExpressionSyntax.prototype.kind = SyntaxKind.OmittedExpression;
     OmittedExpressionSyntax.prototype.childCount = 0;
-    OmittedExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    OmittedExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         throw Errors.invalidOperation();
     }
 
-    export var TemplateExpressionSyntax: TemplateExpressionConstructor = <any>function(data: number, templateStartToken: ISyntaxToken, templateClauses: TemplateClauseSyntax[]) {
+    export var TemplateExpressionSyntax: TemplateExpressionConstructor = <any>function (data: number, templateStartToken: ISyntaxToken, templateClauses: TemplateClauseSyntax[]) {
         if (data) { this.__data = data; }
         this.templateStartToken = templateStartToken,
         this.templateClauses = templateClauses;
     };
     TemplateExpressionSyntax.prototype.kind = SyntaxKind.TemplateExpression;
     TemplateExpressionSyntax.prototype.childCount = 2;
-    TemplateExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TemplateExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.templateStartToken;
             case 1: return this.templateClauses;
         }
     }
 
-    export var TemplateAccessExpressionSyntax: TemplateAccessExpressionConstructor = <any>function(data: number, expression: ILeftHandSideExpressionSyntax, templateExpression: IPrimaryExpressionSyntax) {
+    export var TemplateAccessExpressionSyntax: TemplateAccessExpressionConstructor = <any>function (data: number, expression: ILeftHandSideExpressionSyntax, templateExpression: IPrimaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.templateExpression = templateExpression;
     };
     TemplateAccessExpressionSyntax.prototype.kind = SyntaxKind.TemplateAccessExpression;
     TemplateAccessExpressionSyntax.prototype.childCount = 2;
-    TemplateAccessExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TemplateAccessExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.templateExpression;
         }
     }
 
-    export var YieldExpressionSyntax: YieldExpressionConstructor = <any>function(data: number, yieldKeyword: ISyntaxToken, asterixToken: ISyntaxToken, expression: IExpressionSyntax) {
+    export var YieldExpressionSyntax: YieldExpressionConstructor = <any>function (data: number, yieldKeyword: ISyntaxToken, asterixToken: ISyntaxToken, expression: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.yieldKeyword = yieldKeyword,
         this.asterixToken = asterixToken,
@@ -1188,7 +1188,7 @@ module TypeScript {
     };
     YieldExpressionSyntax.prototype.kind = SyntaxKind.YieldExpression;
     YieldExpressionSyntax.prototype.childCount = 3;
-    YieldExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    YieldExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.yieldKeyword;
             case 1: return this.asterixToken;
@@ -1196,35 +1196,35 @@ module TypeScript {
         }
     }
 
-    export var AwaitExpressionSyntax: AwaitExpressionConstructor = <any>function(data: number, awaitKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
+    export var AwaitExpressionSyntax: AwaitExpressionConstructor = <any>function (data: number, awaitKeyword: ISyntaxToken, expression: IUnaryExpressionSyntax) {
         if (data) { this.__data = data; }
         this.awaitKeyword = awaitKeyword,
         this.expression = expression;
     };
     AwaitExpressionSyntax.prototype.kind = SyntaxKind.AwaitExpression;
     AwaitExpressionSyntax.prototype.childCount = 2;
-    AwaitExpressionSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    AwaitExpressionSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.awaitKeyword;
             case 1: return this.expression;
         }
     }
 
-    export var VariableDeclarationSyntax: VariableDeclarationConstructor = <any>function(data: number, varConstOrLetKeyword: ISyntaxToken, variableDeclarators: ISeparatedSyntaxList<VariableDeclaratorSyntax>) {
+    export var VariableDeclarationSyntax: VariableDeclarationConstructor = <any>function (data: number, varConstOrLetKeyword: ISyntaxToken, variableDeclarators: ISeparatedSyntaxList<VariableDeclaratorSyntax>) {
         if (data) { this.__data = data; }
         this.varConstOrLetKeyword = varConstOrLetKeyword,
         this.variableDeclarators = variableDeclarators;
     };
     VariableDeclarationSyntax.prototype.kind = SyntaxKind.VariableDeclaration;
     VariableDeclarationSyntax.prototype.childCount = 2;
-    VariableDeclarationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    VariableDeclarationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.varConstOrLetKeyword;
             case 1: return this.variableDeclarators;
         }
     }
 
-    export var VariableDeclaratorSyntax: VariableDeclaratorConstructor = <any>function(data: number, propertyName: IPropertyNameSyntax, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax) {
+    export var VariableDeclaratorSyntax: VariableDeclaratorConstructor = <any>function (data: number, propertyName: IPropertyNameSyntax, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax) {
         if (data) { this.__data = data; }
         this.propertyName = propertyName,
         this.typeAnnotation = typeAnnotation,
@@ -1232,7 +1232,7 @@ module TypeScript {
     };
     VariableDeclaratorSyntax.prototype.kind = SyntaxKind.VariableDeclarator;
     VariableDeclaratorSyntax.prototype.childCount = 3;
-    VariableDeclaratorSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    VariableDeclaratorSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.typeAnnotation;
@@ -1240,7 +1240,7 @@ module TypeScript {
         }
     }
 
-    export var ArgumentListSyntax: ArgumentListConstructor = <any>function(data: number, typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, _arguments: ISeparatedSyntaxList<IExpressionSyntax>, closeParenToken: ISyntaxToken) {
+    export var ArgumentListSyntax: ArgumentListConstructor = <any>function (data: number, typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, _arguments: ISeparatedSyntaxList<IExpressionSyntax>, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.typeArgumentList = typeArgumentList,
         this.openParenToken = openParenToken,
@@ -1249,7 +1249,7 @@ module TypeScript {
     };
     ArgumentListSyntax.prototype.kind = SyntaxKind.ArgumentList;
     ArgumentListSyntax.prototype.childCount = 4;
-    ArgumentListSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ArgumentListSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.typeArgumentList;
             case 1: return this.openParenToken;
@@ -1258,7 +1258,7 @@ module TypeScript {
         }
     }
 
-    export var ParameterListSyntax: ParameterListConstructor = <any>function(data: number, openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList<ParameterSyntax>, closeParenToken: ISyntaxToken) {
+    export var ParameterListSyntax: ParameterListConstructor = <any>function (data: number, openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList<ParameterSyntax>, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openParenToken = openParenToken,
         this.parameters = parameters,
@@ -1266,7 +1266,7 @@ module TypeScript {
     };
     ParameterListSyntax.prototype.kind = SyntaxKind.ParameterList;
     ParameterListSyntax.prototype.childCount = 3;
-    ParameterListSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ParameterListSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openParenToken;
             case 1: return this.parameters;
@@ -1274,7 +1274,7 @@ module TypeScript {
         }
     }
 
-    export var TypeArgumentListSyntax: TypeArgumentListConstructor = <any>function(data: number, lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList<ITypeSyntax>, greaterThanToken: ISyntaxToken) {
+    export var TypeArgumentListSyntax: TypeArgumentListConstructor = <any>function (data: number, lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList<ITypeSyntax>, greaterThanToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.lessThanToken = lessThanToken,
         this.typeArguments = typeArguments,
@@ -1282,7 +1282,7 @@ module TypeScript {
     };
     TypeArgumentListSyntax.prototype.kind = SyntaxKind.TypeArgumentList;
     TypeArgumentListSyntax.prototype.childCount = 3;
-    TypeArgumentListSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeArgumentListSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.lessThanToken;
             case 1: return this.typeArguments;
@@ -1290,7 +1290,7 @@ module TypeScript {
         }
     }
 
-    export var TypeParameterListSyntax: TypeParameterListConstructor = <any>function(data: number, lessThanToken: ISyntaxToken, typeParameters: ISeparatedSyntaxList<TypeParameterSyntax>, greaterThanToken: ISyntaxToken) {
+    export var TypeParameterListSyntax: TypeParameterListConstructor = <any>function (data: number, lessThanToken: ISyntaxToken, typeParameters: ISeparatedSyntaxList<TypeParameterSyntax>, greaterThanToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.lessThanToken = lessThanToken,
         this.typeParameters = typeParameters,
@@ -1298,7 +1298,7 @@ module TypeScript {
     };
     TypeParameterListSyntax.prototype.kind = SyntaxKind.TypeParameterList;
     TypeParameterListSyntax.prototype.childCount = 3;
-    TypeParameterListSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeParameterListSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.lessThanToken;
             case 1: return this.typeParameters;
@@ -1306,35 +1306,35 @@ module TypeScript {
         }
     }
 
-    export var HeritageClauseSyntax: HeritageClauseConstructor = <any>function(data: number, extendsOrImplementsKeyword: ISyntaxToken, typeNames: ISeparatedSyntaxList<INameSyntax>) {
+    export var HeritageClauseSyntax: HeritageClauseConstructor = <any>function (data: number, extendsOrImplementsKeyword: ISyntaxToken, typeNames: ISeparatedSyntaxList<INameSyntax>) {
         if (data) { this.__data = data; }
         this.extendsOrImplementsKeyword = extendsOrImplementsKeyword,
         this.typeNames = typeNames;
     };
     HeritageClauseSyntax.prototype.kind = SyntaxKind.HeritageClause;
     HeritageClauseSyntax.prototype.childCount = 2;
-    HeritageClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    HeritageClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.extendsOrImplementsKeyword;
             case 1: return this.typeNames;
         }
     }
 
-    export var EqualsValueClauseSyntax: EqualsValueClauseConstructor = <any>function(data: number, equalsToken: ISyntaxToken, value: IExpressionSyntax) {
+    export var EqualsValueClauseSyntax: EqualsValueClauseConstructor = <any>function (data: number, equalsToken: ISyntaxToken, value: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.equalsToken = equalsToken,
         this.value = value;
     };
     EqualsValueClauseSyntax.prototype.kind = SyntaxKind.EqualsValueClause;
     EqualsValueClauseSyntax.prototype.childCount = 2;
-    EqualsValueClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    EqualsValueClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.equalsToken;
             case 1: return this.value;
         }
     }
 
-    export var CaseSwitchClauseSyntax: CaseSwitchClauseConstructor = <any>function(data: number, caseKeyword: ISyntaxToken, expression: IExpressionSyntax, colonToken: ISyntaxToken, statements: IStatementSyntax[]) {
+    export var CaseSwitchClauseSyntax: CaseSwitchClauseConstructor = <any>function (data: number, caseKeyword: ISyntaxToken, expression: IExpressionSyntax, colonToken: ISyntaxToken, statements: IStatementSyntax[]) {
         if (data) { this.__data = data; }
         this.caseKeyword = caseKeyword,
         this.expression = expression,
@@ -1343,7 +1343,7 @@ module TypeScript {
     };
     CaseSwitchClauseSyntax.prototype.kind = SyntaxKind.CaseSwitchClause;
     CaseSwitchClauseSyntax.prototype.childCount = 4;
-    CaseSwitchClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    CaseSwitchClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.caseKeyword;
             case 1: return this.expression;
@@ -1352,7 +1352,7 @@ module TypeScript {
         }
     }
 
-    export var DefaultSwitchClauseSyntax: DefaultSwitchClauseConstructor = <any>function(data: number, defaultKeyword: ISyntaxToken, colonToken: ISyntaxToken, statements: IStatementSyntax[]) {
+    export var DefaultSwitchClauseSyntax: DefaultSwitchClauseConstructor = <any>function (data: number, defaultKeyword: ISyntaxToken, colonToken: ISyntaxToken, statements: IStatementSyntax[]) {
         if (data) { this.__data = data; }
         this.defaultKeyword = defaultKeyword,
         this.colonToken = colonToken,
@@ -1360,7 +1360,7 @@ module TypeScript {
     };
     DefaultSwitchClauseSyntax.prototype.kind = SyntaxKind.DefaultSwitchClause;
     DefaultSwitchClauseSyntax.prototype.childCount = 3;
-    DefaultSwitchClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    DefaultSwitchClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.defaultKeyword;
             case 1: return this.colonToken;
@@ -1368,21 +1368,21 @@ module TypeScript {
         }
     }
 
-    export var ElseClauseSyntax: ElseClauseConstructor = <any>function(data: number, elseKeyword: ISyntaxToken, statement: IStatementSyntax) {
+    export var ElseClauseSyntax: ElseClauseConstructor = <any>function (data: number, elseKeyword: ISyntaxToken, statement: IStatementSyntax) {
         if (data) { this.__data = data; }
         this.elseKeyword = elseKeyword,
         this.statement = statement;
     };
     ElseClauseSyntax.prototype.kind = SyntaxKind.ElseClause;
     ElseClauseSyntax.prototype.childCount = 2;
-    ElseClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ElseClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.elseKeyword;
             case 1: return this.statement;
         }
     }
 
-    export var CatchClauseSyntax: CatchClauseConstructor = <any>function(data: number, catchKeyword: ISyntaxToken, openParenToken: ISyntaxToken, identifier: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, closeParenToken: ISyntaxToken, block: BlockSyntax) {
+    export var CatchClauseSyntax: CatchClauseConstructor = <any>function (data: number, catchKeyword: ISyntaxToken, openParenToken: ISyntaxToken, identifier: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, closeParenToken: ISyntaxToken, block: BlockSyntax) {
         if (data) { this.__data = data; }
         this.catchKeyword = catchKeyword,
         this.openParenToken = openParenToken,
@@ -1393,7 +1393,7 @@ module TypeScript {
     };
     CatchClauseSyntax.prototype.kind = SyntaxKind.CatchClause;
     CatchClauseSyntax.prototype.childCount = 6;
-    CatchClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    CatchClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.catchKeyword;
             case 1: return this.openParenToken;
@@ -1404,63 +1404,63 @@ module TypeScript {
         }
     }
 
-    export var FinallyClauseSyntax: FinallyClauseConstructor = <any>function(data: number, finallyKeyword: ISyntaxToken, block: BlockSyntax) {
+    export var FinallyClauseSyntax: FinallyClauseConstructor = <any>function (data: number, finallyKeyword: ISyntaxToken, block: BlockSyntax) {
         if (data) { this.__data = data; }
         this.finallyKeyword = finallyKeyword,
         this.block = block;
     };
     FinallyClauseSyntax.prototype.kind = SyntaxKind.FinallyClause;
     FinallyClauseSyntax.prototype.childCount = 2;
-    FinallyClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    FinallyClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.finallyKeyword;
             case 1: return this.block;
         }
     }
 
-    export var TemplateClauseSyntax: TemplateClauseConstructor = <any>function(data: number, expression: IExpressionSyntax, templateMiddleOrEndToken: ISyntaxToken) {
+    export var TemplateClauseSyntax: TemplateClauseConstructor = <any>function (data: number, expression: IExpressionSyntax, templateMiddleOrEndToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.expression = expression,
         this.templateMiddleOrEndToken = templateMiddleOrEndToken;
     };
     TemplateClauseSyntax.prototype.kind = SyntaxKind.TemplateClause;
     TemplateClauseSyntax.prototype.childCount = 2;
-    TemplateClauseSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TemplateClauseSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.expression;
             case 1: return this.templateMiddleOrEndToken;
         }
     }
 
-    export var TypeParameterSyntax: TypeParameterConstructor = <any>function(data: number, identifier: ISyntaxToken, constraint: ConstraintSyntax) {
+    export var TypeParameterSyntax: TypeParameterConstructor = <any>function (data: number, identifier: ISyntaxToken, constraint: ConstraintSyntax) {
         if (data) { this.__data = data; }
         this.identifier = identifier,
         this.constraint = constraint;
     };
     TypeParameterSyntax.prototype.kind = SyntaxKind.TypeParameter;
     TypeParameterSyntax.prototype.childCount = 2;
-    TypeParameterSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeParameterSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.identifier;
             case 1: return this.constraint;
         }
     }
 
-    export var ConstraintSyntax: ConstraintConstructor = <any>function(data: number, extendsKeyword: ISyntaxToken, typeOrExpression: ISyntaxNodeOrToken) {
+    export var ConstraintSyntax: ConstraintConstructor = <any>function (data: number, extendsKeyword: ISyntaxToken, typeOrExpression: ISyntaxNodeOrToken) {
         if (data) { this.__data = data; }
         this.extendsKeyword = extendsKeyword,
         this.typeOrExpression = typeOrExpression;
     };
     ConstraintSyntax.prototype.kind = SyntaxKind.Constraint;
     ConstraintSyntax.prototype.childCount = 2;
-    ConstraintSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ConstraintSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.extendsKeyword;
             case 1: return this.typeOrExpression;
         }
     }
 
-    export var ParameterSyntax: ParameterConstructor = <any>function(data: number, dotDotDotToken: ISyntaxToken, modifiers: ISyntaxToken[], identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax) {
+    export var ParameterSyntax: ParameterConstructor = <any>function (data: number, dotDotDotToken: ISyntaxToken, modifiers: ISyntaxToken[], identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax) {
         if (data) { this.__data = data; }
         this.dotDotDotToken = dotDotDotToken,
         this.modifiers = modifiers,
@@ -1471,7 +1471,7 @@ module TypeScript {
     };
     ParameterSyntax.prototype.kind = SyntaxKind.Parameter;
     ParameterSyntax.prototype.childCount = 6;
-    ParameterSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ParameterSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.dotDotDotToken;
             case 1: return this.modifiers;
@@ -1482,49 +1482,49 @@ module TypeScript {
         }
     }
 
-    export var EnumElementSyntax: EnumElementConstructor = <any>function(data: number, propertyName: IPropertyNameSyntax, equalsValueClause: EqualsValueClauseSyntax) {
+    export var EnumElementSyntax: EnumElementConstructor = <any>function (data: number, propertyName: IPropertyNameSyntax, equalsValueClause: EqualsValueClauseSyntax) {
         if (data) { this.__data = data; }
         this.propertyName = propertyName,
         this.equalsValueClause = equalsValueClause;
     };
     EnumElementSyntax.prototype.kind = SyntaxKind.EnumElement;
     EnumElementSyntax.prototype.childCount = 2;
-    EnumElementSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    EnumElementSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.equalsValueClause;
         }
     }
 
-    export var TypeAnnotationSyntax: TypeAnnotationConstructor = <any>function(data: number, colonToken: ISyntaxToken, type: ITypeSyntax) {
+    export var TypeAnnotationSyntax: TypeAnnotationConstructor = <any>function (data: number, colonToken: ISyntaxToken, type: ITypeSyntax) {
         if (data) { this.__data = data; }
         this.colonToken = colonToken,
         this.type = type;
     };
     TypeAnnotationSyntax.prototype.kind = SyntaxKind.TypeAnnotation;
     TypeAnnotationSyntax.prototype.childCount = 2;
-    TypeAnnotationSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeAnnotationSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.colonToken;
             case 1: return this.type;
         }
     }
 
-    export var ExpressionBody: ExpressionBodyConstructor = <any>function(data: number, equalsGreaterThanToken: ISyntaxToken, expression: IExpressionSyntax) {
+    export var ExpressionBody: ExpressionBodyConstructor = <any>function (data: number, equalsGreaterThanToken: ISyntaxToken, expression: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.equalsGreaterThanToken = equalsGreaterThanToken,
         this.expression = expression;
     };
     ExpressionBody.prototype.kind = SyntaxKind.ExpressionBody;
     ExpressionBody.prototype.childCount = 2;
-    ExpressionBody.prototype.childAt = function(index: number): ISyntaxElement {
+    ExpressionBody.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.equalsGreaterThanToken;
             case 1: return this.expression;
         }
     }
 
-    export var ComputedPropertyNameSyntax: ComputedPropertyNameConstructor = <any>function(data: number, openBracketToken: ISyntaxToken, expression: IExpressionSyntax, closeBracketToken: ISyntaxToken) {
+    export var ComputedPropertyNameSyntax: ComputedPropertyNameConstructor = <any>function (data: number, openBracketToken: ISyntaxToken, expression: IExpressionSyntax, closeBracketToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.openBracketToken = openBracketToken,
         this.expression = expression,
@@ -1532,7 +1532,7 @@ module TypeScript {
     };
     ComputedPropertyNameSyntax.prototype.kind = SyntaxKind.ComputedPropertyName;
     ComputedPropertyNameSyntax.prototype.childCount = 3;
-    ComputedPropertyNameSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ComputedPropertyNameSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.openBracketToken;
             case 1: return this.expression;
@@ -1540,7 +1540,7 @@ module TypeScript {
         }
     }
 
-    export var PropertyAssignmentSyntax: PropertyAssignmentConstructor = <any>function(data: number, propertyName: IPropertyNameSyntax, colonToken: ISyntaxToken, expression: IExpressionSyntax) {
+    export var PropertyAssignmentSyntax: PropertyAssignmentConstructor = <any>function (data: number, propertyName: IPropertyNameSyntax, colonToken: ISyntaxToken, expression: IExpressionSyntax) {
         if (data) { this.__data = data; }
         this.propertyName = propertyName,
         this.colonToken = colonToken,
@@ -1548,7 +1548,7 @@ module TypeScript {
     };
     PropertyAssignmentSyntax.prototype.kind = SyntaxKind.PropertyAssignment;
     PropertyAssignmentSyntax.prototype.childCount = 3;
-    PropertyAssignmentSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    PropertyAssignmentSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.propertyName;
             case 1: return this.colonToken;
@@ -1556,7 +1556,7 @@ module TypeScript {
         }
     }
 
-    export var TypeAliasSyntax: TypeAliasConstructor = <any>function(data: number, modifiers: ISyntaxToken[], typeKeyword: ISyntaxToken, identifier: ISyntaxToken, equalsToken: ISyntaxToken, type: ITypeSyntax, semicolonToken: ISyntaxToken) {
+    export var TypeAliasSyntax: TypeAliasConstructor = <any>function (data: number, modifiers: ISyntaxToken[], typeKeyword: ISyntaxToken, identifier: ISyntaxToken, equalsToken: ISyntaxToken, type: ITypeSyntax, semicolonToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.modifiers = modifiers,
         this.typeKeyword = typeKeyword,
@@ -1567,7 +1567,7 @@ module TypeScript {
     };
     TypeAliasSyntax.prototype.kind = SyntaxKind.TypeAlias;
     TypeAliasSyntax.prototype.childCount = 6;
-    TypeAliasSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    TypeAliasSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.modifiers;
             case 1: return this.typeKeyword;
@@ -1578,7 +1578,7 @@ module TypeScript {
         }
     }
 
-    export var ExternalModuleReferenceSyntax: ExternalModuleReferenceConstructor = <any>function(data: number, requireKeyword: ISyntaxToken, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken) {
+    export var ExternalModuleReferenceSyntax: ExternalModuleReferenceConstructor = <any>function (data: number, requireKeyword: ISyntaxToken, openParenToken: ISyntaxToken, expression: IExpressionSyntax, closeParenToken: ISyntaxToken) {
         if (data) { this.__data = data; }
         this.requireKeyword = requireKeyword,
         this.openParenToken = openParenToken,
@@ -1587,7 +1587,7 @@ module TypeScript {
     };
     ExternalModuleReferenceSyntax.prototype.kind = SyntaxKind.ExternalModuleReference;
     ExternalModuleReferenceSyntax.prototype.childCount = 4;
-    ExternalModuleReferenceSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ExternalModuleReferenceSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.requireKeyword;
             case 1: return this.openParenToken;
@@ -1596,13 +1596,13 @@ module TypeScript {
         }
     }
 
-    export var ModuleNameModuleReferenceSyntax: ModuleNameModuleReferenceConstructor = <any>function(data: number, moduleName: INameSyntax) {
+    export var ModuleNameModuleReferenceSyntax: ModuleNameModuleReferenceConstructor = <any>function (data: number, moduleName: INameSyntax) {
         if (data) { this.__data = data; }
         this.moduleName = moduleName;
     };
     ModuleNameModuleReferenceSyntax.prototype.kind = SyntaxKind.ModuleNameModuleReference;
     ModuleNameModuleReferenceSyntax.prototype.childCount = 1;
-    ModuleNameModuleReferenceSyntax.prototype.childAt = function(index: number): ISyntaxElement {
+    ModuleNameModuleReferenceSyntax.prototype.childAt = function (index: number): ISyntaxElement {
         switch (index) {
             case 0: return this.moduleName;
         }

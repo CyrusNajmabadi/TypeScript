@@ -1964,16 +1964,45 @@ function generateConstructorFunction(definition) {
     }
     result += ") {\r\n";
     result += "        if (data) { this.__data = data; }\r\n";
+    result += "        this.parent = undefined";
     if (definition.children.length) {
         for (var i = 0; i < definition.children.length; i++) {
+<<<<<<< HEAD
             if (i) {
                 result += ",\r\n";
             }
+=======
+            result += ",\r\n";
+>>>>>>> 691a8a7... Remove restriction that you cannot reuse nodes/tokens during incremental parsing while doing speculatively operations.
             var child = definition.children[i];
+<<<<<<< HEAD
             result += "        this." + child.name + " = " + getSafeName(child);
+=======
+            result += "this." + child.name + " = " + getSafeName(child);
         }
         result += ";\r\n";
     }
+<<<<<<< HEAD
+    if (definition.children.length > 0) {
+        result += "        ";
+        for (var i = 0; i < definition.children.length; i++) {
+            if (i) {
+                result += ", ";
+            }
+            var child = definition.children[i];
+            if (child.isOptional) {
+                result += getSafeName(child) + " && (" + getSafeName(child) + ".parent = this)";
+            }
+            else {
+                result += getSafeName(child) + ".parent = this";
+            }
+>>>>>>> ts_official/master
+        }
+        result += ";\r\n";
+    }
+=======
+    result += ";\r\n";
+>>>>>>> 691a8a7... Remove restriction that you cannot reuse nodes/tokens during incremental parsing while doing speculatively operations.
     result += "    };\r\n";
     result += "    " + definition.name + ".prototype.kind = SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
     result += "    " + definition.name + ".prototype.childCount = " + definition.children.length + ";\r\n";
