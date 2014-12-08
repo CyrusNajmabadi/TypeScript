@@ -22989,14 +22989,6 @@ var TypeScript;
             }
         }
         addArrayPrototypeValue("kind", 1 /* List */);
-        function list(nodes) {
-            return nodes;
-        }
-        Syntax.list = list;
-        function separatedList(nodesAndTokens) {
-            return nodesAndTokens;
-        }
-        Syntax.separatedList = separatedList;
     })(Syntax = TypeScript.Syntax || (TypeScript.Syntax = {}));
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
@@ -24640,15 +24632,6 @@ var TypeScript;
                 }
                 return result;
             }
-            function currentNode() {
-                if (!skippedTokens) {
-                    var node = source.currentNode();
-                    if (node && TypeScript.parserContextFlags(node) === contextFlags) {
-                        return node;
-                    }
-                }
-                return undefined;
-            }
             function currentToken() {
                 return source.currentToken();
             }
@@ -24696,6 +24679,7 @@ var TypeScript;
             function consumeNode(node) {
                 TypeScript.Debug.assert(skippedTokens === undefined);
                 source.consumeNodeOrToken(node);
+                return node;
             }
             function eatToken(kind) {
                 var token = currentToken();
@@ -24873,18 +24857,10 @@ var TypeScript;
                 }
             }
             function isModuleElement(inErrorRecovery) {
-                if (TypeScript.SyntaxUtilities.isModuleElement(currentNode())) {
-                    return true;
-                }
                 var _modifierCount = modifierCount();
                 return isInterfaceEnumClassModuleImportExportOrTypeAlias(_modifierCount) || isStatement(_modifierCount, inErrorRecovery);
             }
             function tryParseModuleElement(inErrorRecovery) {
-                var node = currentNode();
-                if (TypeScript.SyntaxUtilities.isModuleElement(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 var _currentToken = currentToken();
                 var _modifierCount = modifierCount();
                 if (_modifierCount) {
@@ -24990,21 +24966,12 @@ var TypeScript;
                 return new TypeScript.EnumDeclarationSyntax(contextFlags, parseModifiers(), eatToken(48 /* EnumKeyword */), eatIdentifierToken(), openBraceToken = eatToken(75 /* OpenBraceToken */), openBraceToken.fullWidth() > 0 ? parseSeparatedSyntaxList(8 /* EnumDeclaration_EnumElements */) : [], eatToken(76 /* CloseBraceToken */));
             }
             function isEnumElement(inErrorRecovery) {
-                var node = currentNode();
-                if (node && node.kind === 211 /* EnumElement */) {
-                    return true;
-                }
                 return isPropertyName(0, inErrorRecovery);
             }
             function tryParseEnumElementEqualsValueClause() {
                 return isEqualsValueClause(false) ? allowInAnd(parseEqualsValueClause) : undefined;
             }
             function tryParseEnumElement(inErrorRecovery) {
-                var node = currentNode();
-                if (node && node.kind === 211 /* EnumElement */) {
-                    consumeNode(node);
-                    return node;
-                }
                 if (!isPropertyName(0, inErrorRecovery)) {
                     return undefined;
                 }
@@ -25070,7 +25037,7 @@ var TypeScript;
                     }
                     break;
                 }
-                return TypeScript.Syntax.list(tokens);
+                return tokens;
             }
             function parseHeritageClauses(isClassHeritageClause) {
                 if (isHeritageClause()) {
@@ -25124,9 +25091,6 @@ var TypeScript;
                 return new TypeScript.SetAccessorSyntax(contextFlags, modifiers, consumeToken(setKeyword), parsePropertyName(), parseCallSignatureWithoutSemicolonOrComma(false, false, false), parseFunctionBody(false, false));
             }
             function isClassElement(inErrorRecovery) {
-                if (TypeScript.SyntaxUtilities.isClassElement(currentNode())) {
-                    return true;
-                }
                 return isAtModifier() || isConstructorDeclaration() || isAccessor(inErrorRecovery) || isIndexMemberDeclaration() || isMemberVariableOrFunctionDeclaration(inErrorRecovery);
             }
             function isMemberVariableOrFunctionDeclaration(inErrorRecovery) {
@@ -25159,11 +25123,6 @@ var TypeScript;
                 }
             }
             function tryParseClassElement(inErrorRecovery) {
-                var node = currentNode();
-                if (TypeScript.SyntaxUtilities.isClassElement(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 var modifiers = parseModifiers();
                 if (isConstructorDeclaration()) {
                     return parseConstructorDeclaration(modifiers);
@@ -25248,9 +25207,6 @@ var TypeScript;
                 return new TypeScript.TupleTypeSyntax(contextFlags, consumeToken(currentToken), parseSeparatedSyntaxList(20 /* TupleType_Types */), eatToken(80 /* CloseBracketToken */));
             }
             function isTypeMember(inErrorRecovery) {
-                if (TypeScript.SyntaxUtilities.isTypeMember(currentNode())) {
-                    return true;
-                }
                 return isCallSignature(0) || isConstructSignature() || isIndexSignature(0) || isMethodOrPropertySignature(inErrorRecovery);
             }
             function isMethodOrPropertySignature(inErrorRecovery) {
@@ -25264,11 +25220,6 @@ var TypeScript;
                 return isPropertyName(0, inErrorRecovery);
             }
             function tryParseTypeMember(inErrorRecovery) {
-                var node = currentNode();
-                if (TypeScript.SyntaxUtilities.isTypeMember(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 if (isCallSignature(0)) {
                     return parseCallSignatureWithSemicolonOrComma(false, false, false);
                 }
@@ -25408,9 +25359,6 @@ var TypeScript;
                 return false;
             }
             function isStatement(modifierCount, inErrorRecovery) {
-                if (TypeScript.SyntaxUtilities.isStatement(currentNode())) {
-                    return true;
-                }
                 if (isDefinitelyNotStatement()) {
                     return false;
                 }
@@ -25438,11 +25386,6 @@ var TypeScript;
                 return tryParseStatement(inErrorRecovery) || parseExpressionStatement();
             }
             function tryParseStatement(inErrorRecovery) {
-                var node = currentNode();
-                if (TypeScript.SyntaxUtilities.isStatement(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 var _currentToken = currentToken();
                 var currentTokenKind = _currentToken.kind;
                 return tryParseStatementWorker(_currentToken, currentTokenKind, modifierCount(), inErrorRecovery);
@@ -25592,29 +25535,18 @@ var TypeScript;
                 return new TypeScript.SwitchStatementSyntax(contextFlags, consumeToken(switchKeyword), openParenToken = eatToken(77 /* OpenParenToken */), parseSwitchExpression(openParenToken), eatToken(78 /* CloseParenToken */), openBraceToken = eatToken(75 /* OpenBraceToken */), openBraceToken.fullWidth() > 0 ? parseSyntaxList(3 /* SwitchStatement_SwitchClauses */) : [], eatToken(76 /* CloseBraceToken */));
             }
             function isSwitchClause() {
-                if (TypeScript.SyntaxUtilities.isSwitchClause(currentNode())) {
-                    return true;
-                }
                 var currentTokenKind = currentToken().kind;
                 return currentTokenKind === 18 /* CaseKeyword */ || currentTokenKind === 22 /* DefaultKeyword */;
             }
             function tryParseSwitchClause() {
-                var node = currentNode();
-                if (TypeScript.SyntaxUtilities.isSwitchClause(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 var _currentToken = currentToken();
-                var kind = _currentToken.kind;
-                if (kind === 18 /* CaseKeyword */) {
-                    return parseCaseSwitchClause(_currentToken);
+                switch (_currentToken.kind) {
+                    case 18 /* CaseKeyword */:
+                        return parseCaseSwitchClause(_currentToken);
+                    case 22 /* DefaultKeyword */:
+                        return parseDefaultSwitchClause(_currentToken);
                 }
-                else if (kind === 22 /* DefaultKeyword */) {
-                    return parseDefaultSwitchClause(_currentToken);
-                }
-                else {
-                    return undefined;
-                }
+                return undefined;
             }
             function parseCaseSwitchClause(caseKeyword) {
                 return new TypeScript.CaseSwitchClauseSyntax(contextFlags, consumeToken(caseKeyword), allowInAnd(parseExpression), eatToken(111 /* ColonToken */), parseSyntaxList(4 /* SwitchClause_Statements */));
@@ -25722,25 +25654,9 @@ var TypeScript;
                 return new TypeScript.VariableDeclarationSyntax(contextFlags, consumeToken(currentToken()), parseSeparatedSyntaxList(12 /* VariableDeclaration_VariableDeclarators */));
             }
             function isVariableDeclarator() {
-                var node = currentNode();
-                if (node && node.kind === 195 /* VariableDeclarator */) {
-                    return true;
-                }
                 return isIdentifier(currentToken());
             }
-            function canReuseVariableDeclaratorNode(node) {
-                if (!node || node.kind !== 195 /* VariableDeclarator */) {
-                    return false;
-                }
-                var variableDeclarator = node;
-                return variableDeclarator.equalsValueClause === undefined;
-            }
             function tryParseVariableDeclarator() {
-                var node = currentNode();
-                if (canReuseVariableDeclaratorNode(node)) {
-                    consumeNode(node);
-                    return node;
-                }
                 if (!isIdentifier(currentToken())) {
                     return undefined;
                 }
@@ -26153,7 +26069,7 @@ var TypeScript;
                 do {
                     templateClauses.push(parseTemplateClause());
                 } while (templateClauses[templateClauses.length - 1].templateMiddleOrEndToken.kind === 15 /* TemplateMiddleToken */);
-                return new TypeScript.TemplateExpressionSyntax(contextFlags, startToken, TypeScript.Syntax.list(templateClauses));
+                return new TypeScript.TemplateExpressionSyntax(contextFlags, startToken, templateClauses);
             }
             function parseTemplateClause() {
                 var expression = allowInAnd(parseExpression);
@@ -26642,9 +26558,6 @@ var TypeScript;
                 return new TypeScript.ConstructorTypeSyntax(contextFlags, eatToken(33 /* NewKeyword */), tryParseTypeParameterList(false), parseParameterList(false, false), eatToken(90 /* EqualsGreaterThanToken */), parseType());
             }
             function isParameter() {
-                if (currentNode() && currentNode().kind === 210 /* Parameter */) {
-                    return true;
-                }
                 return isParameterHelper(currentToken());
             }
             function isParameterHelper(token) {
@@ -26655,17 +26568,12 @@ var TypeScript;
                 return new TypeScript.ParameterSyntax(contextFlags, undefined, [], eatIdentifierToken(), undefined, undefined, undefined);
             }
             function tryParseParameter() {
-                var node = currentNode();
-                if (node && node.kind === 210 /* Parameter */) {
-                    consumeNode(node);
-                    return node;
-                }
                 var dotDotDotToken = tryEatToken(82 /* DotDotDotToken */);
                 var modifiers = parseModifiers();
                 var _currentToken = currentToken();
                 if (!isIdentifier(_currentToken) && !dotDotDotToken && modifiers.length === 0) {
                     if (isModifierKind(_currentToken.kind)) {
-                        modifiers = TypeScript.Syntax.list([consumeToken(_currentToken)]);
+                        modifiers = [consumeToken(_currentToken)];
                     }
                     else {
                         return undefined;
@@ -26733,7 +26641,7 @@ var TypeScript;
                         }
                     }
                 }
-                return TypeScript.Syntax.list(items);
+                return items;
             }
             function parseSeparatedSyntaxListWorker(currentListType) {
                 var nodesAndSeparators = [];
@@ -26766,7 +26674,7 @@ var TypeScript;
                     nodesAndSeparators.push(eatToken(84 /* CommaToken */));
                     inErrorRecovery = true;
                 }
-                return TypeScript.Syntax.separatedList(nodesAndSeparators);
+                return nodesAndSeparators;
             }
             function reportUnexpectedTokenDiagnostic(listType) {
                 var token = currentToken();
@@ -26936,6 +26844,10 @@ var TypeScript;
                 return currentToken().kind === 27 /* FinallyKeyword */;
             }
             function isExpectedListItem(currentListType, inErrorRecovery) {
+                var node = currentNode(currentListType);
+                if (node) {
+                    return true;
+                }
                 switch (currentListType) {
                     case 0 /* SourceUnit_ModuleElements */: return isModuleElement(inErrorRecovery);
                     case 1 /* ClassDeclaration_ClassElements */: return isClassElement(inErrorRecovery);
@@ -26972,6 +26884,10 @@ var TypeScript;
                 return false;
             }
             function tryParseExpectedListItemWorker(currentListType, inErrorRecovery) {
+                var node = currentNode(currentListType);
+                if (node) {
+                    return node;
+                }
                 switch (currentListType) {
                     case 0 /* SourceUnit_ModuleElements */: return tryParseModuleElement(inErrorRecovery);
                     case 1 /* ClassDeclaration_ClassElements */: return tryParseClassElement(inErrorRecovery);
@@ -26996,6 +26912,64 @@ var TypeScript;
                     case 20 /* TupleType_Types */: return tryParseType();
                     default: throw TypeScript.Errors.invalidOperation();
                 }
+            }
+            function currentNode(currentListType) {
+                if (skippedTokens) {
+                    return undefined;
+                }
+                var node = source.currentNode();
+                if (!node) {
+                    return undefined;
+                }
+                if (TypeScript.parserContextFlags(node) !== contextFlags) {
+                    return undefined;
+                }
+                if (!canReuseNode(node, currentListType)) {
+                    return undefined;
+                }
+                return consumeNode(node);
+            }
+            function canReuseNode(node, listParsingState) {
+                switch (listParsingState) {
+                    case 0 /* SourceUnit_ModuleElements */:
+                        return TypeScript.SyntaxUtilities.isModuleElement(node);
+                    case 1 /* ClassDeclaration_ClassElements */:
+                        return TypeScript.SyntaxUtilities.isClassElement(node);
+                    case 2 /* ModuleDeclaration_ModuleElements */:
+                        return TypeScript.SyntaxUtilities.isModuleElement(node);
+                    case 3 /* SwitchStatement_SwitchClauses */:
+                        return TypeScript.SyntaxUtilities.isSwitchClause(node);
+                    case 4 /* SwitchClause_Statements */:
+                    case 5 /* Block_Statements */:
+                    case 6 /* TryBlock_Statements */:
+                    case 7 /* CatchBlock_Statements */:
+                        return TypeScript.SyntaxUtilities.isStatement(node);
+                    case 8 /* EnumDeclaration_EnumElements */:
+                        return node.kind === 211 /* EnumElement */;
+                    case 9 /* ObjectType_TypeMembers */:
+                        return TypeScript.SyntaxUtilities.isTypeMember(node);
+                    case 12 /* VariableDeclaration_VariableDeclarators */:
+                        return canReuseVariableDeclaratorNode(node);
+                    case 16 /* ParameterList_Parameters */:
+                    case 17 /* IndexSignature_Parameters */:
+                        return node.kind === 210 /* Parameter */;
+                    case 10 /* ClassOrInterfaceDeclaration_HeritageClauses */:
+                    case 11 /* HeritageClause_TypeNameList */:
+                    case 19 /* TypeParameterList_TypeParameters */:
+                    case 20 /* TupleType_Types */:
+                    case 18 /* TypeArgumentList_Types */:
+                    case 13 /* ArgumentList_AssignmentExpressions */:
+                    case 15 /* ArrayLiteralExpression_AssignmentExpressions */:
+                    case 14 /* ObjectLiteralExpression_PropertyAssignments */:
+                }
+                return false;
+            }
+            function canReuseVariableDeclaratorNode(node) {
+                if (node.kind !== 195 /* VariableDeclarator */) {
+                    return false;
+                }
+                var variableDeclarator = node;
+                return variableDeclarator.equalsValueClause === undefined;
             }
             function getExpectedListElementType(currentListType) {
                 switch (currentListType) {
@@ -27081,7 +27055,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.moduleElements = moduleElements, this.endOfFileToken = endOfFileToken;
+        this.moduleElements = moduleElements, this.endOfFileToken = endOfFileToken;
     };
     TypeScript.SourceUnitSyntax.prototype.kind = 125 /* SourceUnit */;
     TypeScript.SourceUnitSyntax.prototype.childCount = 2;
@@ -27095,7 +27069,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.left = left, this.dotToken = dotToken, this.right = right;
+        this.left = left, this.dotToken = dotToken, this.right = right;
     };
     TypeScript.QualifiedNameSyntax.prototype.kind = 126 /* QualifiedName */;
     TypeScript.QualifiedNameSyntax.prototype.childCount = 3;
@@ -27110,7 +27084,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openBraceToken = openBraceToken, this.typeMembers = typeMembers, this.closeBraceToken = closeBraceToken;
+        this.openBraceToken = openBraceToken, this.typeMembers = typeMembers, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.ObjectTypeSyntax.prototype.kind = 127 /* ObjectType */;
     TypeScript.ObjectTypeSyntax.prototype.childCount = 3;
@@ -27125,7 +27099,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.equalsGreaterThanToken = equalsGreaterThanToken, this.type = type;
+        this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.equalsGreaterThanToken = equalsGreaterThanToken, this.type = type;
     };
     TypeScript.FunctionTypeSyntax.prototype.kind = 128 /* FunctionType */;
     TypeScript.FunctionTypeSyntax.prototype.childCount = 4;
@@ -27141,7 +27115,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.type = type, this.openBracketToken = openBracketToken, this.closeBracketToken = closeBracketToken;
+        this.type = type, this.openBracketToken = openBracketToken, this.closeBracketToken = closeBracketToken;
     };
     TypeScript.ArrayTypeSyntax.prototype.kind = 129 /* ArrayType */;
     TypeScript.ArrayTypeSyntax.prototype.childCount = 3;
@@ -27156,7 +27130,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.newKeyword = newKeyword, this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.equalsGreaterThanToken = equalsGreaterThanToken, this.type = type;
+        this.newKeyword = newKeyword, this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.equalsGreaterThanToken = equalsGreaterThanToken, this.type = type;
     };
     TypeScript.ConstructorTypeSyntax.prototype.kind = 130 /* ConstructorType */;
     TypeScript.ConstructorTypeSyntax.prototype.childCount = 5;
@@ -27173,7 +27147,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.name = name, this.typeArgumentList = typeArgumentList;
+        this.name = name, this.typeArgumentList = typeArgumentList;
     };
     TypeScript.GenericTypeSyntax.prototype.kind = 131 /* GenericType */;
     TypeScript.GenericTypeSyntax.prototype.childCount = 2;
@@ -27187,7 +27161,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.typeOfKeyword = typeOfKeyword, this.name = name;
+        this.typeOfKeyword = typeOfKeyword, this.name = name;
     };
     TypeScript.TypeQuerySyntax.prototype.kind = 132 /* TypeQuery */;
     TypeScript.TypeQuerySyntax.prototype.childCount = 2;
@@ -27201,7 +27175,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openBracketToken = openBracketToken, this.types = types, this.closeBracketToken = closeBracketToken;
+        this.openBracketToken = openBracketToken, this.types = types, this.closeBracketToken = closeBracketToken;
     };
     TypeScript.TupleTypeSyntax.prototype.kind = 133 /* TupleType */;
     TypeScript.TupleTypeSyntax.prototype.childCount = 3;
@@ -27216,7 +27190,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.left = left, this.barToken = barToken, this.right = right;
+        this.left = left, this.barToken = barToken, this.right = right;
     };
     TypeScript.UnionTypeSyntax.prototype.kind = 134 /* UnionType */;
     TypeScript.UnionTypeSyntax.prototype.childCount = 3;
@@ -27231,7 +27205,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openParenToken = openParenToken, this.type = type, this.closeParenToken = closeParenToken;
+        this.openParenToken = openParenToken, this.type = type, this.closeParenToken = closeParenToken;
     };
     TypeScript.ParenthesizedTypeSyntax.prototype.kind = 135 /* ParenthesizedType */;
     TypeScript.ParenthesizedTypeSyntax.prototype.childCount = 3;
@@ -27246,7 +27220,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.interfaceKeyword = interfaceKeyword, this.identifier = identifier, this.typeParameterList = typeParameterList, this.heritageClauses = heritageClauses, this.body = body;
+        this.modifiers = modifiers, this.interfaceKeyword = interfaceKeyword, this.identifier = identifier, this.typeParameterList = typeParameterList, this.heritageClauses = heritageClauses, this.body = body;
     };
     TypeScript.InterfaceDeclarationSyntax.prototype.kind = 136 /* InterfaceDeclaration */;
     TypeScript.InterfaceDeclarationSyntax.prototype.childCount = 6;
@@ -27264,7 +27238,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.functionKeyword = functionKeyword, this.asterixToken = asterixToken, this.identifier = identifier, this.callSignature = callSignature, this.body = body;
+        this.modifiers = modifiers, this.functionKeyword = functionKeyword, this.asterixToken = asterixToken, this.identifier = identifier, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.FunctionDeclarationSyntax.prototype.kind = 137 /* FunctionDeclaration */;
     TypeScript.FunctionDeclarationSyntax.prototype.childCount = 6;
@@ -27282,7 +27256,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.moduleKeyword = moduleKeyword, this.name = name, this.openBraceToken = openBraceToken, this.moduleElements = moduleElements, this.closeBraceToken = closeBraceToken;
+        this.modifiers = modifiers, this.moduleKeyword = moduleKeyword, this.name = name, this.openBraceToken = openBraceToken, this.moduleElements = moduleElements, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.ModuleDeclarationSyntax.prototype.kind = 138 /* ModuleDeclaration */;
     TypeScript.ModuleDeclarationSyntax.prototype.childCount = 6;
@@ -27300,7 +27274,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.classKeyword = classKeyword, this.identifier = identifier, this.typeParameterList = typeParameterList, this.heritageClauses = heritageClauses, this.openBraceToken = openBraceToken, this.classElements = classElements, this.closeBraceToken = closeBraceToken;
+        this.modifiers = modifiers, this.classKeyword = classKeyword, this.identifier = identifier, this.typeParameterList = typeParameterList, this.heritageClauses = heritageClauses, this.openBraceToken = openBraceToken, this.classElements = classElements, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.ClassDeclarationSyntax.prototype.kind = 139 /* ClassDeclaration */;
     TypeScript.ClassDeclarationSyntax.prototype.childCount = 8;
@@ -27320,7 +27294,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.enumKeyword = enumKeyword, this.identifier = identifier, this.openBraceToken = openBraceToken, this.enumElements = enumElements, this.closeBraceToken = closeBraceToken;
+        this.modifiers = modifiers, this.enumKeyword = enumKeyword, this.identifier = identifier, this.openBraceToken = openBraceToken, this.enumElements = enumElements, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.EnumDeclarationSyntax.prototype.kind = 140 /* EnumDeclaration */;
     TypeScript.EnumDeclarationSyntax.prototype.childCount = 6;
@@ -27338,7 +27312,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.importKeyword = importKeyword, this.identifier = identifier, this.equalsToken = equalsToken, this.moduleReference = moduleReference, this.semicolonToken = semicolonToken;
+        this.modifiers = modifiers, this.importKeyword = importKeyword, this.identifier = identifier, this.equalsToken = equalsToken, this.moduleReference = moduleReference, this.semicolonToken = semicolonToken;
     };
     TypeScript.ImportDeclarationSyntax.prototype.kind = 141 /* ImportDeclaration */;
     TypeScript.ImportDeclarationSyntax.prototype.childCount = 6;
@@ -27356,7 +27330,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.exportKeyword = exportKeyword, this.equalsToken = equalsToken, this.identifier = identifier, this.semicolonToken = semicolonToken;
+        this.modifiers = modifiers, this.exportKeyword = exportKeyword, this.equalsToken = equalsToken, this.identifier = identifier, this.semicolonToken = semicolonToken;
     };
     TypeScript.ExportAssignmentSyntax.prototype.kind = 142 /* ExportAssignment */;
     TypeScript.ExportAssignmentSyntax.prototype.childCount = 5;
@@ -27373,7 +27347,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.asterixToken = asterixToken, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
+        this.modifiers = modifiers, this.asterixToken = asterixToken, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.MethodDeclarationSyntax.prototype.kind = 143 /* MethodDeclaration */;
     TypeScript.MethodDeclarationSyntax.prototype.childCount = 5;
@@ -27390,7 +27364,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.variableDeclarator = variableDeclarator, this.semicolonToken = semicolonToken;
+        this.modifiers = modifiers, this.variableDeclarator = variableDeclarator, this.semicolonToken = semicolonToken;
     };
     TypeScript.PropertyDeclarationSyntax.prototype.kind = 144 /* PropertyDeclaration */;
     TypeScript.PropertyDeclarationSyntax.prototype.childCount = 3;
@@ -27405,7 +27379,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.constructorKeyword = constructorKeyword, this.callSignature = callSignature, this.body = body;
+        this.modifiers = modifiers, this.constructorKeyword = constructorKeyword, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.ConstructorDeclarationSyntax.prototype.kind = 145 /* ConstructorDeclaration */;
     TypeScript.ConstructorDeclarationSyntax.prototype.childCount = 4;
@@ -27421,7 +27395,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.getKeyword = getKeyword, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
+        this.modifiers = modifiers, this.getKeyword = getKeyword, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.GetAccessorSyntax.prototype.kind = 146 /* GetAccessor */;
     TypeScript.GetAccessorSyntax.prototype.childCount = 5;
@@ -27438,7 +27412,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.setKeyword = setKeyword, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
+        this.modifiers = modifiers, this.setKeyword = setKeyword, this.propertyName = propertyName, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.SetAccessorSyntax.prototype.kind = 147 /* SetAccessor */;
     TypeScript.SetAccessorSyntax.prototype.childCount = 5;
@@ -27455,7 +27429,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.propertyName = propertyName, this.questionToken = questionToken, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
+        this.propertyName = propertyName, this.questionToken = questionToken, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
     };
     TypeScript.PropertySignatureSyntax.prototype.kind = 148 /* PropertySignature */;
     TypeScript.PropertySignatureSyntax.prototype.childCount = 4;
@@ -27471,7 +27445,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
+        this.typeParameterList = typeParameterList, this.parameterList = parameterList, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
     };
     TypeScript.CallSignatureSyntax.prototype.kind = 149 /* CallSignature */;
     TypeScript.CallSignatureSyntax.prototype.childCount = 4;
@@ -27487,7 +27461,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.newKeyword = newKeyword, this.callSignature = callSignature;
+        this.newKeyword = newKeyword, this.callSignature = callSignature;
     };
     TypeScript.ConstructSignatureSyntax.prototype.kind = 150 /* ConstructSignature */;
     TypeScript.ConstructSignatureSyntax.prototype.childCount = 2;
@@ -27501,7 +27475,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.openBracketToken = openBracketToken, this.parameters = parameters, this.closeBracketToken = closeBracketToken, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
+        this.modifiers = modifiers, this.openBracketToken = openBracketToken, this.parameters = parameters, this.closeBracketToken = closeBracketToken, this.typeAnnotation = typeAnnotation, this.semicolonOrCommaToken = semicolonOrCommaToken;
     };
     TypeScript.IndexSignatureSyntax.prototype.kind = 151 /* IndexSignature */;
     TypeScript.IndexSignatureSyntax.prototype.childCount = 6;
@@ -27519,7 +27493,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.propertyName = propertyName, this.questionToken = questionToken, this.callSignature = callSignature;
+        this.propertyName = propertyName, this.questionToken = questionToken, this.callSignature = callSignature;
     };
     TypeScript.MethodSignatureSyntax.prototype.kind = 152 /* MethodSignature */;
     TypeScript.MethodSignatureSyntax.prototype.childCount = 3;
@@ -27534,7 +27508,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.equalsGreaterThanToken = equalsGreaterThanToken, this.openBraceToken = openBraceToken, this.statements = statements, this.closeBraceToken = closeBraceToken;
+        this.equalsGreaterThanToken = equalsGreaterThanToken, this.openBraceToken = openBraceToken, this.statements = statements, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.BlockSyntax.prototype.kind = 153 /* Block */;
     TypeScript.BlockSyntax.prototype.childCount = 4;
@@ -27550,7 +27524,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.ifKeyword = ifKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement, this.elseClause = elseClause;
+        this.ifKeyword = ifKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement, this.elseClause = elseClause;
     };
     TypeScript.IfStatementSyntax.prototype.kind = 154 /* IfStatement */;
     TypeScript.IfStatementSyntax.prototype.childCount = 6;
@@ -27568,7 +27542,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.variableDeclaration = variableDeclaration, this.semicolonToken = semicolonToken;
+        this.modifiers = modifiers, this.variableDeclaration = variableDeclaration, this.semicolonToken = semicolonToken;
     };
     TypeScript.VariableStatementSyntax.prototype.kind = 155 /* VariableStatement */;
     TypeScript.VariableStatementSyntax.prototype.childCount = 3;
@@ -27583,7 +27557,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.semicolonToken = semicolonToken;
+        this.expression = expression, this.semicolonToken = semicolonToken;
     };
     TypeScript.ExpressionStatementSyntax.prototype.kind = 156 /* ExpressionStatement */;
     TypeScript.ExpressionStatementSyntax.prototype.childCount = 2;
@@ -27597,7 +27571,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.returnKeyword = returnKeyword, this.expression = expression, this.semicolonToken = semicolonToken;
+        this.returnKeyword = returnKeyword, this.expression = expression, this.semicolonToken = semicolonToken;
     };
     TypeScript.ReturnStatementSyntax.prototype.kind = 157 /* ReturnStatement */;
     TypeScript.ReturnStatementSyntax.prototype.childCount = 3;
@@ -27612,7 +27586,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.switchKeyword = switchKeyword, this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken, this.openBraceToken = openBraceToken, this.switchClauses = switchClauses, this.closeBraceToken = closeBraceToken;
+        this.switchKeyword = switchKeyword, this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken, this.openBraceToken = openBraceToken, this.switchClauses = switchClauses, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.SwitchStatementSyntax.prototype.kind = 158 /* SwitchStatement */;
     TypeScript.SwitchStatementSyntax.prototype.childCount = 7;
@@ -27631,7 +27605,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.breakKeyword = breakKeyword, this.identifier = identifier, this.semicolonToken = semicolonToken;
+        this.breakKeyword = breakKeyword, this.identifier = identifier, this.semicolonToken = semicolonToken;
     };
     TypeScript.BreakStatementSyntax.prototype.kind = 159 /* BreakStatement */;
     TypeScript.BreakStatementSyntax.prototype.childCount = 3;
@@ -27646,7 +27620,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.continueKeyword = continueKeyword, this.identifier = identifier, this.semicolonToken = semicolonToken;
+        this.continueKeyword = continueKeyword, this.identifier = identifier, this.semicolonToken = semicolonToken;
     };
     TypeScript.ContinueStatementSyntax.prototype.kind = 160 /* ContinueStatement */;
     TypeScript.ContinueStatementSyntax.prototype.childCount = 3;
@@ -27661,7 +27635,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.initializer = initializer, this.firstSemicolonToken = firstSemicolonToken, this.condition = condition, this.secondSemicolonToken = secondSemicolonToken, this.incrementor = incrementor, this.closeParenToken = closeParenToken, this.statement = statement;
+        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.initializer = initializer, this.firstSemicolonToken = firstSemicolonToken, this.condition = condition, this.secondSemicolonToken = secondSemicolonToken, this.incrementor = incrementor, this.closeParenToken = closeParenToken, this.statement = statement;
     };
     TypeScript.ForStatementSyntax.prototype.kind = 161 /* ForStatement */;
     TypeScript.ForStatementSyntax.prototype.childCount = 9;
@@ -27682,7 +27656,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.left = left, this.inKeyword = inKeyword, this.right = right, this.closeParenToken = closeParenToken, this.statement = statement;
+        this.forKeyword = forKeyword, this.openParenToken = openParenToken, this.left = left, this.inKeyword = inKeyword, this.right = right, this.closeParenToken = closeParenToken, this.statement = statement;
     };
     TypeScript.ForInStatementSyntax.prototype.kind = 162 /* ForInStatement */;
     TypeScript.ForInStatementSyntax.prototype.childCount = 7;
@@ -27701,7 +27675,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.semicolonToken = semicolonToken;
+        this.semicolonToken = semicolonToken;
     };
     TypeScript.EmptyStatementSyntax.prototype.kind = 163 /* EmptyStatement */;
     TypeScript.EmptyStatementSyntax.prototype.childCount = 1;
@@ -27714,7 +27688,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.throwKeyword = throwKeyword, this.expression = expression, this.semicolonToken = semicolonToken;
+        this.throwKeyword = throwKeyword, this.expression = expression, this.semicolonToken = semicolonToken;
     };
     TypeScript.ThrowStatementSyntax.prototype.kind = 164 /* ThrowStatement */;
     TypeScript.ThrowStatementSyntax.prototype.childCount = 3;
@@ -27729,7 +27703,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.whileKeyword = whileKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement;
+        this.whileKeyword = whileKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement;
     };
     TypeScript.WhileStatementSyntax.prototype.kind = 165 /* WhileStatement */;
     TypeScript.WhileStatementSyntax.prototype.childCount = 5;
@@ -27746,7 +27720,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.tryKeyword = tryKeyword, this.block = block, this.catchClause = catchClause, this.finallyClause = finallyClause;
+        this.tryKeyword = tryKeyword, this.block = block, this.catchClause = catchClause, this.finallyClause = finallyClause;
     };
     TypeScript.TryStatementSyntax.prototype.kind = 166 /* TryStatement */;
     TypeScript.TryStatementSyntax.prototype.childCount = 4;
@@ -27762,7 +27736,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.identifier = identifier, this.colonToken = colonToken, this.statement = statement;
+        this.identifier = identifier, this.colonToken = colonToken, this.statement = statement;
     };
     TypeScript.LabeledStatementSyntax.prototype.kind = 167 /* LabeledStatement */;
     TypeScript.LabeledStatementSyntax.prototype.childCount = 3;
@@ -27777,7 +27751,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.doKeyword = doKeyword, this.statement = statement, this.whileKeyword = whileKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.semicolonToken = semicolonToken;
+        this.doKeyword = doKeyword, this.statement = statement, this.whileKeyword = whileKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.semicolonToken = semicolonToken;
     };
     TypeScript.DoStatementSyntax.prototype.kind = 168 /* DoStatement */;
     TypeScript.DoStatementSyntax.prototype.childCount = 7;
@@ -27796,7 +27770,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.debuggerKeyword = debuggerKeyword, this.semicolonToken = semicolonToken;
+        this.debuggerKeyword = debuggerKeyword, this.semicolonToken = semicolonToken;
     };
     TypeScript.DebuggerStatementSyntax.prototype.kind = 169 /* DebuggerStatement */;
     TypeScript.DebuggerStatementSyntax.prototype.childCount = 2;
@@ -27810,7 +27784,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.withKeyword = withKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement;
+        this.withKeyword = withKeyword, this.openParenToken = openParenToken, this.condition = condition, this.closeParenToken = closeParenToken, this.statement = statement;
     };
     TypeScript.WithStatementSyntax.prototype.kind = 170 /* WithStatement */;
     TypeScript.WithStatementSyntax.prototype.childCount = 5;
@@ -27827,7 +27801,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.operatorToken = operatorToken, this.operand = operand;
+        this.operatorToken = operatorToken, this.operand = operand;
     };
     TypeScript.PrefixUnaryExpressionSyntax.prototype.kind = 171 /* PrefixUnaryExpression */;
     TypeScript.PrefixUnaryExpressionSyntax.prototype.childCount = 2;
@@ -27841,7 +27815,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.deleteKeyword = deleteKeyword, this.expression = expression;
+        this.deleteKeyword = deleteKeyword, this.expression = expression;
     };
     TypeScript.DeleteExpressionSyntax.prototype.kind = 172 /* DeleteExpression */;
     TypeScript.DeleteExpressionSyntax.prototype.childCount = 2;
@@ -27855,7 +27829,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.typeOfKeyword = typeOfKeyword, this.expression = expression;
+        this.typeOfKeyword = typeOfKeyword, this.expression = expression;
     };
     TypeScript.TypeOfExpressionSyntax.prototype.kind = 173 /* TypeOfExpression */;
     TypeScript.TypeOfExpressionSyntax.prototype.childCount = 2;
@@ -27869,7 +27843,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.voidKeyword = voidKeyword, this.expression = expression;
+        this.voidKeyword = voidKeyword, this.expression = expression;
     };
     TypeScript.VoidExpressionSyntax.prototype.kind = 174 /* VoidExpression */;
     TypeScript.VoidExpressionSyntax.prototype.childCount = 2;
@@ -27883,7 +27857,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.condition = condition, this.questionToken = questionToken, this.whenTrue = whenTrue, this.colonToken = colonToken, this.whenFalse = whenFalse;
+        this.condition = condition, this.questionToken = questionToken, this.whenTrue = whenTrue, this.colonToken = colonToken, this.whenFalse = whenFalse;
     };
     TypeScript.ConditionalExpressionSyntax.prototype.kind = 175 /* ConditionalExpression */;
     TypeScript.ConditionalExpressionSyntax.prototype.childCount = 5;
@@ -27900,7 +27874,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.left = left, this.operatorToken = operatorToken, this.right = right;
+        this.left = left, this.operatorToken = operatorToken, this.right = right;
     };
     TypeScript.BinaryExpressionSyntax.prototype.kind = 176 /* BinaryExpression */;
     TypeScript.BinaryExpressionSyntax.prototype.childCount = 3;
@@ -27915,7 +27889,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.operand = operand, this.operatorToken = operatorToken;
+        this.operand = operand, this.operatorToken = operatorToken;
     };
     TypeScript.PostfixUnaryExpressionSyntax.prototype.kind = 177 /* PostfixUnaryExpression */;
     TypeScript.PostfixUnaryExpressionSyntax.prototype.childCount = 2;
@@ -27929,7 +27903,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.dotToken = dotToken, this.name = name;
+        this.expression = expression, this.dotToken = dotToken, this.name = name;
     };
     TypeScript.PropertyAccessExpressionSyntax.prototype.kind = 178 /* PropertyAccessExpression */;
     TypeScript.PropertyAccessExpressionSyntax.prototype.childCount = 3;
@@ -27944,7 +27918,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.argumentList = argumentList;
+        this.expression = expression, this.argumentList = argumentList;
     };
     TypeScript.InvocationExpressionSyntax.prototype.kind = 179 /* InvocationExpression */;
     TypeScript.InvocationExpressionSyntax.prototype.childCount = 2;
@@ -27958,7 +27932,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openBracketToken = openBracketToken, this.expressions = expressions, this.closeBracketToken = closeBracketToken;
+        this.openBracketToken = openBracketToken, this.expressions = expressions, this.closeBracketToken = closeBracketToken;
     };
     TypeScript.ArrayLiteralExpressionSyntax.prototype.kind = 180 /* ArrayLiteralExpression */;
     TypeScript.ArrayLiteralExpressionSyntax.prototype.childCount = 3;
@@ -27973,7 +27947,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openBraceToken = openBraceToken, this.propertyAssignments = propertyAssignments, this.closeBraceToken = closeBraceToken;
+        this.openBraceToken = openBraceToken, this.propertyAssignments = propertyAssignments, this.closeBraceToken = closeBraceToken;
     };
     TypeScript.ObjectLiteralExpressionSyntax.prototype.kind = 181 /* ObjectLiteralExpression */;
     TypeScript.ObjectLiteralExpressionSyntax.prototype.childCount = 3;
@@ -27988,7 +27962,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.newKeyword = newKeyword, this.expression = expression, this.argumentList = argumentList;
+        this.newKeyword = newKeyword, this.expression = expression, this.argumentList = argumentList;
     };
     TypeScript.ObjectCreationExpressionSyntax.prototype.kind = 182 /* ObjectCreationExpression */;
     TypeScript.ObjectCreationExpressionSyntax.prototype.childCount = 3;
@@ -28003,7 +27977,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken;
+        this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken;
     };
     TypeScript.ParenthesizedExpressionSyntax.prototype.kind = 183 /* ParenthesizedExpression */;
     TypeScript.ParenthesizedExpressionSyntax.prototype.childCount = 3;
@@ -28018,7 +27992,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.asyncKeyword = asyncKeyword, this.callSignature = callSignature, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body;
+        this.asyncKeyword = asyncKeyword, this.callSignature = callSignature, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body;
     };
     TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = 184 /* ParenthesizedArrowFunctionExpression */;
     TypeScript.ParenthesizedArrowFunctionExpressionSyntax.prototype.childCount = 4;
@@ -28034,7 +28008,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.asyncKeyword = asyncKeyword, this.parameter = parameter, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body;
+        this.asyncKeyword = asyncKeyword, this.parameter = parameter, this.equalsGreaterThanToken = equalsGreaterThanToken, this.body = body;
     };
     TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.kind = 185 /* SimpleArrowFunctionExpression */;
     TypeScript.SimpleArrowFunctionExpressionSyntax.prototype.childCount = 4;
@@ -28050,7 +28024,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.lessThanToken = lessThanToken, this.type = type, this.greaterThanToken = greaterThanToken, this.expression = expression;
+        this.lessThanToken = lessThanToken, this.type = type, this.greaterThanToken = greaterThanToken, this.expression = expression;
     };
     TypeScript.TypeAssertionExpressionSyntax.prototype.kind = 186 /* TypeAssertionExpression */;
     TypeScript.TypeAssertionExpressionSyntax.prototype.childCount = 4;
@@ -28066,7 +28040,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.openBracketToken = openBracketToken, this.argumentExpression = argumentExpression, this.closeBracketToken = closeBracketToken;
+        this.expression = expression, this.openBracketToken = openBracketToken, this.argumentExpression = argumentExpression, this.closeBracketToken = closeBracketToken;
     };
     TypeScript.ElementAccessExpressionSyntax.prototype.kind = 187 /* ElementAccessExpression */;
     TypeScript.ElementAccessExpressionSyntax.prototype.childCount = 4;
@@ -28082,7 +28056,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.asyncKeyword = asyncKeyword, this.functionKeyword = functionKeyword, this.asterixToken = asterixToken, this.identifier = identifier, this.callSignature = callSignature, this.body = body;
+        this.asyncKeyword = asyncKeyword, this.functionKeyword = functionKeyword, this.asterixToken = asterixToken, this.identifier = identifier, this.callSignature = callSignature, this.body = body;
     };
     TypeScript.FunctionExpressionSyntax.prototype.kind = 188 /* FunctionExpression */;
     TypeScript.FunctionExpressionSyntax.prototype.childCount = 6;
@@ -28100,7 +28074,6 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined;
     };
     TypeScript.OmittedExpressionSyntax.prototype.kind = 189 /* OmittedExpression */;
     TypeScript.OmittedExpressionSyntax.prototype.childCount = 0;
@@ -28111,7 +28084,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.templateStartToken = templateStartToken, this.templateClauses = templateClauses;
+        this.templateStartToken = templateStartToken, this.templateClauses = templateClauses;
     };
     TypeScript.TemplateExpressionSyntax.prototype.kind = 190 /* TemplateExpression */;
     TypeScript.TemplateExpressionSyntax.prototype.childCount = 2;
@@ -28125,7 +28098,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.templateExpression = templateExpression;
+        this.expression = expression, this.templateExpression = templateExpression;
     };
     TypeScript.TemplateAccessExpressionSyntax.prototype.kind = 191 /* TemplateAccessExpression */;
     TypeScript.TemplateAccessExpressionSyntax.prototype.childCount = 2;
@@ -28139,7 +28112,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.yieldKeyword = yieldKeyword, this.asterixToken = asterixToken, this.expression = expression;
+        this.yieldKeyword = yieldKeyword, this.asterixToken = asterixToken, this.expression = expression;
     };
     TypeScript.YieldExpressionSyntax.prototype.kind = 192 /* YieldExpression */;
     TypeScript.YieldExpressionSyntax.prototype.childCount = 3;
@@ -28154,7 +28127,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.awaitKeyword = awaitKeyword, this.expression = expression;
+        this.awaitKeyword = awaitKeyword, this.expression = expression;
     };
     TypeScript.AwaitExpressionSyntax.prototype.kind = 193 /* AwaitExpression */;
     TypeScript.AwaitExpressionSyntax.prototype.childCount = 2;
@@ -28168,7 +28141,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.varConstOrLetKeyword = varConstOrLetKeyword, this.variableDeclarators = variableDeclarators;
+        this.varConstOrLetKeyword = varConstOrLetKeyword, this.variableDeclarators = variableDeclarators;
     };
     TypeScript.VariableDeclarationSyntax.prototype.kind = 194 /* VariableDeclaration */;
     TypeScript.VariableDeclarationSyntax.prototype.childCount = 2;
@@ -28182,7 +28155,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.propertyName = propertyName, this.typeAnnotation = typeAnnotation, this.equalsValueClause = equalsValueClause;
+        this.propertyName = propertyName, this.typeAnnotation = typeAnnotation, this.equalsValueClause = equalsValueClause;
     };
     TypeScript.VariableDeclaratorSyntax.prototype.kind = 195 /* VariableDeclarator */;
     TypeScript.VariableDeclaratorSyntax.prototype.childCount = 3;
@@ -28197,7 +28170,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.typeArgumentList = typeArgumentList, this.openParenToken = openParenToken, this.arguments = _arguments, this.closeParenToken = closeParenToken;
+        this.typeArgumentList = typeArgumentList, this.openParenToken = openParenToken, this.arguments = _arguments, this.closeParenToken = closeParenToken;
     };
     TypeScript.ArgumentListSyntax.prototype.kind = 196 /* ArgumentList */;
     TypeScript.ArgumentListSyntax.prototype.childCount = 4;
@@ -28213,7 +28186,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openParenToken = openParenToken, this.parameters = parameters, this.closeParenToken = closeParenToken;
+        this.openParenToken = openParenToken, this.parameters = parameters, this.closeParenToken = closeParenToken;
     };
     TypeScript.ParameterListSyntax.prototype.kind = 197 /* ParameterList */;
     TypeScript.ParameterListSyntax.prototype.childCount = 3;
@@ -28228,7 +28201,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.lessThanToken = lessThanToken, this.typeArguments = typeArguments, this.greaterThanToken = greaterThanToken;
+        this.lessThanToken = lessThanToken, this.typeArguments = typeArguments, this.greaterThanToken = greaterThanToken;
     };
     TypeScript.TypeArgumentListSyntax.prototype.kind = 198 /* TypeArgumentList */;
     TypeScript.TypeArgumentListSyntax.prototype.childCount = 3;
@@ -28243,7 +28216,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.lessThanToken = lessThanToken, this.typeParameters = typeParameters, this.greaterThanToken = greaterThanToken;
+        this.lessThanToken = lessThanToken, this.typeParameters = typeParameters, this.greaterThanToken = greaterThanToken;
     };
     TypeScript.TypeParameterListSyntax.prototype.kind = 199 /* TypeParameterList */;
     TypeScript.TypeParameterListSyntax.prototype.childCount = 3;
@@ -28258,7 +28231,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.extendsOrImplementsKeyword = extendsOrImplementsKeyword, this.typeNames = typeNames;
+        this.extendsOrImplementsKeyword = extendsOrImplementsKeyword, this.typeNames = typeNames;
     };
     TypeScript.HeritageClauseSyntax.prototype.kind = 200 /* HeritageClause */;
     TypeScript.HeritageClauseSyntax.prototype.childCount = 2;
@@ -28272,7 +28245,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.equalsToken = equalsToken, this.value = value;
+        this.equalsToken = equalsToken, this.value = value;
     };
     TypeScript.EqualsValueClauseSyntax.prototype.kind = 201 /* EqualsValueClause */;
     TypeScript.EqualsValueClauseSyntax.prototype.childCount = 2;
@@ -28286,7 +28259,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.caseKeyword = caseKeyword, this.expression = expression, this.colonToken = colonToken, this.statements = statements;
+        this.caseKeyword = caseKeyword, this.expression = expression, this.colonToken = colonToken, this.statements = statements;
     };
     TypeScript.CaseSwitchClauseSyntax.prototype.kind = 202 /* CaseSwitchClause */;
     TypeScript.CaseSwitchClauseSyntax.prototype.childCount = 4;
@@ -28302,7 +28275,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.defaultKeyword = defaultKeyword, this.colonToken = colonToken, this.statements = statements;
+        this.defaultKeyword = defaultKeyword, this.colonToken = colonToken, this.statements = statements;
     };
     TypeScript.DefaultSwitchClauseSyntax.prototype.kind = 203 /* DefaultSwitchClause */;
     TypeScript.DefaultSwitchClauseSyntax.prototype.childCount = 3;
@@ -28317,7 +28290,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.elseKeyword = elseKeyword, this.statement = statement;
+        this.elseKeyword = elseKeyword, this.statement = statement;
     };
     TypeScript.ElseClauseSyntax.prototype.kind = 204 /* ElseClause */;
     TypeScript.ElseClauseSyntax.prototype.childCount = 2;
@@ -28331,7 +28304,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.catchKeyword = catchKeyword, this.openParenToken = openParenToken, this.identifier = identifier, this.typeAnnotation = typeAnnotation, this.closeParenToken = closeParenToken, this.block = block;
+        this.catchKeyword = catchKeyword, this.openParenToken = openParenToken, this.identifier = identifier, this.typeAnnotation = typeAnnotation, this.closeParenToken = closeParenToken, this.block = block;
     };
     TypeScript.CatchClauseSyntax.prototype.kind = 205 /* CatchClause */;
     TypeScript.CatchClauseSyntax.prototype.childCount = 6;
@@ -28349,7 +28322,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.finallyKeyword = finallyKeyword, this.block = block;
+        this.finallyKeyword = finallyKeyword, this.block = block;
     };
     TypeScript.FinallyClauseSyntax.prototype.kind = 206 /* FinallyClause */;
     TypeScript.FinallyClauseSyntax.prototype.childCount = 2;
@@ -28363,7 +28336,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.expression = expression, this.templateMiddleOrEndToken = templateMiddleOrEndToken;
+        this.expression = expression, this.templateMiddleOrEndToken = templateMiddleOrEndToken;
     };
     TypeScript.TemplateClauseSyntax.prototype.kind = 207 /* TemplateClause */;
     TypeScript.TemplateClauseSyntax.prototype.childCount = 2;
@@ -28377,7 +28350,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.identifier = identifier, this.constraint = constraint;
+        this.identifier = identifier, this.constraint = constraint;
     };
     TypeScript.TypeParameterSyntax.prototype.kind = 208 /* TypeParameter */;
     TypeScript.TypeParameterSyntax.prototype.childCount = 2;
@@ -28391,7 +28364,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.extendsKeyword = extendsKeyword, this.typeOrExpression = typeOrExpression;
+        this.extendsKeyword = extendsKeyword, this.typeOrExpression = typeOrExpression;
     };
     TypeScript.ConstraintSyntax.prototype.kind = 209 /* Constraint */;
     TypeScript.ConstraintSyntax.prototype.childCount = 2;
@@ -28405,7 +28378,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.dotDotDotToken = dotDotDotToken, this.modifiers = modifiers, this.identifier = identifier, this.questionToken = questionToken, this.typeAnnotation = typeAnnotation, this.equalsValueClause = equalsValueClause;
+        this.dotDotDotToken = dotDotDotToken, this.modifiers = modifiers, this.identifier = identifier, this.questionToken = questionToken, this.typeAnnotation = typeAnnotation, this.equalsValueClause = equalsValueClause;
     };
     TypeScript.ParameterSyntax.prototype.kind = 210 /* Parameter */;
     TypeScript.ParameterSyntax.prototype.childCount = 6;
@@ -28423,7 +28396,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.propertyName = propertyName, this.equalsValueClause = equalsValueClause;
+        this.propertyName = propertyName, this.equalsValueClause = equalsValueClause;
     };
     TypeScript.EnumElementSyntax.prototype.kind = 211 /* EnumElement */;
     TypeScript.EnumElementSyntax.prototype.childCount = 2;
@@ -28437,7 +28410,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.colonToken = colonToken, this.type = type;
+        this.colonToken = colonToken, this.type = type;
     };
     TypeScript.TypeAnnotationSyntax.prototype.kind = 212 /* TypeAnnotation */;
     TypeScript.TypeAnnotationSyntax.prototype.childCount = 2;
@@ -28451,7 +28424,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.equalsGreaterThanToken = equalsGreaterThanToken, this.expression = expression;
+        this.equalsGreaterThanToken = equalsGreaterThanToken, this.expression = expression;
     };
     TypeScript.ExpressionBody.prototype.kind = 213 /* ExpressionBody */;
     TypeScript.ExpressionBody.prototype.childCount = 2;
@@ -28465,7 +28438,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.openBracketToken = openBracketToken, this.expression = expression, this.closeBracketToken = closeBracketToken;
+        this.openBracketToken = openBracketToken, this.expression = expression, this.closeBracketToken = closeBracketToken;
     };
     TypeScript.ComputedPropertyNameSyntax.prototype.kind = 214 /* ComputedPropertyName */;
     TypeScript.ComputedPropertyNameSyntax.prototype.childCount = 3;
@@ -28480,7 +28453,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.propertyName = propertyName, this.colonToken = colonToken, this.expression = expression;
+        this.propertyName = propertyName, this.colonToken = colonToken, this.expression = expression;
     };
     TypeScript.PropertyAssignmentSyntax.prototype.kind = 215 /* PropertyAssignment */;
     TypeScript.PropertyAssignmentSyntax.prototype.childCount = 3;
@@ -28495,7 +28468,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.modifiers = modifiers, this.typeKeyword = typeKeyword, this.identifier = identifier, this.equalsToken = equalsToken, this.type = type, this.semicolonToken = semicolonToken;
+        this.modifiers = modifiers, this.typeKeyword = typeKeyword, this.identifier = identifier, this.equalsToken = equalsToken, this.type = type, this.semicolonToken = semicolonToken;
     };
     TypeScript.TypeAliasSyntax.prototype.kind = 216 /* TypeAlias */;
     TypeScript.TypeAliasSyntax.prototype.childCount = 6;
@@ -28513,7 +28486,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.requireKeyword = requireKeyword, this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken;
+        this.requireKeyword = requireKeyword, this.openParenToken = openParenToken, this.expression = expression, this.closeParenToken = closeParenToken;
     };
     TypeScript.ExternalModuleReferenceSyntax.prototype.kind = 217 /* ExternalModuleReference */;
     TypeScript.ExternalModuleReferenceSyntax.prototype.childCount = 4;
@@ -28529,7 +28502,7 @@ var TypeScript;
         if (data) {
             this.__data = data;
         }
-        this.parent = undefined, this.moduleName = moduleName;
+        this.moduleName = moduleName;
     };
     TypeScript.ModuleNameModuleReferenceSyntax.prototype.kind = 218 /* ModuleNameModuleReference */;
     TypeScript.ModuleNameModuleReferenceSyntax.prototype.childCount = 1;
@@ -30013,9 +29986,6 @@ var TypeScript;
             function absolutePosition() {
                 return scannerParserSource.absolutePosition();
             }
-            function diagnostics() {
-                return scannerParserSource.diagnostics();
-            }
             function tryParse(callback) {
                 var savedOldSourceUnitCursor = IncrementalParser.cloneSyntaxCursor(oldSourceUnitCursor);
                 var result = scannerParserSource.tryParse(callback);
@@ -30079,9 +30049,6 @@ var TypeScript;
                 }
                 return scannerParserSource.currentToken();
             }
-            function currentContextualToken() {
-                return scannerParserSource.currentContextualToken();
-            }
             function tryGetNodeFromOldSourceUnit() {
                 while (true) {
                     var node = oldSourceUnitCursor.currentNode();
@@ -30129,22 +30096,12 @@ var TypeScript;
                 var token = oldSourceUnitCursor.currentToken();
                 return canReuseTokenFromOldSourceUnit(token) ? token : undefined;
             }
-            function consumeNodeOrToken(nodeOrToken) {
-                scannerParserSource.consumeNodeOrToken(nodeOrToken);
-            }
-            return {
-                text: text,
-                fileName: oldSyntaxTree.fileName(),
-                languageVersion: oldSyntaxTree.languageVersion(),
-                absolutePosition: absolutePosition,
-                currentNode: currentNode,
-                currentToken: currentToken,
-                currentContextualToken: currentContextualToken,
-                peekToken: peekToken,
-                consumeNodeOrToken: consumeNodeOrToken,
-                tryParse: tryParse,
-                diagnostics: diagnostics
-            };
+            var currentContextualToken = scannerParserSource.currentContextualToken;
+            var consumeNodeOrToken = scannerParserSource.consumeNodeOrToken;
+            var diagnostics = scannerParserSource.diagnostics;
+            var fileName = oldSyntaxTree.fileName();
+            var languageVersion = oldSyntaxTree.languageVersion();
+            return { fileName: fileName, languageVersion: languageVersion, text: text, absolutePosition: absolutePosition, currentNode: currentNode, currentToken: currentToken, peekToken: peekToken, tryParse: tryParse, currentContextualToken: currentContextualToken, consumeNodeOrToken: consumeNodeOrToken, diagnostics: diagnostics };
         }
         function updateTokenPositionsAndMarkElements(element, changeStart, changeRangeOldEnd, delta, fullStart) {
             if (fullStart > changeRangeOldEnd) {
@@ -30196,8 +30153,7 @@ var TypeScript;
                 forceUpdateTokenPosition(nodeOrToken, delta);
             }
             else {
-                var node = nodeOrToken;
-                var tokens = TypeScript.getTokens(node);
+                var tokens = TypeScript.getTokens(nodeOrToken);
                 for (var i = 0, n = tokens.length; i < n; i++) {
                     forceUpdateTokenPosition(tokens[i], delta);
                 }
@@ -32471,7 +32427,7 @@ var Program = (function () {
         var originalTree = tree;
         var totalIncrementalTime = 0;
         for (var i = 0; i < repeat; i++) {
-            var changeLength = i * 2;
+            var changeLength = i * 2 % 20;
             var start = new Date().getTime();
             var tree2 = TypeScript.IncrementalParser.parse(tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan(((text.length() / 2) >> 0) - i, changeLength), changeLength), text);
             totalIncrementalTime += (new Date().getTime() - start);
@@ -32502,20 +32458,30 @@ var Program = (function () {
         var totalIncrementalTime = 0;
         var totalIncrementalASTTime = 0;
         for (var i = 0; i < repeat; i++) {
-            var changeLength = i * 2;
-            var changeSpan = new TypeScript.TextSpan(((text.length() / 2) >> 0) - i, changeLength);
+            var changeStart = ((text.length() / 2) >> 0) - i;
             contents = text.substr(0, text.length());
-            var contentsToReplace = contents.substr(changeSpan.start(), changeSpan.length());
+            var contentsToReplace = contents.substr(changeStart);
             var first = true;
-            var updatedText = contentsToReplace.replace(/[^a-zA-Z0-9][a-z]+[^a-zA-Z0-9]/, function (sub) {
-                if (first && TypeScript.SyntaxFacts.getTokenKind(sub.substr(1, sub.length - 2)) === 0 /* None */) {
+            var changeRange = undefined;
+            var updatedText = contentsToReplace.replace(/[^a-zA-Z0-9][a-zA-Z]+[^a-zA-Z0-9]/g, function (sub, offset) {
+                var start = sub.substring(0, 1);
+                var mid = sub.substring(1, sub.length - 1);
+                var end = sub.substring(sub.length - 1);
+                var midOffset = changeStart + offset + 1;
+                if (first && TypeScript.SyntaxFacts.getTokenKind(mid) === 0 /* None */) {
                     first = false;
-                    return sub.substr(0, sub.length - 1) + "a" + sub.substr(sub.length - 1);
+                    if (i % 3 && mid.length >= 2) {
+                        changeRange = new TypeScript.TextChangeRange(new TypeScript.TextSpan(midOffset, mid.length), mid.length - 1);
+                        return start + mid.substr(0, mid.length - 1) + end;
+                    }
+                    changeRange = new TypeScript.TextChangeRange(new TypeScript.TextSpan(midOffset, mid.length), mid.length + 1);
+                    return start + mid + "a" + end;
                 }
                 return sub;
             });
-            text = TypeScript.SimpleText.fromString(contents.substr(0, changeSpan.start()) + updatedText + contents.substr(changeSpan.end()));
-            var changeRange = new TypeScript.TextChangeRange(changeSpan, updatedText.length);
+            var newContents = this.flatten(contents.substr(0, changeStart) + updatedText);
+            TypeScript.Debug.assert(changeRange);
+            text = TypeScript.SimpleText.fromString(newContents);
             var start = new Date().getTime();
             var tree2 = TypeScript.IncrementalParser.parse(tree, changeRange, text);
             totalIncrementalTime += (new Date().getTime() - start);
@@ -32525,13 +32491,20 @@ var Program = (function () {
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         TypeScript.Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
-        rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalASTTime;
-        rateBytesPerSecond = rateBytesPerMillisecond * 1000;
-        rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
         var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
         var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
         var reuse = TypeScript.ArrayUtilities.where(allNewElements, function (v) { return TypeScript.ArrayUtilities.contains(allOldElements, v); }).length;
         TypeScript.Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
+    };
+    Program.prototype.flatten = function (val) {
+        var v = {};
+        v[val] = 1;
+        for (var a in v) {
+            if (v.hasOwnProperty(a)) {
+                return a;
+            }
+        }
+        TypeScript.Debug.fail();
     };
     Program.prototype.handleException = function (fileName, e) {
         TypeScript.Environment.standardOut.WriteLine("");

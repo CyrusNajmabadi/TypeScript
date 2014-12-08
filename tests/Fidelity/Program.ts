@@ -388,7 +388,7 @@ class Program {
         var totalIncrementalTime = 0;
 
         for (var i = 0; i < repeat; i++) {
-            var changeLength = i * 2;
+            var changeLength = i * 2 % 20;
 
             var start = new Date().getTime();
             var tree2 = TypeScript.IncrementalParser.parse(tree, new TypeScript.TextChangeRange( new TypeScript.TextSpan(((text.length() / 2) >> 0) - i, changeLength), changeLength), text);
@@ -438,27 +438,40 @@ class Program {
         var totalIncrementalASTTime = 0;
 
         for (var i = 0; i < repeat; i++) {
-            var changeLength = i * 2;
-            var changeSpan = new TypeScript.TextSpan(((text.length() / 2) >> 0) - i, changeLength);
+            var changeStart = ((text.length() / 2) >> 0) - i;
 
             contents = text.substr(0, text.length());
-            var contentsToReplace = contents.substr(changeSpan.start(), changeSpan.length());
+            var contentsToReplace = contents.substr(changeStart);
 
+            // Look for identifiers with non-identifier text around them.
             var first = true;
-            var updatedText = contentsToReplace.replace(/[^a-zA-Z0-9][a-z]+[^a-zA-Z0-9]/, (sub) => {
-                if (first && TypeScript.SyntaxFacts.getTokenKind(sub.substr(1, sub.length - 2)) === TypeScript.SyntaxKind.None) {
+            var changeRange: TypeScript.TextChangeRange = undefined;
+            var updatedText = contentsToReplace.replace(/[^a-zA-Z0-9][a-zA-Z]+[^a-zA-Z0-9]/g, (sub: string, offset: number) => {
+                var start = sub.substring(0, 1);
+                var mid = sub.substring(1, sub.length - 1);
+                var end = sub.substring(sub.length - 1);
+                var midOffset = changeStart + offset + 1;
+
+                if (first && TypeScript.SyntaxFacts.getTokenKind(mid) === TypeScript.SyntaxKind.None) {
                     first = false;
-                    return sub.substr(0, sub.length - 1) + "a" + sub.substr(sub.length - 1);
+                    
+                    if (i % 3 && mid.length >= 2) {
+                        changeRange = new TypeScript.TextChangeRange(new TypeScript.TextSpan(midOffset, mid.length), mid.length - 1);
+                        return start + mid.substr(0, mid.length - 1) + end;
+                    }
+
+                    // grow match.
+                    changeRange = new TypeScript.TextChangeRange(new TypeScript.TextSpan(midOffset, mid.length), mid.length + 1);
+                    return start + mid + "a" + end;
                 }
 
                 return sub;
             });
 
-            text = TypeScript.SimpleText.fromString(
-                contents.substr(0, changeSpan.start()) +
-                updatedText +
-                contents.substr(changeSpan.end()));
-            var changeRange = new TypeScript.TextChangeRange(changeSpan, updatedText.length);
+            var newContents  = this.flatten(contents.substr(0, changeStart) + updatedText);
+
+            TypeScript.Debug.assert(changeRange);
+            text = TypeScript.SimpleText.fromString(newContents);
 
             var start = new Date().getTime();
             var tree2 = TypeScript.IncrementalParser.parse(tree, changeRange, text);
@@ -473,10 +486,6 @@ class Program {
 
         TypeScript.Environment.standardOut.WriteLine("Incremental     rate: " + rateMBPerSecond + " MB/s");
 
-        rateBytesPerMillisecond = (contents.length * repeat) / totalIncrementalASTTime;
-        rateBytesPerSecond = rateBytesPerMillisecond * 1000;
-        rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
-
         var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(originalTree.sourceUnit());
         var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(tree.sourceUnit());
 
@@ -484,6 +493,18 @@ class Program {
             v => TypeScript.ArrayUtilities.contains(allOldElements, v)).length;
 
         TypeScript.Environment.standardOut.WriteLine("Reuse: " + reuse / allNewElements.length);
+    }
+
+    private flatten(val: string) {
+        var v = {};
+        (<any>v)[val] = 1;
+        for (var a in v) {
+            if (v.hasOwnProperty(a)) {
+                return a;
+            }
+        }
+
+        TypeScript.Debug.fail();
     }
 
     private handleException(fileName: string, e: Error): void {
