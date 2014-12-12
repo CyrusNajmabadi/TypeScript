@@ -37,26 +37,50 @@ module ts.NavigationBar {
 
             return indent;
         }
-          
+
         function getChildNodes(nodes: Node[]): Node[] {
-            var childNodes: Node[] = [];    
+            var childNodes: Node[] = [];
 
-            for (var i = 0, n = nodes.length; i < n; i++) {
-                var node = nodes[i];
-
-                if (node.kind === SyntaxKind.ClassDeclaration ||
-                    node.kind === SyntaxKind.EnumDeclaration ||
-                    node.kind === SyntaxKind.InterfaceDeclaration ||
-                    node.kind === SyntaxKind.ModuleDeclaration ||
-                    node.kind === SyntaxKind.FunctionDeclaration) {
-
-                    childNodes.push(node);
-                }
-                else if (node.kind === SyntaxKind.VariableStatement) {
-                    childNodes.push.apply(childNodes, (<VariableStatement>node).declarations);
+            function visit(node: Node) {
+                switch (node.kind) {
+                    case SyntaxKind.VariableStatement:
+                        forEach((<VariableStatement>node).declarations, visit);
+                        break;
+                    case SyntaxKind.ObjectBindingPattern:
+                    case SyntaxKind.ArrayBindingPattern:
+                        forEach((<BindingPattern>node).elements, visit);
+                        break;
+                    case SyntaxKind.VariableDeclaration:
+                        if (isBindingPattern(node)) {
+                            visit((<VariableDeclaration>node).name);
+                            break;
+                        }
+                        // Fall through
+                    case SyntaxKind.ClassDeclaration:
+                    case SyntaxKind.EnumDeclaration:
+                    case SyntaxKind.InterfaceDeclaration:
+                    case SyntaxKind.ModuleDeclaration:
+                    case SyntaxKind.FunctionDeclaration:
+                        childNodes.push(node);
                 }
             }
 
+            //for (var i = 0, n = nodes.length; i < n; i++) {
+            //    var node = nodes[i];
+
+            //    if (node.kind === SyntaxKind.ClassDeclaration ||
+            //        node.kind === SyntaxKind.EnumDeclaration ||
+            //        node.kind === SyntaxKind.InterfaceDeclaration ||
+            //        node.kind === SyntaxKind.ModuleDeclaration ||
+            //        node.kind === SyntaxKind.FunctionDeclaration) {
+
+            //        childNodes.push(node);
+            //    }
+            //    else if (node.kind === SyntaxKind.VariableStatement) {
+            //        childNodes.push.apply(childNodes, (<VariableStatement>node).declarations);
+            //    }
+            //}
+            forEach(nodes, visit);
             return sortNodes(childNodes);
         }
 
@@ -200,12 +224,16 @@ module ts.NavigationBar {
         function createChildItem(node: Node): ts.NavigationBarItem {
             switch (node.kind) {
                 case SyntaxKind.Parameter:
+                    if (isBindingPattern((<ParameterDeclaration>node).name)) {
+                        break;
+                    }
                     if ((node.flags & NodeFlags.Modifier) === 0) {
                         return undefined;
                     }
                     return createItem(node, getTextOfNode((<ParameterDeclaration>node).name), ts.ScriptElementKind.memberVariableElement);
 
-                case SyntaxKind.Method:
+                case SyntaxKind.MethodDeclaration:
+                case SyntaxKind.MethodSignature:
                     return createItem(node, getTextOfNode((<MethodDeclaration>node).name), ts.ScriptElementKind.memberFunctionElement);
 
                 case SyntaxKind.GetAccessor:
@@ -226,13 +254,17 @@ module ts.NavigationBar {
                 case SyntaxKind.ConstructSignature:
                     return createItem(node, "new()", ts.ScriptElementKind.constructSignatureElement);
 
-                case SyntaxKind.Property:
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.PropertySignature:
                     return createItem(node, getTextOfNode((<PropertyDeclaration>node).name), ts.ScriptElementKind.memberVariableElement);
 
                 case SyntaxKind.FunctionDeclaration:
                     return createItem(node, getTextOfNode((<FunctionLikeDeclaration>node).name), ts.ScriptElementKind.functionElement);
 
                 case SyntaxKind.VariableDeclaration:
+                    if (isBindingPattern((<VariableDeclaration>node).name)) {
+                        break;
+                    }
                     if (isConst(node)) {
                         return createItem(node, getTextOfNode((<VariableDeclaration>node).name), ts.ScriptElementKind.constElement);
                     }
