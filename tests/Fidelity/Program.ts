@@ -2,6 +2,7 @@
 /// <reference path='json2.ts' />
 /// <reference path='environment.ts' />
 
+///<reference path='..\..\src\compiler\sys.ts' />
 ///<reference path='..\..\src\compiler\checker.ts' />
 ///<reference path='..\..\src\services\syntax\references.ts' />
 ///<reference path='..\..\src\services\syntax\syntaxNodes.concrete.generated.ts' />
@@ -666,7 +667,7 @@ class Program {
         var text = TypeScript.SimpleText.fromString(contents);
 
         var andersStart = new Date().getTime();
-        var andersText = ts.createSourceFile(fileName, contents, ts.ScriptTarget.ES6, "0");
+        var andersText = ts.createSourceFile(fileName, contents, ts.ScriptTarget.ES6);
         andersTime += (new Date().getTime() - andersStart);
 
         var start = new Date().getTime();
