@@ -9,6 +9,7 @@ interface Array<T> {
 
 module TypeScript {
     export interface ISeparatedSyntaxList<T extends ISyntaxNodeOrToken> extends Array<ISyntaxNodeOrToken> {
+        _separatedSyntaxListBrand: T;
         //separatorCount(): number;
         //separatorAt(index: number): TypeScript.ISyntaxToken;
 

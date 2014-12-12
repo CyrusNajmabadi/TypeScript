@@ -224,8 +224,8 @@ module TypeScript {
         }
 
         public visitHeritageClause(node: HeritageClauseSyntax): void {
-            if (this.checkForTrailingComma(node.typeNames) ||
-                this.checkForAtLeastOneElement(node.typeNames, node.extendsOrImplementsKeyword, SyntaxFacts.getText(node.extendsOrImplementsKeyword.kind))) {
+            if (this.checkForTrailingComma(node.types) ||
+                this.checkForAtLeastOneElement(node.types, node.extendsOrImplementsKeyword, SyntaxFacts.getText(node.extendsOrImplementsKeyword.kind))) {
                 return;
             }
 
@@ -355,7 +355,7 @@ module TypeScript {
                         return this.pushDiagnostic(heritageClause, DiagnosticCode.extends_clause_must_precede_implements_clause);
                     }
 
-                    if (nonSeparatorCount(heritageClause.typeNames) > 1) {
+                    if (nonSeparatorCount(heritageClause.types) > 1) {
                         return this.pushDiagnostic(heritageClause, DiagnosticCode.Classes_can_only_extend_a_single_class);
                     }
 

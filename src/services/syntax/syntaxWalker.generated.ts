@@ -524,7 +524,7 @@ module TypeScript {
 
         public visitHeritageClause(node: HeritageClauseSyntax): void {
             this.visitToken(node.extendsOrImplementsKeyword);
-            this.visitList(node.typeNames);
+            this.visitList(node.types);
         }
 
         public visitEqualsValueClause(node: EqualsValueClauseSyntax): void {

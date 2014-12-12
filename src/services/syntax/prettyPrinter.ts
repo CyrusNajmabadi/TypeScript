@@ -309,7 +309,7 @@ module TypeScript.PrettyPrinter {
         public visitHeritageClause(node: HeritageClauseSyntax): void {
             this.appendToken(node.extendsOrImplementsKeyword);
             this.ensureSpace();
-            this.appendSeparatorSpaceList(node.typeNames);
+            this.appendSeparatorSpaceList(node.types);
         }
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {

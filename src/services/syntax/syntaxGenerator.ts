@@ -55,11 +55,7 @@ var definitions: ITypeDefinition[] = [
         baseType: 'ISyntaxNode',
         interfaces: ['IModuleReferenceSyntax'],
         children: [
-<<<<<<< HEAD
             <any>{ name: 'requireKeyword', isToken: true }, 
-=======
-            <any>{ name: 'requireKeyword', isToken: true },
->>>>>>> ts_official/master
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }
@@ -137,7 +133,7 @@ var definitions: ITypeDefinition[] = [
         baseType: 'ISyntaxNode',
         children: [
             <any>{ name: 'extendsOrImplementsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
+            <any>{ name: 'types', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
     },
@@ -1108,34 +1104,19 @@ function generateConstructorFunction(definition: ITypeDefinition) {
     result += ") {\r\n";
 
     result += "        if (data) { this.__data = data; }\r\n";
-<<<<<<< HEAD
-    //result += "        this.parent = undefined";
-    if (definition.children.length) {
-        for (var i = 0; i < definition.children.length; i++) {
-            if (i) {
-                result += ",\r\n";
-            }
-=======
     result += "        this.parent = undefined";
     if (definition.children.length) {
         for (var i = 0; i < definition.children.length; i++) {
             //if (i) {
             result += ",\r\n";
             //}
->>>>>>> ts_official/master
 
             var child = definition.children[i];
             result += "        this." + child.name + " = " + getSafeName(child);
         }
-<<<<<<< HEAD
-        result += ";\r\n";
-    }
-
-=======
     }
 
     result += ";\r\n";
->>>>>>> ts_official/master
 
     result += "    };\r\n";
     result += "    " + definition.name + ".prototype.kind = SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
@@ -1528,9 +1509,9 @@ var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var utilities = generateUtilities();
 
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts", syntaxNodesConcrete, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxInterfaces.generated.ts", syntaxInterfaces, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxWalker.generated.ts", walker, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\scannerUtilities.generated.ts", scannerUtilities, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxVisitor.generated.ts", visitor, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\utilities.generated.ts", utilities, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts", syntaxNodesConcrete, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxInterfaces.generated.ts", syntaxInterfaces, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxWalker.generated.ts", walker, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\scannerUtilities.generated.ts", scannerUtilities, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxVisitor.generated.ts", visitor, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\utilities.generated.ts", utilities, false);

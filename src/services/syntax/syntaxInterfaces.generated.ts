@@ -582,9 +582,9 @@ module TypeScript {
 
     export interface HeritageClauseSyntax extends ISyntaxNode {
         extendsOrImplementsKeyword: ISyntaxToken;
-        typeNames: ISeparatedSyntaxList<INameSyntax>;
+        types: ISeparatedSyntaxList<ITypeSyntax>;
     }
-    export interface HeritageClauseConstructor { new (data: number, extendsOrImplementsKeyword: ISyntaxToken, typeNames: ISeparatedSyntaxList<INameSyntax>): HeritageClauseSyntax }
+    export interface HeritageClauseConstructor { new (data: number, extendsOrImplementsKeyword: ISyntaxToken, types: ISeparatedSyntaxList<ITypeSyntax>): HeritageClauseSyntax }
 
     export interface EqualsValueClauseSyntax extends ISyntaxNode {
         equalsToken: ISyntaxToken;

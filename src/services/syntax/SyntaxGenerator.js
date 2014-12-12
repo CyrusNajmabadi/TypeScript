@@ -1,198 +1,201 @@
-var sys = (function () {
-    function getWScriptSystem() {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var fileStream = new ActiveXObject("ADODB.Stream");
-        fileStream.Type = 2;
-        var binaryStream = new ActiveXObject("ADODB.Stream");
-        binaryStream.Type = 1;
-        var args = [];
-        for (var i = 0; i < WScript.Arguments.length; i++) {
-            args[i] = WScript.Arguments.Item(i);
-        }
-        function readFile(fileName, encoding) {
-            if (!fso.FileExists(fileName)) {
-                return undefined;
+var ts;
+(function (ts) {
+    ts.sys = (function () {
+        function getWScriptSystem() {
+            var fso = new ActiveXObject("Scripting.FileSystemObject");
+            var fileStream = new ActiveXObject("ADODB.Stream");
+            fileStream.Type = 2;
+            var binaryStream = new ActiveXObject("ADODB.Stream");
+            binaryStream.Type = 1;
+            var args = [];
+            for (var i = 0; i < WScript.Arguments.length; i++) {
+                args[i] = WScript.Arguments.Item(i);
             }
-            fileStream.Open();
-            try {
-                if (encoding) {
-                    fileStream.Charset = encoding;
-                    fileStream.LoadFromFile(fileName);
+            function readFile(fileName, encoding) {
+                if (!fso.FileExists(fileName)) {
+                    return undefined;
                 }
-                else {
-                    fileStream.Charset = "x-ansi";
-                    fileStream.LoadFromFile(fileName);
-                    var bom = fileStream.ReadText(2) || "";
-                    fileStream.Position = 0;
-                    fileStream.Charset = bom.length >= 2 && (bom.charCodeAt(0) === 0xFF && bom.charCodeAt(1) === 0xFE || bom.charCodeAt(0) === 0xFE && bom.charCodeAt(1) === 0xFF) ? "unicode" : "utf-8";
-                }
-                return fileStream.ReadText();
-            }
-            catch (e) {
-                throw e;
-            }
-            finally {
-                fileStream.Close();
-            }
-        }
-        function writeFile(fileName, data, writeByteOrderMark) {
-            fileStream.Open();
-            binaryStream.Open();
-            try {
-                fileStream.Charset = "utf-8";
-                fileStream.WriteText(data);
-                if (writeByteOrderMark) {
-                    fileStream.Position = 0;
-                }
-                else {
-                    fileStream.Position = 3;
-                }
-                fileStream.CopyTo(binaryStream);
-                binaryStream.SaveToFile(fileName, 2);
-            }
-            finally {
-                binaryStream.Close();
-                fileStream.Close();
-            }
-        }
-        return {
-            args: args,
-            newLine: "\r\n",
-            useCaseSensitiveFileNames: false,
-            write: function (s) {
-                WScript.StdOut.Write(s);
-            },
-            readFile: readFile,
-            writeFile: writeFile,
-            resolvePath: function (path) {
-                return fso.GetAbsolutePathName(path);
-            },
-            fileExists: function (path) {
-                return fso.FileExists(path);
-            },
-            directoryExists: function (path) {
-                return fso.FolderExists(path);
-            },
-            createDirectory: function (directoryName) {
-                if (!this.directoryExists(directoryName)) {
-                    fso.CreateFolder(directoryName);
-                }
-            },
-            getExecutingFilePath: function () {
-                return WScript.ScriptFullName;
-            },
-            getCurrentDirectory: function () {
-                return new ActiveXObject("WScript.Shell").CurrentDirectory;
-            },
-            exit: function (exitCode) {
+                fileStream.Open();
                 try {
-                    WScript.Quit(exitCode);
+                    if (encoding) {
+                        fileStream.Charset = encoding;
+                        fileStream.LoadFromFile(fileName);
+                    }
+                    else {
+                        fileStream.Charset = "x-ansi";
+                        fileStream.LoadFromFile(fileName);
+                        var bom = fileStream.ReadText(2) || "";
+                        fileStream.Position = 0;
+                        fileStream.Charset = bom.length >= 2 && (bom.charCodeAt(0) === 0xFF && bom.charCodeAt(1) === 0xFE || bom.charCodeAt(0) === 0xFE && bom.charCodeAt(1) === 0xFF) ? "unicode" : "utf-8";
+                    }
+                    return fileStream.ReadText();
                 }
                 catch (e) {
+                    throw e;
+                }
+                finally {
+                    fileStream.Close();
                 }
             }
-        };
-    }
-    function getNodeSystem() {
-        var _fs = require("fs");
-        var _path = require("path");
-        var _os = require('os');
-        var platform = _os.platform();
-        var useCaseSensitiveFileNames = platform !== "win32" && platform !== "win64" && platform !== "darwin";
-        function readFile(fileName, encoding) {
-            if (!_fs.existsSync(fileName)) {
-                return undefined;
-            }
-            var buffer = _fs.readFileSync(fileName);
-            var len = buffer.length;
-            if (len >= 2 && buffer[0] === 0xFE && buffer[1] === 0xFF) {
-                len &= ~1;
-                for (var i = 0; i < len; i += 2) {
-                    var temp = buffer[i];
-                    buffer[i] = buffer[i + 1];
-                    buffer[i + 1] = temp;
-                }
-                return buffer.toString("utf16le", 2);
-            }
-            if (len >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
-                return buffer.toString("utf16le", 2);
-            }
-            if (len >= 3 && buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
-                return buffer.toString("utf8", 3);
-            }
-            return buffer.toString("utf8");
-        }
-        function writeFile(fileName, data, writeByteOrderMark) {
-            if (writeByteOrderMark) {
-                data = '\uFEFF' + data;
-            }
-            _fs.writeFileSync(fileName, data, "utf8");
-        }
-        return {
-            args: process.argv.slice(2),
-            newLine: _os.EOL,
-            useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-            write: function (s) {
-                _fs.writeSync(1, s);
-            },
-            readFile: readFile,
-            writeFile: writeFile,
-            watchFile: function (fileName, callback) {
-                _fs.watchFile(fileName, { persistent: true, interval: 250 }, fileChanged);
-                return {
-                    close: function () {
-                        _fs.unwatchFile(fileName, fileChanged);
+            function writeFile(fileName, data, writeByteOrderMark) {
+                fileStream.Open();
+                binaryStream.Open();
+                try {
+                    fileStream.Charset = "utf-8";
+                    fileStream.WriteText(data);
+                    if (writeByteOrderMark) {
+                        fileStream.Position = 0;
                     }
-                };
-                function fileChanged(curr, prev) {
-                    if (+curr.mtime <= +prev.mtime) {
-                        return;
+                    else {
+                        fileStream.Position = 3;
                     }
-                    callback(fileName);
+                    fileStream.CopyTo(binaryStream);
+                    binaryStream.SaveToFile(fileName, 2);
                 }
-                ;
-            },
-            resolvePath: function (path) {
-                return _path.resolve(path);
-            },
-            fileExists: function (path) {
-                return _fs.existsSync(path);
-            },
-            directoryExists: function (path) {
-                return _fs.existsSync(path) && _fs.statSync(path).isDirectory();
-            },
-            createDirectory: function (directoryName) {
-                if (!this.directoryExists(directoryName)) {
-                    _fs.mkdirSync(directoryName);
+                finally {
+                    binaryStream.Close();
+                    fileStream.Close();
                 }
-            },
-            getExecutingFilePath: function () {
-                return process.mainModule.filename;
-            },
-            getCurrentDirectory: function () {
-                return process.cwd();
-            },
-            getMemoryUsage: function () {
-                if (global.gc) {
-                    global.gc();
-                }
-                return process.memoryUsage().heapUsed;
-            },
-            exit: function (exitCode) {
-                process.exit(exitCode);
             }
-        };
-    }
-    if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
-        return getWScriptSystem();
-    }
-    else if (typeof module !== "undefined" && module.exports) {
-        return getNodeSystem();
-    }
-    else {
-        return undefined;
-    }
-})();
+            return {
+                args: args,
+                newLine: "\r\n",
+                useCaseSensitiveFileNames: false,
+                write: function (s) {
+                    WScript.StdOut.Write(s);
+                },
+                readFile: readFile,
+                writeFile: writeFile,
+                resolvePath: function (path) {
+                    return fso.GetAbsolutePathName(path);
+                },
+                fileExists: function (path) {
+                    return fso.FileExists(path);
+                },
+                directoryExists: function (path) {
+                    return fso.FolderExists(path);
+                },
+                createDirectory: function (directoryName) {
+                    if (!this.directoryExists(directoryName)) {
+                        fso.CreateFolder(directoryName);
+                    }
+                },
+                getExecutingFilePath: function () {
+                    return WScript.ScriptFullName;
+                },
+                getCurrentDirectory: function () {
+                    return new ActiveXObject("WScript.Shell").CurrentDirectory;
+                },
+                exit: function (exitCode) {
+                    try {
+                        WScript.Quit(exitCode);
+                    }
+                    catch (e) {
+                    }
+                }
+            };
+        }
+        function getNodeSystem() {
+            var _fs = require("fs");
+            var _path = require("path");
+            var _os = require('os');
+            var platform = _os.platform();
+            var useCaseSensitiveFileNames = platform !== "win32" && platform !== "win64" && platform !== "darwin";
+            function readFile(fileName, encoding) {
+                if (!_fs.existsSync(fileName)) {
+                    return undefined;
+                }
+                var buffer = _fs.readFileSync(fileName);
+                var len = buffer.length;
+                if (len >= 2 && buffer[0] === 0xFE && buffer[1] === 0xFF) {
+                    len &= ~1;
+                    for (var i = 0; i < len; i += 2) {
+                        var temp = buffer[i];
+                        buffer[i] = buffer[i + 1];
+                        buffer[i + 1] = temp;
+                    }
+                    return buffer.toString("utf16le", 2);
+                }
+                if (len >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
+                    return buffer.toString("utf16le", 2);
+                }
+                if (len >= 3 && buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
+                    return buffer.toString("utf8", 3);
+                }
+                return buffer.toString("utf8");
+            }
+            function writeFile(fileName, data, writeByteOrderMark) {
+                if (writeByteOrderMark) {
+                    data = '\uFEFF' + data;
+                }
+                _fs.writeFileSync(fileName, data, "utf8");
+            }
+            return {
+                args: process.argv.slice(2),
+                newLine: _os.EOL,
+                useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+                write: function (s) {
+                    _fs.writeSync(1, s);
+                },
+                readFile: readFile,
+                writeFile: writeFile,
+                watchFile: function (fileName, callback) {
+                    _fs.watchFile(fileName, { persistent: true, interval: 250 }, fileChanged);
+                    return {
+                        close: function () {
+                            _fs.unwatchFile(fileName, fileChanged);
+                        }
+                    };
+                    function fileChanged(curr, prev) {
+                        if (+curr.mtime <= +prev.mtime) {
+                            return;
+                        }
+                        callback(fileName);
+                    }
+                    ;
+                },
+                resolvePath: function (path) {
+                    return _path.resolve(path);
+                },
+                fileExists: function (path) {
+                    return _fs.existsSync(path);
+                },
+                directoryExists: function (path) {
+                    return _fs.existsSync(path) && _fs.statSync(path).isDirectory();
+                },
+                createDirectory: function (directoryName) {
+                    if (!this.directoryExists(directoryName)) {
+                        _fs.mkdirSync(directoryName);
+                    }
+                },
+                getExecutingFilePath: function () {
+                    return __filename;
+                },
+                getCurrentDirectory: function () {
+                    return process.cwd();
+                },
+                getMemoryUsage: function () {
+                    if (global.gc) {
+                        global.gc();
+                    }
+                    return process.memoryUsage().heapUsed;
+                },
+                exit: function (exitCode) {
+                    process.exit(exitCode);
+                }
+            };
+        }
+        if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
+            return getWScriptSystem();
+        }
+        else if (typeof module !== "undefined" && module.exports) {
+            return getNodeSystem();
+        }
+        else {
+            return undefined;
+        }
+    })();
+})(ts || (ts = {}));
 var TypeScript;
 (function (TypeScript) {
     var Errors = (function () {
@@ -996,7 +999,7 @@ var definitions = [
         baseType: 'ISyntaxNode',
         children: [
             { name: 'extendsOrImplementsKeyword', isToken: true },
-            { name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
+            { name: 'types', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'ITypeSyntax' }
         ],
         isTypeScriptSpecific: true
     },
@@ -1967,42 +1970,12 @@ function generateConstructorFunction(definition) {
     result += "        this.parent = undefined";
     if (definition.children.length) {
         for (var i = 0; i < definition.children.length; i++) {
-<<<<<<< HEAD
-            if (i) {
-                result += ",\r\n";
-            }
-=======
             result += ",\r\n";
->>>>>>> 691a8a7... Remove restriction that you cannot reuse nodes/tokens during incremental parsing while doing speculatively operations.
             var child = definition.children[i];
-<<<<<<< HEAD
             result += "        this." + child.name + " = " + getSafeName(child);
-=======
-            result += "this." + child.name + " = " + getSafeName(child);
         }
-        result += ";\r\n";
     }
-<<<<<<< HEAD
-    if (definition.children.length > 0) {
-        result += "        ";
-        for (var i = 0; i < definition.children.length; i++) {
-            if (i) {
-                result += ", ";
-            }
-            var child = definition.children[i];
-            if (child.isOptional) {
-                result += getSafeName(child) + " && (" + getSafeName(child) + ".parent = this)";
-            }
-            else {
-                result += getSafeName(child) + ".parent = this";
-            }
->>>>>>> ts_official/master
-        }
-        result += ";\r\n";
-    }
-=======
     result += ";\r\n";
->>>>>>> 691a8a7... Remove restriction that you cannot reuse nodes/tokens during incremental parsing while doing speculatively operations.
     result += "    };\r\n";
     result += "    " + definition.name + ".prototype.kind = SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
     result += "    " + definition.name + ".prototype.childCount = " + definition.children.length + ";\r\n";
@@ -2271,10 +2244,10 @@ var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var utilities = generateUtilities();
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts", syntaxNodesConcrete, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxInterfaces.generated.ts", syntaxInterfaces, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxWalker.generated.ts", walker, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\scannerUtilities.generated.ts", scannerUtilities, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxVisitor.generated.ts", visitor, false);
-sys.writeFile(sys.getCurrentDirectory() + "\\src\\services\\syntax\\utilities.generated.ts", utilities, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxNodes.concrete.generated.ts", syntaxNodesConcrete, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxInterfaces.generated.ts", syntaxInterfaces, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxWalker.generated.ts", walker, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\scannerUtilities.generated.ts", scannerUtilities, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\syntaxVisitor.generated.ts", visitor, false);
+ts.sys.writeFile(ts.sys.getCurrentDirectory() + "\\src\\services\\syntax\\utilities.generated.ts", utilities, false);
 //# sourceMappingURL=file:///C:/VSPro_1/src/typescript/public_cyrusn/src/services/syntax/SyntaxGenerator.js.map
