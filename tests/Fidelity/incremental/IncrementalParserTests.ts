@@ -44,7 +44,8 @@ module TypeScript {
     // NOTE: 'reusedElements' is the expected count of elements reused from the old tree to the new
     // tree.  It may change as we tweak the parser.  If the count increases then that should always
     // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
-    // unavoidable.  If it does decrease an investigation 
+    // unavoidable.  If it does decrease an investigation should be done to make sure that things 
+    // are still ok and we're still appropriately reusing most of the tree.
     function compareTrees(oldText: ISimpleText, newText: ISimpleText, textChangeRange: TextChangeRange, reusedElements: number = -1): void {
         var oldTree = Parser.parse("", oldText, ts.ScriptTarget.ES5, false);
         TypeScript.visitNodeOrToken(new PositionValidatingWalker(), oldTree.sourceUnit());

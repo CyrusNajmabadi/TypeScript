@@ -32818,7 +32818,7 @@ var totalSize = 0;
 var program = new Program();
 totalTime = 0;
 totalSize = 0;
-program.runAllTests(true);
+program.runAllTests(false);
 var count = 1;
 TypeScript.Environment.standardOut.WriteLine("Total time: " + (totalTime / count));
 TypeScript.Environment.standardOut.WriteLine("Total size: " + (totalSize / count));
